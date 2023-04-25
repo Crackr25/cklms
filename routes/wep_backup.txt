@@ -1,0 +1,268 @@
+
+<?php
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+
+// Route::get('/', function () {
+
+//     return view('login');
+    
+// });
+Route::get('/comingsoon', function () {
+
+    return view('comingsoon');
+    
+});
+ 
+                                                            //  =======================================================
+
+// Route::get('/courseplus', function () {
+
+//     return view('courseplus');
+    
+// });
+Route::get('/courseresume', function () {
+
+    return view('courseresume');
+    
+});
+Route::get('/coursepath', function () {
+
+    return view('course-path');
+    
+});
+// Route::get('/courses', function () {
+
+//     return view('courses');
+    
+// });
+// Route::get('/coursedetails', function () {
+
+//     return view('coursedetails');
+    
+// });
+// Route::get('/books', function () {
+
+//     return view('books');
+    
+// });
+Route::get('/bookdescription', function () {
+
+    return view('bookdescription');
+    
+});
+Route::get('/tableofcontents1', function () {
+
+    return view('tableofcontents1');
+    
+});
+Route::get('/tableofcontents2', function () {
+
+    return view('tableofcontents2');
+    
+});
+Route::get('/tableofcontents3', function () {
+
+    return view('tableofcontents3');
+    
+});
+
+                                                            //  =======================================================
+
+                                                            //  ========================== ADMIN ======================
+
+                                                            //  =======================================================
+
+       
+
+//Administrator
+
+Route::middleware(['auth', 'isAdministrator','isDefaultPass'])->group(function () {
+    Route::get('/admincourses', function () {
+    
+        return view('admin.admincourses');
+        
+    });  
+    Route::get('/admincreatecourse', function () {
+    
+        return view('admin.admincreatecourse');
+        
+    });         
+            
+    Route::get('/adminsubjects', 'Admin\SubjectController@index');  
+    Route::get('/adminsubjects/view', 'Admin\SubjectController@view');  
+    Route::get('/adminsubjects/edit', 'Admin\SubjectController@edit');  
+    Route::get('/adminsubjects/delete', 'Admin\SubjectController@delete');  
+    Route::get('/admincreatesubject/{id}', 'Admin\SubjectController@createsubjects');     
+    
+    Route::get('/adminbooks/{id}', 'Admin\BookController@index'); 
+    Route::post('/admincreatebooks/{id}', 'Admin\BookController@createbooks');      
+    Route::get('/adminviewbook/{id}', 'Admin\BookController@viewbook');    
+    Route::post('/adminviewbookupdateinfo', 'Admin\BookController@bookinfoupdate');   
+    Route::get('/adminviewbookupdatestatus', 'Admin\BookController@bookstatusupdate');      
+    Route::get('/adminviewbookchapterinfo', 'Admin\BookController@getchapterinfo');        
+    Route::get('/adminviewbookchapterinfoedit', 'Admin\BookController@editchapterinfo');      
+    Route::get('/create', 'Admin\BookController@create');     
+    Route::get('/delete', 'Admin\BookController@delete');     
+    Route::get('/viewlesson', 'Admin\LessonController@viewlesson');       
+    Route::get('/editbookgetinfo', 'Admin\BookController@getinfo');       
+    Route::get('/editbookupdate', 'Admin\BookController@update');      
+    Route::get('/createcontent', 'Admin\BookController@createcontent');
+    Route::get('/updatelesson', 'Admin\LessonController@updatelesson');            
+    
+    Route::get('/adminparts/{id}', 'Admin\PartController@manualselection');      
+    Route::get('/adminparts/view', 'Admin\PartController@view');      
+    Route::get('/admincreateparts', 'Admin\PartController@createpart');    
+    
+    Route::get('/admincreatechapters', 'Admin\PartController@createchapters');
+    Route::get('/admincreatechaptertest', 'Admin\ChapterTestController@createchaptertest');  
+    Route::get('/admincreatechaptertest/createbasicdetails', 'Admin\ChapterTestController@createchaptertestbasicdetails');    
+    Route::get('/admincreatechaptertest/createquestion', 'Admin\ChapterTestController@createquestion');  
+    Route::get('/admincreatechaptertest/editquestion', 'Admin\ChapterTestController@editquestion');  
+    Route::get('/admincreatechaptertest/addanswers', 'Admin\ChapterTestController@addanswers');  
+    Route::get('/adminviewchaptertest/view', 'Admin\ChapterTestController@view');  
+    Route::get('/adminchaptertest/deletequestion', 'Admin\ChapterTestController@deletequestion');   
+    Route::get('/adminchaptertest/editanswer', 'Admin\ChapterTestController@editanswer');   
+    Route::get('/adminchaptertest/updateanswer', 'Admin\ChapterTestController@updateanswer');   
+    Route::get('/adminchaptertest/deleteanswer', 'Admin\ChapterTestController@deleteanswer');   
+
+    Route::get('/adminchapter', 'Admin\ChapterController@index');    
+    
+    Route::get('/admincreatelessons', 'Admin\PartController@createlessons');    
+    Route::get('/adminlessoncontents', 'Admin\LessonController@viewlesson');    
+    Route::get('/adminlessondelete', 'Admin\LessonController@deletelesson'); 
+    Route::post('/adminlessoncontentcreate', 'Admin\LessonController@createcontent');    
+    Route::post('/adminlessoncontentupdate', 'Admin\LessonController@updatecontent');   
+    Route::post('/adminlessoncontentdelete', 'Admin\LessonController@deletecontent');    
+    
+    Route::get('/adminteachers', 'Admin\InstructorController@index');
+    Route::get('/adminteachers/create', 'Admin\InstructorController@create');
+    Route::get('/adminteachers/editstatus', 'Admin\InstructorController@editstatus');
+    
+
+    Route::get('/adminacademicprogram', 'Admin\AcademicProgramController@index');  
+    Route::get('/adminacademicprogram/create', 'Admin\AcademicProgramController@create');  
+    Route::get('/adminacademicprogram/getinfo', 'Admin\AcademicProgramController@getinfo');  
+    Route::get('/adminacademicprogram/update', 'Admin\AcademicProgramController@update');  
+    Route::get('/adminacademicprogram/delete', 'Admin\AcademicProgramController@delete');  
+
+
+    // Route::get('/adminmessage', function () {
+
+    //     return view('admin.adminmessage');
+        
+    // });     
+    
+           
+    // Route::get('/adminstudents', function () {
+    
+    //     return view('admin.adminstudents');
+        
+    // });   
+    // Route::get('/admininstructors', function () {
+    
+    //     return view('admin.admininstructors');
+        
+    // });     
+    // Route::get('/admincategories', function () {
+    
+    //     return view('admin.admincategories');
+        
+    // });   
+    // Route::get('/adminsettings_general', function () {
+    
+    //     return view('admin.adminsettings_general');
+        
+    // });   
+});
+Route::middleware(['auth', 'isTeacher','isDefaultPass'])->group(function () {
+    Route::get('/teacherclassrooms', 'Teacher\ClassroomController@index');   
+    Route::get('/teacherclassroom/create', 'Teacher\ClassroomController@create');   
+    Route::get('/teachergetavailablecode', 'Teacher\ClassroomController@getavailablecode');    
+      
+    Route::get('/teacherbooks/{id}', 'Teacher\BookController@index');      
+    Route::get('/teacherviewbook/{id}', 'Teacher\BookController@viewbook');  
+    Route::get('/teachermessages', 'Teacher\BookController@messages');   
+    
+    //Classroom View 
+    Route::get('/teacherclassroomview', 'Teacher\ClassroomController@viewclassroom'); 
+    Route::get('/teacheraddstudent', 'Teacher\ClassroomController@addstudent'); 
+    Route::post('/teacherpost', 'Teacher\ClassroomController@post');     
+    Route::get('/teacherpostcomment', 'Teacher\ClassroomController@comment');   
+    Route::get('/teacherrefreshcomments', 'Teacher\ClassroomController@refreshcomment');     
+    Route::get('/teacheraddthisbook', 'Teacher\ClassroomController@addthisbook'); 
+});
+
+Route::middleware(['auth', 'isStudent','isDefaultPass'])->group(function () {  
+    Route::get('/studentjoinclassroom', 'Student\StudentClassroomController@joinclassroom');   
+    Route::get('/studentviewclassroom', 'Student\StudentClassroomController@index');
+    Route::post('/studentpost', 'Student\StudentClassroomController@post');    
+    Route::get('/studentpostcomment', 'Student\StudentClassroomController@comment');   
+    Route::get('/studentrefreshcomments', 'Student\StudentClassroomController@refreshcomment'); 
+    Route::get('/studentrefreshposts', 'Student\StudentClassroomController@refreshpost');     
+    
+    Route::get('/chaptertesttakethetest','GlobalController\ViewBookController@takethetest');
+    Route::get('/chaptertestsubmitanswers','Student\StudentBookController@submitanswers');
+});
+  
+
+Route::group(['middleware' => ['auth', 'web']], function() {
+    Route::get('/messages', 'GlobalController\MessageController@index');
+    Route::get('/messages/getmessage', 'GlobalController\MessageController@getmessage');
+    Route::get('/messages/sendmessage', 'GlobalController\MessageController@sendmessage');
+    Route::get('/messages/autodisplaymessage', 'GlobalController\MessageController@autodisplaymessage');
+    Route::get('/messages/loadmessages', 'GlobalController\MessageController@loadmessages');
+
+
+    Route::get('/jitsi',function(){
+        return view('jitsimeet');
+    });
+
+    //View Book    
+    Route::get('/viewbook/{ids}', 'GlobalController\ViewBookController@viewbook');     
+    Route::get('/viewbookchaptertestavailability', 'GlobalController\ViewBookController@chaptertestavailability');
+    Route::get('/globalsetting/profileview', 'GlobalController\UserProfileController@profileview');    
+       
+
+});
+
+
+Route::middleware(['guest'])->group(function(){
+
+    Route::get('/', function () {
+        return view('auth.login');
+    });
+
+    Route::post('/registeraccount', 'Auth\RegisterController@create');
+
+    Route::get('/register', function () {
+        return view('auth.register');
+    });
+    Route::get('/welcome', function () {
+        return view('welcome');
+    });
+   
+
+});
+
+Route::middleware(['isDefaultPass'])->group(function () {
+
+    Route::get('/home', 'HomeController@index')->name('home');
+
+});
+
+Route::get('hasher', function(){
+
+    return Hash::make('123456789');
+
+});
+Auth::routes(['register' => false]);
