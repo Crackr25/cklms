@@ -38,7 +38,7 @@
 background-color: #002833!important;
 }
 .asidebar {
-  background-image: linear-gradient(to right bottom, #01181f,#05495c) , url(../img/header2.jpg);
+  background-image: linear-gradient(to right bottom, #01181f,#05495c);
 /* background-image: linear-gradient(to right bottom, #ff9797,#ff9797) , url(../img/header2.jpg); */
 /* background-color: rgba(255,255,255,.1)!important; */
 }
@@ -70,7 +70,7 @@ padding-top: 10px;
 .navss{
 padding: .7rem;
 background-color: #042f3a;
-background-image: linear-gradient(to right bottom, #01181f,#05495c) , url(../img/header2.jpg);
+/* background-image: linear-gradient(to right bottom, #01181f,#05495c) , url(../img/header2.jpg); */
 color: #fff;
 }
 .essentiellogo {
