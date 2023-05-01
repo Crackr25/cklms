@@ -392,22 +392,23 @@ class BookController extends Controller
     }
     public function addquiz(Request $request)
     {
-        date_default_timezone_set('Asia/Manila');
-        $quizid = DB::table('chapterquiz')
-            ->insertGetId([
-                'title'     => $request->get('title'),
-                'description'     => $request->get('description'),
-                'chapterid'    => $request->get('chapterid'),
-                'type'    => $request->get('type'),
-                'createdby' => auth()->user()->id,
-                'createddatetime'   => date('Y-m-d H:i:s')
-            ]);
+        // date_default_timezone_set('Asia/Manila');
+        // $quizid = DB::table('chapterquiz')
+        //     ->insertGetId([
+        //         'title'     => $request->get('title'),
+        //         'description'     => $request->get('description'),
+        //         'chapterid'    => $request->get('chapterid'),
+        //         'type'    => $request->get('type'),
+        //         'createdby' => auth()->user()->id,
+        //         'createddatetime'   => date('Y-m-d H:i:s')
+        //     ]);
 
-        $chapterquizinfo = DB::table('chapterquiz')
-            ->where('id', $quizid)
-            ->first();
+        // $chapterquizinfo = DB::table('chapterquiz')
+        //     ->where('id', $quizid)
+        //     ->first();
 
-        return collect($chapterquizinfo);
+        // return collect($chapterquizinfo);
+        return view('admin.adminquiz.quizindex');
     }
     public function bookinfoupdate(Request $request)
     {

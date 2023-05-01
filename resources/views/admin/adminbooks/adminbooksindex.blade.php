@@ -22,6 +22,11 @@
     .swal2-header{
         border: none;
     }
+    .book:hover img {
+        transform: translateY(-10px);
+        transition: transform 0.3s ease-in-out;
+    }
+
     
     .select2-container {
             z-index: 9999;
@@ -68,7 +73,7 @@
                                 </div>
                             @else
                                 @foreach($books as $book)
-                                    <div class="uk-first-column">
+                                    <div class="uk-first-column book">
                                         {{-- <div class="uk-first-column"> --}}
                                         <a href="/adminviewbook/index?id={{$book->bookid}}" class="uk-text-bold">
                                             <img src="{{asset($book->picurl)}}" onerror="this.onerror = null, this.src='{{asset('/altimages/temp-book-cover.png')}}'"  class="mb-2 w-100 shadow rounded">
@@ -82,7 +87,7 @@
                 </div>
         </div>
                 <!-- footer
-               ================================================== -->
+                ================================================== -->
         <div class="footer">
             @include('admin.inc.footer')
         </div>

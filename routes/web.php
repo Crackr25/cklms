@@ -142,6 +142,7 @@ Route::middleware(['auth', 'isAdministrator','isDefaultPass'])->group(function (
     Route::get('/adminviewbook/deletebycontenttype', 'Admin\BookController@deletebycontenttype'); 
 
     Route::get('/adminviewbook/lessoncontents', 'Admin\LessonController@viewlesson'); 
+    Route::get('/adminviewbook/addquiz', 'Admin\LessonController@addquiz'); 
     
     Route::get('/adminviewbook/chaptertestcontents', 'Admin\ChapterTestController@viewchaptertest');  
     Route::post('/adminviewbook/chaptertestcontents/uploadfiles', 'Admin\ChapterTestController@chapterstestuploadfiles');  

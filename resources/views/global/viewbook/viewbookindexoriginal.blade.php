@@ -235,7 +235,7 @@
                     <div uk-sticky="" class="uk-sticky uk-sticky-fixed" style="position: fixed; top: 0px; width: 298px;">
                         <h5 class="bg-gradient-grey text-white py-4 p-3 mb-0"> {{$bookinfo->title}}</h5>
                         <ul class="uk-child-width-expand mb-0 uk-tab" uk-switcher="animation: uk-animation-slide-right-small, uk-animation-slide-left-small" uk-tab="">
-                            <li class="uk-active"><a href="#" aria-expanded="true"> Contents</a></li>
+                            <li class="uk-active"><a href="#" aria-expanded="true"> Content</a></li>
                             {{-- <li><a href="#" aria-expanded="false"> Details</a></li> --}}
                         </ul>
                         <ul class="uk-switcher uk-overflow-hidden" style="touch-action: pan-y pinch-zoom;">

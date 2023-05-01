@@ -138,10 +138,12 @@
                                                 <a class="btn btn-sm text-white gfg_tooltip" contenttype="video" style="background-color: #3175c2; border: 3px solid #1d62b7;">
                                                     <i class="fas fa-video m-0"></i><span class="gfg_text">Video</span>
                                                 </a>
+                                                <a class="btn btn-sm text-white gfg_tooltip"style="background-color: #3175c2; border: 3px solid #1d62b7;">
+                                                    <i class="fa-sharp fa-light fa-scroll"></i><span class="gfg_text">Quiz</span>
+                                                </a>
                                                 <a class="btn btn-sm text-white gfg_tooltip newrow" style="background-color: #3175c2; border: 3px solid #1d62b7;">
                                                     <i class="fas fa-plus m-0"></i><span class="gfg_text">New row</span>
-                                                </a>
-                                            </div>
+                                                </a>                                            </div>
                                         </div>
                                         <div class="col-lg-11 col-10 editcontent col-content">
                                             <div class="contenttype">
@@ -180,6 +182,10 @@
                                                     <a class="btn btn-sm text-white gfg_tooltip" contenttype="video" style="background-color: #3175c2; border: 3px solid #1d62b7;">
                                                         <i class="fas fa-video m-0"></i><span class="gfg_text">Video</span>
                                                     </a>
+                                                    <a class="btn btn-sm text-white gfg_tooltip"style="background-color: #3175c2; border: 3px solid #1d62b7;">
+                                                        <i class="fa-sharp fa-light fa-scroll"></i><span class="gfg_text">Quiz</span>
+                                                    </a>
+                                                    
                                                     <a class="btn btn-sm text-white gfg_tooltip newrow" style="background-color: #3175c2; border: 3px solid #1d62b7;">
                                                         <i class="fas fa-plus m-0"></i><span class="gfg_text">New row</span>
                                                     </a>
@@ -329,6 +335,9 @@
                                         '<a class="btn btn-sm text-white gfg_tooltip" contenttype="video" style="background-color: #3175c2; border: 3px solid #1d62b7;"id="'+addrow+'">'+
                                             '<i class="fas fa-video m-0"></i><span class="gfg_text">Video</span>'+
                                         '</a>'+
+                                        '<a class="btn btn-sm text-white gfg_tooltip newrow" style="background-color: #3175c2; border: 3px solid #1d62b7;">'+
+                                            '<i class="fa-sharp fa-light fa-scroll"></i><span class="gfg_text">Quiz</span>'+
+                                        '</a>'+
                                         '<a class="btn btn-sm text-white gfg_tooltip newrow" id="'+addrow+'"style="background-color: #3175c2; border: 3px solid #1d62b7;">'+
                                             '<i class="fas fa-plus m-0"></i><span class="gfg_text">New row</span>'+
                                         '</a>'+
@@ -385,6 +394,9 @@
                                 '<a class="btn btn-sm text-white gfg_tooltip" contenttype="video" style="background-color: #3175c2; border: 3px solid #1d62b7;" id="'+addrowid+'">'+
                                     '<i class="fas fa-video m-0"></i><span class="gfg_text">Video</span>'+
                                 '</a>'+
+                                '<a class="btn btn-sm text-white gfg_tooltip newrow" style="background-color: #3175c2; border: 3px solid #1d62b7;">'+
+                                            '<i class="fa-sharp fa-light fa-scroll"></i><span class="gfg_text">Quiz</span>'+
+                                        '</a>'+
                                 '<a class="btn btn-sm text-white gfg_tooltip newrow" style="background-color: #3175c2; border: 3px solid #1d62b7;" id="'+addrowid+'">'+
                                     '<i class="fas fa-plus m-0"></i><span class="gfg_text">New row</span>'+
                                 '</a>'+
@@ -413,6 +425,7 @@
                         }
                         if($(this).attr('contenttype') == 'image'){
                             selectedcontent = 'image';
+                            // console.log("Hello!")
                             var contentdisplay = '<input contenttype="image" type="file" class="form-control" name="photos" id="'+addrowid+'" />';
                         }
                         if($(this).attr('contenttype') == 'video'){

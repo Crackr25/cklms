@@ -14,6 +14,14 @@
 
     <style>
         .swal2-header{ border: none; }
+
+        .form-group {
+        /* border: 1px solid black; */
+        padding: 20px;
+        /* border-radius: 10px; */
+        }
+
+
         
         ul, #myUL { list-style-type: none; }
 
@@ -338,6 +346,46 @@
             </form>
         </div>
     </div> --}}
+
+                        <div id="modalviewquiz" uk-modal>
+                                <div class="uk-modal-dialog uk-modal-body">
+                                    <label for="quiztype">Quiz</label>
+                                    <div class="form-group newquizselection">
+                                    <label for="blank-quiz" class="uk-flex uk-flex-middle">
+                                        <input type="radio" name="quiztype" id="blank-quiz" value="blank-quiz" class="uk-radio uk-margin-small-right"> 
+                                        <i class="fa fa-file-word mr-2" style="font-size: 24px; color: gray "></i><span>Blank Quiz</span>
+                                    </label>
+                                    </div>
+                                    <div class="form-group newquizselection">
+                                    <label for="select-answer">
+                                        <input type="radio" name="quiztype" id="select-answer" value="select-answer" class="uk-radio uk-margin-small-right"> 
+                                        <i class="fa fa-file-word mr-2" style="font-size: 24px; color: gray "></i><span style="font-size: 18px; color: black">Quiz 1</span>  <br/>
+                                        <span style="padding-left: 55px; padding-top:-5px; color: gray ">Lorem ipsum dolor sit amet consectetur adipiscing elit ullamcorper accumsan eleifend, torquent ad quam ac dictum habitasse aptent quis. Accumsan odio nostra vitae leo mus scelerisque class gravida varius, potenti cubilia fringilla vel mollis morbi magna faucibus nulla eros, nullam magnis pretium laoreet interdum nisi lacus torquent. Aenean luctus proin sociis viverra elementum lobortis ornare rutrum primis lacus potenti, ad nec etiam mus auctor ridiculus fusce nullam sed et congue, rhoncus pellentesque varius duis mattis sapien penatibus urna faucibus erat. Nulla lectus sed dictumst id nam eros euismod nostra ac suspendisse elementum consequat ullamcorper curabitur, blandit potenti viverra purus massa mattis nascetur scelerisque erat pharetra congue class.</span>
+                                    </label>
+                                    </div>
+                                    <div class="form-group newquizselection">
+                                    <label for="select-answer2">
+                                        <input type="radio" name="quiztype" id="select-answer" value="select-answer" class="uk-radio uk-margin-small-right"> 
+                                        <i class="fa fa-file-word mr-2" style="font-size: 24px; color: gray "></i><span style="font-size: 18px; color: black">Quiz 2</span>  <br/>
+                                        <span style="padding-left: 55px; padding-top:-5px; color: gray ">Lorem ipsum dolor sit, amet.</span>
+                                    </label>
+                                    </div>
+                                    {{-- 
+                                    <div class="form-group">
+                                    <label for="fill-blanks" class="uk-flex uk-flex-middle">
+                                        <input type="radio" name="quiztype" id="fill-blanks" value="fill-blanks" class="uk-radio uk-margin-small-right"> 
+                                        <span>Quiz 2 with Description - Fill in the Blanks</span>
+                                    </label>
+                                    </div> --}}
+                                    <p class="uk-text-right">
+                                    <button class="uk-button uk-button-default uk-modal-close modalviewupdate" type="button">Cancel</button>
+                                    <button class="uk-button uk-button-primary modalviewupdate" type="button" id="proceedbtn">Proceed</button>
+                                    </p>
+                                </div>
+                                </div>
+
+
+
     
     <script src="{{asset('plugins/jquery/jquery.min.js')}}"></script>
     <!-- Bootstrap -->
@@ -369,6 +417,28 @@
                     }
                 })
             })
+
+            $(document).on('click','.newquizselection', function(){
+                $(this).find('input[type=radio]').prop('checked', true);
+                $('.newquizselection').css({
+                "border-left": "2px solid white",
+                "padding": "20px",
+                });
+
+                $(this).css({
+                    "border-left": "2px solid dodgerblue",
+                    "padding": "20px",
+                });
+                })
+
+                $(document).on('click','#proceedbtn', function(){
+                    window.location.href = '/adminviewbook/addquiz';
+                    console.log("Hello from New Zealand")
+                });
+                
+
+
+
             $(document).on('click','#buttonupdateinfo', function(){
                 var updatebookinfoform ='<form action="/adminviewbook/updatebookinfo" method="post" id="bookinfoupdate"  enctype="multipart/form-data">'+
                                         '@csrf'+
@@ -495,7 +565,8 @@
                             '<button type="button" class="btn btn-sm btn-info mr-2 viewinfo" id="viewchapterinfo" uk-toggle="target: #modalviewupdate" chapterid="'+id+'" ><i class="fa fa-question"></i> View info</button>'+
                             '<button type="button" class="btn btn-sm btn-info mr-2" id="addchapter" uk-toggle="target: #modaladdchapter"><i class="fa fa-plus"></i> Chapter / Unit</button>'+
                             '<button type="button" class="btn btn-sm btn-info mr-2" id="addlesson" uk-toggle="target: #modaladdlesson"><i class="fa fa-plus"></i> Lesson</button>'+
-                            '<button type="button" class="btn btn-sm btn-info"  id="addquiz" uk-toggle="target: #modaladdquiz"><i class="fa fa-plus"></i> Quiz</button>'
+                            '<button type="button" class="btn btn-sm btn-info mr-2" uk-toggle="target: #modalviewquiz"><i class="fa fa-plus"></i> Quiz</button>'
+                            // '<a href="/adminviewbook/addquiz" type="button" class="btn btn-sm btn-info mr-2" target="_blank" id="addquiz" > Quiz</a>'
                         );
                         $('.boxchapter'+id+' i').remove()
                         $('.boxchapter'+id).append('<i class="fa fa-times ml-2 removeitem"></i>')

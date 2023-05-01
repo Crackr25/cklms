@@ -43,7 +43,7 @@
                                 </div>
 
                                 <div class="card-footer d-flex justify-content-between py-2">
-                                    <a href="/adminstudents" class=" "> Veiw</a>
+                                    <a href="/adminstudents" class=" "> View</a>
                                 </div>
                             </div>
                         </a>
@@ -76,7 +76,7 @@
                                 </div>
 
                                 <div class="card-footer d-flex justify-content-between py-2">
-                                    <a href="/adminteachers" class=" "> Veiw</a>
+                                    <a href="/adminteachers" class=" "> View</a>
                                 </div>
                             </div>
                         </a>
@@ -109,7 +109,7 @@
                                 </div>
 
                                 <div class="card-footer d-flex justify-content-between py-2">
-                                    <a href="/adminbooks/index" class=" "> Veiw</a>
+                                    <a href="/adminbooks/index" class=" "> View</a>
                                 </div>
                             </div>
                         </a>
@@ -142,7 +142,7 @@
                                 </div>
 
                                 <div class="card-footer d-flex justify-content-between py-2">
-                                    <a href="/adminclassrooms" class=" "> Veiw</a>
+                                    <a href="/adminclassrooms" class=" "> View</a>
                                 </div>
                             </div>
                         </a>

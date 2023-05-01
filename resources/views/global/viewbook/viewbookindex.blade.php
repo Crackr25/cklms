@@ -297,7 +297,7 @@
                                     </div>
                                 </div>
                             </li>
-                         
+                            
                         </ul>
                     </div><div class="uk-sticky-placeholder" style="height: 595px; margin: 0px;"></div>
                 </div>
@@ -315,7 +315,7 @@
 
             $('#lesson_content_holder').css('height', heightwindow+'px');
 
-           
+            
             $("body").on("contextmenu",function(e){
                 return false;
             });
@@ -363,7 +363,7 @@
                     success: function(data){
 
                         $(data).insertAfter(selectedChapterElement)
-                   
+                        $("Quiz").insertAfter(selectedChapterElement)
                     }
                 })
 
@@ -534,7 +534,7 @@
                 clearSchedModal()
 
                 $('ul[book="chapter"]').remove()
-               
+                
                 if($('li[data-id="'+selectedPart+'"][book="part"]').hasClass('uk-open')){
                     loadChapters()
                 }
@@ -564,7 +564,7 @@
                 $('div[book="lesson"]').remove()
 
                 if($('li[data-id="'+selectedChapter+'"][book="lesson"]').hasClass('uk-open')){
-
+                    console.log("Hello");
                     loadlesson()
 
                 }
@@ -612,11 +612,11 @@
                 $('#submit_classsched').text( 'Update Quiz Schedule')
                 dataproccess = 2;
 
-               
+                
 
             })
 
-          
+            
 
             function clearSchedModal(){
 

@@ -510,4 +510,105 @@ class LessonController extends Controller
     {
         return $request->all();
     }
+
+    public function addquiz(Request $request)
+    {
+        // // return $request->all();
+        // $lessoninfo = DB::table('lessons')
+        //     ->where('id', $request->get('formlessonid'))
+        //     ->first();
+
+        // $chapterinfo = Db::table('chapters')
+        //     ->where('id', $lessoninfo->chapterid)
+        //     ->first();
+
+        // $partinfo = Db::table('parts')
+        //     ->where('id', $chapterinfo->partid)
+        //     ->get();
+            
+        // if(count($partinfo) == 0)
+        // {
+        //     $bookinfo = Db::table('books')
+        //         ->where('id', $chapterinfo->bookid)
+        //         ->first();
+        // }else{
+        //     $bookinfo = Db::table('books')
+        //         ->where('id', $partinfo[0]->bookid)
+        //         ->first();
+        // }
+        // // -----------------------------------------------------------------------------------------------------    
+        // $lessons = DB::table('lessons')
+        //         ->where('chapterid', $lessoninfo->chapterid)
+        //         ->get();
+                
+        // $lessonkey = 1;
+        
+        // foreach($lessons as $lesson){
+        //     $lesson->key = $lessonkey;
+        //     $lessonkey+=1;
+        // }
+        
+
+        // $getlessonkey = collect($lessons->where('id',$request->get('formlessonid')))->flatten();
+        // // -----------------------------------------------------------------------------------------------------  
+        // if(count($partinfo) == 0)
+        // {
+        //     $chapters = DB::table('chapters')
+        //         ->where('bookid', $chapterinfo->bookid)
+        //         ->get();
+        // }else{
+        //     $chapters = DB::table('chapters')
+        //         ->where('partid', $partinfo[0]->id)
+        //         ->get();
+                
+        // }
+        // $chapterkey = 1;
+        
+        // foreach($chapters as $chapter){
+        //     $chapter->key = $chapterkey;
+        //     $chapterkey+=1;
+        // }
+
+        // $getchapterkey = collect($chapters->where('id',$chapterinfo->id))->flatten();
+        // // -----------------------------------------------------------------------------------------------------  
+        // $parts = DB::table('parts')
+        //     ->where('bookid', $bookinfo->id)
+        //     ->get();
+            
+        // $partkey = 1;
+
+        // foreach($parts as $part){
+        //     $part->key = $partkey;
+        //     $partkey+=1;
+        // }
+        
+        // if(count($partinfo) == 0)
+        // {
+        //     $getpartkey = [];
+        //     $partkey = 0;
+        // }else{
+        //     $getpartkey = collect($parts->where('id',$partinfo[0]->id))->flatten();
+            
+        //     $partkey = $getpartkey[0]->key;
+        // }
+        // // -----------------------------------------------------------------------------------------------------  
+
+        // $lessoncontents = DB::table('lessoncontents')
+        //     ->where('lessonid', $request->get('formlessonid'))
+		// 	->where('deleted','0')
+        //     ->get();
+            
+
+        return view('admin.adminquiz.quizindex');
+            // ->with('lessonid', $request->get('formlessonid'))
+            // ->with('lessoninfo', $lessoninfo)
+            // ->with('chapterinfo', $chapterinfo)
+            // ->with('partinfo', $partinfo)
+            // ->with('bookinfo', $bookinfo)
+            // ->with('lessonkey', $getlessonkey[0]->key)
+            // ->with('chapterkey', $getchapterkey[0]->key)
+            // ->with('partkey', $partkey)
+            // ->with('lessoncontents', $lessoncontents);
+        // return view
+    }
 }
