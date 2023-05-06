@@ -137,12 +137,20 @@ Route::middleware(['auth', 'isAdministrator','isDefaultPass'])->group(function (
     Route::get('/adminviewbook/addpart', 'Admin\BookController@addpart');  
     Route::get('/adminviewbook/addchapter', 'Admin\BookController@addchapter');  
     Route::get('/adminviewbook/addlesson', 'Admin\BookController@addlesson');  
-    Route::get('/adminviewbook/addquiz', 'Admin\BookController@addquiz');  
+    Route::get('/adminviewbook/addquiz/{id}', 'Admin\BookController@addquiz');
+    Route::get('/adminviewbook/createquiz', 'Admin\BookController@createquiz'); 
+    Route::get('/adminviewbook/getquizlist', 'Admin\BookController@getquiz');  
+    Route::get('/adminviewbook/createquiztitle', 'Admin\BookController@createdescription'); 
+    Route::get('/adminviewbook/addquestion', 'Admin\BookController@addquestion');
+    Route::get('/adminviewbook/createquestion', 'Admin\BookController@createquestion');
+    Route::get('/adminviewbook/createchoices', 'Admin\BookController@createchoices');
+    Route::get('/adminviewbook/selectlesson', 'Admin\BookController@lessonSelect')->name('lessonSelect');    
+    
     
     Route::get('/adminviewbook/deletebycontenttype', 'Admin\BookController@deletebycontenttype'); 
 
     Route::get('/adminviewbook/lessoncontents', 'Admin\LessonController@viewlesson'); 
-    Route::get('/adminviewbook/addquiz', 'Admin\LessonController@addquiz'); 
+    // Route::get('/adminviewbook/addquiz', 'Admin\LessonController@addquiz'); 
     
     Route::get('/adminviewbook/chaptertestcontents', 'Admin\ChapterTestController@viewchaptertest');  
     Route::post('/adminviewbook/chaptertestcontents/uploadfiles', 'Admin\ChapterTestController@chapterstestuploadfiles');  

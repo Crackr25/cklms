@@ -204,7 +204,7 @@ class BookController extends Controller
                 array_push($contents,$lesson);
             }
         }
-        $quizzes = DB::table('chapterquiz')
+        $quizzes = DB::table('lesssonquiz')
             ->where('chapterid', $request->get('id'))
             ->where('deleted','0')
             ->get();
@@ -237,7 +237,7 @@ class BookController extends Controller
                     }
                     if($lessonvalue->type == 'q')
                     {
-                        Db::table('chapterquiz')
+                        Db::table('lesssonquiz')
                             ->where('id', $lessonvalue->id)
                             ->update([
                                 'sortid' => $lessonkey+1
@@ -390,7 +390,10 @@ class BookController extends Controller
 
         return collect($lessoninfo);
     }
-    public function addquiz(Request $request)
+
+
+
+    public function addquiz($id, Request $request)
     {
         // date_default_timezone_set('Asia/Manila');
         // $quizid = DB::table('chapterquiz')
@@ -403,13 +406,174 @@ class BookController extends Controller
         //         'createddatetime'   => date('Y-m-d H:i:s')
         //     ]);
 
-        // $chapterquizinfo = DB::table('chapterquiz')
-        //     ->where('id', $quizid)
-        //     ->first();
+
+
+        $chapterquizinfo = DB::table('lesssonquiz')
+            ->where('id', $id)
+            ->first();
+
+        $quizquestions = DB::table('lessonquizquestions')
+                ->where('quizid', $id)
+                ->get();
+
+
+        if($chapterquizinfo->title == null || $chapterquizinfo->title == ""){
+            $chapterquizinfo->title = "Untitled Quiz";
+        }
+
+        if($chapterquizinfo->description == null || $chapterquizinfo->description == ""){
+            $chapterquizinfo->description = "";
+        }
+
 
         // return collect($chapterquizinfo);
-        return view('admin.adminquiz.quizindex');
+
+        return view('admin.adminquiz.quizindex')
+        ->with('id',$id)
+        ->with('quizquestions',$quizquestions)
+        ->with('quiz',$chapterquizinfo);
     }
+
+    public function createquiz(Request $request)
+    {
+
+
+        date_default_timezone_set('Asia/Manila');
+        $id = DB::table('lesssonquiz')->insertGetId([
+            'bookid' => $request->get('bookid'),
+            'chapterid' => $request->get('chapterid'),
+            'createddatetime' => date('Y-m-d H:i:s'),
+        ]);
+
+        return $id;
+    }
+
+    public function getquiz(Request $request)
+    {
+
+
+        date_default_timezone_set('Asia/Manila');
+        $quizlist = DB::table('lesssonquiz')
+            ->where('bookid', $request->get('bookid'))
+            ->where('chapterid', $request->get('chapterid'))
+            ->get();
+
+        return $quizlist;
+    }
+
+
+    public function createdescription(Request $request)
+    {
+
+
+        DB::table('lesssonquiz')
+            ->where('id', $request->get('id'))
+            ->update([
+                'title'         => $request->get('title'),
+                'description'   => $request->get('description')
+            ]);
+
+        return 1;
+    }
+    
+
+    public function addquestion(Request $request)
+    {
+
+
+        date_default_timezone_set('Asia/Manila');
+        $id = DB::table('lessonquizquestions')->insertGetId([
+            'quizid' => $request->get('quizid'),
+            'createddatetime' => date('Y-m-d H:i:s'),
+        ]);
+
+        return $id;
+    }
+
+
+    public function lessonSelect(Request $request)
+    {
+        $page = $request->get('page')*10;
+
+        $chapter = DB::table('lesssonquiz')->where('id',$request->get('quizId'))->value('chapterid');
+
+        $lessons = DB::table('lessons')
+            ->where('chapterid', $chapter)
+            ->where('deleted', 0)
+            ->select(
+                                    'lessons.id',
+                                    'lessons.title as text'
+                    )
+            ->take(10)
+            ->skip($page)
+            ->get();
+
+        $lessons_count = DB::table('lessons')
+        ->where('chapterid', $chapter)
+        ->where('deleted', 0)
+        ->count();
+
+
+
+            return @json_encode((object)[
+                    "results"=>$lessons,
+                    "pagination"=>(object)[
+                            "more"=>$lessons_count > ($page)  ? true :false
+                    ],
+                    "count_filtered"=>$lessons_count
+                ]);
+    }
+
+
+    public function createquestion(Request $request)
+    {
+
+        DB::table('lessonquizquestions')
+            ->where('id', $request->get('id'))
+            ->update([
+                'question'         => $request->get('question'),
+                'typeofquiz'   => $request->get('typeofquiz')
+            ]);
+
+        return 1;
+    }
+
+    public function createchoices(Request $request)
+    {
+        
+        date_default_timezone_set('Asia/Manila');
+        $choice = DB::table('lessonquizchoices')
+            ->where('questionid', $request->get('questionid'))
+            ->where('sortid', $request->get('sortid'))
+            ->count();
+
+        if($choice == 0){
+        DB::table('lessonquizchoices')
+            ->insert([
+                    'sortid'            =>  $request->get('sortid'),
+                    'questionid'        =>  $request->get('questionid'),
+                    'description'       =>  $request->get('description'),
+                    'createddatetime'   => date('Y-m-d H:i:s')
+                ]);
+
+                }else{
+
+                    DB::table('lessonquizchoices')
+                        ->where('questionid', $request->get('questionid'))
+                        ->where('sortid', $request->get('sortid'))
+                        ->update([
+                            'questionid'             =>  $request->get('questionid'),
+                            'description'       =>  $request->get('description'),
+                            'updatedatetime'   => date('Y-m-d H:i:s')
+                        ]);
+
+                }
+        
+
+        return 1;
+    }
+
+
     public function bookinfoupdate(Request $request)
     {
         // return $request->all();
@@ -574,11 +738,17 @@ class BookController extends Controller
             return 'success';
         }
         if($request->get('contenttype') == 'quiz'){
-            DB::table('chapterquiz')
-                ->where('id', $request->get('id'))
-                ->update([
-                    'deleted' => 1
-                ]);
+            // DB::table('chapterquiz')
+            //     ->where('id', $request->get('id'))
+            //     ->update([
+            //         'deleted' => 1
+            //     ]);
+
+            DB::table('lesssonquiz')
+            ->where('id', $request->get('id'))
+            ->update([
+                'deleted' => 1
+            ]);
             return 'success';
         }
     }

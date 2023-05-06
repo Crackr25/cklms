@@ -3,9 +3,14 @@
 @section('content')
 <meta name="csrf-token" content="{{ csrf_token() }}" />
 
+<link rel="stylesheet" href="{{asset('plugins/select2/css/select2.min.css')}}">
+
+<link rel="stylesheet" href="{{asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css')}}">
+
+
 <style>
 
-     <style>
+    <style>
         .swal-wide{
             width:850px !important;
         }
@@ -42,7 +47,7 @@
                 top: 5%; 
                 left: 115%; 
             } 
-              
+
             .gfg_tooltip .gfg_text::after { 
                 content: ""; 
                 position: absolute; 
@@ -54,7 +59,7 @@
                 border-color: transparent gray transparent  
                                 transparent; 
             } 
-              
+
             .gfg_tooltip:hover .gfg_text { 
                 visibility: visible; 
             } 
@@ -62,175 +67,711 @@
                 width: 100%;
                 height: 100%;
             }
+            .col-content {
+                background-color: #fff;
+                }
+            .select2-container .select2-selection--multiple {
+                
+                height: auto;
+            }
+
+            .select2-selection__choice {
+                font-size: 16px; /* Change the font size */
+                background-color: #5cb85c !important; /* Change the background color */
+                color:rgb(255, 255, 255) !important;
+                border-radius: 5px; /* Add rounded corners */
+                padding: 2px 8px; /* Add some padding */
+                margin-right: 5px; /* Add some space between items */
+                }
     </style>
 
-<body>
-            <div class="container quizcontent">
+<body class="dark">
+            <div class="container" id="quiz-info"  data-quizid="{{ $id }}">
                 <div class="row justify-content-center">
-                        <div class="col-md-6">
-                            <div class="card mt-5">
+                        <div class="col-md-8">
+                            
                             <div class="contentcontainer">
-                                    <div class="row p-4  dragrow">
+                                    <div class="row p-4 dragrow">
                                         <div class="col-lg-1 col-2 rowhidden d-flex align-items-center">
                                             <div class="btn-group-vertical">
-                                                <a class="btn btn-sm  text-white gfg_tooltip"style="background-color: #3175c2; border: 3px solid #1d62b7;">
-                                                    <i class="fas fa-trash  m-0"></i><span class="gfg_text">Delete</span>
-                                                </a>
                                                 <a class="btn btn-sm text-white gfg_tooltip newrow" style="background-color: #3175c2; border: 3px solid #1d62b7;">
                                                     <i class="fas fa-plus m-0"></i><span class="gfg_text">Add Question</span>
                                                 </a>                                            </div>
                                             </div>
+                        
                                         <div class="col-lg-11 col-10 editcontent col-content" id = "1">
+                                                <div class="card mt-5 shadow-none  border-0">
                                                 <div class="card-header" id="quizTitle">
-                                                <h3 class="text-center" contenteditable="true">Untitled Quiz</h3>
-                                                <input type="text" class="form-control d-none" value="Untitled Quiz">
+                                                <h3 class="text-center" contenteditable="true">{{$quiz->title}}</h3>
+                                                {{-- <input type="text" class="form-control d-none" value="Untitled Quiz"> --}}
                                                 </div>
                                                 <div class="card-body">
                                                 <form>
+                    
                                                     <div class="form-group">
+                                                        
+                                                        <label>Coverage</label>
+                                                        <select class="form-control-sm select2 pr-3" id="select-lesson" multiple="multiple">
+                                                            <option>Select Student/Personnel</option>    
+                                                            </select>
+                                                                
+                                                        {{-- <label for="quiz_categories">Quiz Categories</label> --}}
                                                     <label for="description">Quiz Description:</label>
-                                                    <textarea class="form-control" id="description" rows="1"></textarea>
+                                                    <textarea class="form-control" id="description" value= '{{$quiz->description}}' rows="1">{{$quiz->description}}</textarea>
                                                     </div>
                                                 </form>
                                                 </div>
                                         </div>
-                                    </div>      
-                                    </div>      
-                                    </div>   
-                                    
-                                    
+                                        </div>
+                                        
 
+                                                @if(count($quizquestions) > 0)
+                                                @foreach($quizquestions as $question)
+                                                <div id={{$question->id}} class="row p-4 dragrow">
+                                                    <div class="col-lg-1 col-2 rowhidden{{$question->id}} d-flex align-items-center">
+                                                        {{-- <div class="btn-group-vertical">
+                                                            <a class="btn btn-sm text-white gfg_tooltip delrow" id={{$question->id}} style="background-color: #3175c2; border: 3px solid #1d62b7;">
+                                                                <i class="fas fa-trash m-0"></i><span class="gfg_text">Delete</span>
+                                                            </a>
+                                                            <a class="btn btn-sm text-white gfg_tooltip newrow" style="background-color: #3175c2; border: 3px solid #1d62b7;">
+                                                                <i class="fas fa-plus m-0"></i><span class="gfg_text">Add Question</span>
+                                                            </a>
+                                                        </div> --}}
+                                                    </div>
+                                                    @if($question->typeofquiz == 1)
+                                                    <div id={{$question->id}} class="col-lg-11 col-10 editcontent col-content">
+                                                        <div class="card mt-5 shadow-none border-0">
+                                                            <div class="card-header">
+                                                                <div class="row justify-content-end">
+                                                                    <div class="col-6 mr-1 quizarea">
+                                                                        <select class="form-control select2 quiztype" id="quiztype{{$question->id}}">
+                                                                        <option value="multiple_choice">Multiple Choice</option>
+                                                                        <option value="instruction">Instruction</option>
+                                                                        <option value="short_answer">Short Answer</option>
+                                                                        <option value="paragraph_answer">Paragraph</option>
+                                                                        <option value="enumeration">Enumeration</option>
+                                                                        <option value="drag_drop">Drag & drop</option>
+                                                                        </select>
+                                                                    </div>
+                                                                <div class="col-12 m-2" id="quiztioncontent{{$question->id}}">
+                                                                    <div class="row">
+                                                                        <div class="col-12 m-2">
+                                                                            <textarea class="form-control" placeholder="Untitled question" id="multiplechoice{{$question->id}}" >{{$question->question}}</textarea>
+                                                                        </div>
+                                                            @php
+                                                                $quizchoices = DB::table('lessonquizchoices')
+                                                                    ->where('questionid', $question->id)
+                                                                    ->orderBy('sortid')
+                                                                    ->get();
+
+
+                                                                @endphp
+                                                                        <div class="col-12" id="list_option{{$question->id}}">
+                                                                            @if(count($quizchoices) > 0)
+                                                                            @foreach($quizchoices as $choice)
+                                                                            <input class="form-check-input ml-2" type="radio" name="option1" value="1">
+                                                                            <label class="form-check-label ml-5 option{{$question->id}}" id="option{{$question->id}}" contenteditable="true">{{$choice->description}}</label>
+                                                                            @endforeach
+                                                                            @endif
+                                                                        </div>
+                                                                    <button class="form-control addoption" style="margin: 20px; " id="{{$question->id}}">Add option</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @endif
+                                                    @if($question->typeofquiz == 2)
+                                                    <div id={{$question->id}} class="col-lg-11 col-10 editcontent col-content">
+                                                        <div class="card mt-5 shadow-none border-0">
+                                                            <div class="card-header">
+                                                                <div class="row justify-content-end">
+                                                                    <div class="col-6 mr-1 quizarea">
+                                                                        <select class="form-control select2 quiztype" id="quiztype{{$question->id}}">
+                                                                        <option value="short_answer">Short Answer</option>
+                                                                        {{-- <option value="multiple_choice">Multiple Choice</option> --}}
+                                                                        <option value="instruction">Instruction</option>
+                                                                        <option value="paragraph_answer">Paragraph</option>
+                                                                        <option value="enumeration">Enumeration</option>
+                                                                        <option value="drag_drop">Drag & drop</option>
+                                                                        </select>
+                                                                    </div>
+                                                                <div class="col-12 m-2" id="quiztioncontent{{$question->id}}">
+                                                                    <div class="row">
+                                                                        <div class="col-12">
+                                                                            <textarea class="form-control" placeholder="Untitled question" id="shortz_answer_question{{$question->id}}" >{{$question->question}}</textarea>
+                                                                        </div>
+                                                                        <input type="text" class="form-control m-2 mr-1" placeholder="Short answer text" disabled>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @endif
+                                                    @if($question->typeofquiz == 3)
+                                                    <div id={{$question->id}} class="col-lg-11 col-10 editcontent col-content">
+                                                        <div class="card mt-5 shadow-none border-0">
+                                                            <div class="card-header">
+                                                                <div class="row justify-content-end">
+                                                                    <div class="col-6 mr-1 quizarea">
+                                                                        <select class="form-control select2 quiztype" id="quiztype{{$question->id}}">
+                                                                        <option value="paragraph_answer">Paragraph</option>
+                                                                        <option value="short_answer">Short Answer</option>
+                                                                        {{-- <option value="multiple_choice">Multiple Choice</option> --}}
+                                                                        <option value="instruction">Instruction</option>
+                                                                        <option value="enumeration">Enumeration</option>
+                                                                        <option value="drag_drop">Drag & drop</option>
+                                                                        </select>
+                                                                    </div>
+                                                                <div class="col-12 m-2" id="quiztioncontent{{$question->id}}">
+                                                                    <div class="row">
+                                                                        <div class="col-12">
+                                                                            <textarea class="form-control" placeholder="Untitled question" id="long_answer_question{{$question->id}}" >{{$question->question}}</textarea>
+                                                                        </div>
+                                                                        <input type="text" class="form-control m-2 mr-1" placeholder="Long answer text" disabled>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @endif
+                                                    @if($question->typeofquiz == 4)
+                                                    <div id={{$question->id}} class="col-lg-11 col-10 editcontent col-content">
+                                                        <div class="card mt-5 shadow-none border-0">
+                                                            <div class="card-header">
+                                                                <div class="row justify-content-end">
+                                                                    <div class="col-6 mr-1 quizarea">
+                                                                        <select class="form-control select2 quiztype" id="quiztype{{$question->id}}">
+                                                                        <option value="instruction">Instruction</option>
+                                                                        <option value="paragraph_answer">Paragraph</option>
+                                                                        <option value="short_answer">Short Answer</option>
+                                                                        {{-- <option value="multiple_choice">Multiple Choice</option> --}}
+                                                                        <option value="instruction">Instruction</option>
+                                                                        <option value="enumeration">Enumeration</option>
+                                                                        <option value="drag_drop">Drag & drop</option>
+                                                                        </select>
+                                                                    </div>
+                                                                <div class="col-12 m-2" id="quiztioncontent{{$question->id}}">
+                                                                    <div class="row">
+                                                                        <div class="col-12">
+                                                                            <textarea class="form-control instruction" placeholder="Untitled question" id="instruction_item{{$question->id}}" >{{$question->question}}</textarea>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @endif
+                                                </div>
+                                                </div>    
+                                                @endforeach
+                                                @endif
+                                                </div>      
+                                                {{-- $('#quiztioncontent' + parentId).append('<textarea class="form-control m-2 shortz_answer_question"'+parentId+'" placeholder="Untitled question" style="height: 20px !important;" id="shortz_answer_question'+parentId+'" ></textarea>');
+                            $('#quiztioncontent' + parentId).append('<input type="text" class="form-control m-2 mr-1" placeholder="Short answer text" disabled>');
+                        --}}
+
+                                {{-- <div class="position-fixed bg-white text-black p-3 rounded-bottom-right" style="bottom: 0; right: 0;">
+                                    <p>All changes saved on drive.</p>
+                                </div> --}}
                             
+{{-- 
+                            <div id="input-fields-container">
+                                <div class="form-group">
+                                    <label for="outer_field">Outer Field</label>
+                                    <input type="text" name="outer_field" class="form-control">
+                                </div>
+                                <div class="form-group nested-input-fields-container">
+                                    <label for="inner_field">Inner Field</label>
+                                    <input type="text" name="inner_field[]" class="form-control">
+                                    <button type="button" class="btn btn-danger remove-nested-field">Remove</button>
+                                </div>
+                                </div>
+
+                                <button type="button" id="add-nested-field" class="btn btn-primary">Add Nested Field</button> --}}
+
 
     </body>
 
-
+    
     <script src="{{asset('plugins/jquery/jquery.min.js')}}"></script>
 <script>
 
+    $(function () {
+            //Initialize Select2 Elements
+            $('.select2').select2()
+            $('.select').select2()
+        
+            //Initialize Select2 Elements
+            $('.select2bs4').select2({
+                theme: 'bootstrap4'
+            })
 
-            $(document).ready(function(){
-                    
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'bottom-end',
+                showConfirmButton: false,
+                timer: 3000
+                });
+        })  
 
 
-                        var click =0;
-                        var id;
-                        $(document).on('click', '.editcontent', function(){
-                            $('.editcontent').css({
-                                "border-right": "3px solid white",
-                                "padding": "20px",
-                    
-                            });
-                            
-                            $(this).css({
-                                "border-right": "3px solid dodgerblue",
-                                "padding": "20px",
-                            });
-                                if(id == $(this).attr('id')){
-                                click+=1;
-                                }else{
-                                click =0
-                                }
+        $(document).ready(function(){
+            var data = {!! json_encode($quizquestions) !!};
+            console.log(data);
+
+            $('.instruction').summernote({
+                                height: 200,
+                                toolbar: [
+                                        // [groupName, [list of button]]
+                                        ['style', ['bold', 'italic', 'underline', 'clear']],
+                                        // ['font', ['strikethrough', 'superscript', 'subscript']],
+                                        ['fontsize', ['fontsize']],
+                                        ['color', ['color']],
+                                        ['para', ['ul', 'ol', 'paragraph']],
+                                        // ['height', ['height']]
+                                                ]
+                                });
+                // $('textarea').summernote({
+                //     toolbar: [
+                //         // [groupName, [list of button]]
+                //         ['style', ['bold', 'italic', 'underline', 'clear']],
+                //         // ['font', ['strikethrough', 'superscript', 'subscript']],
+                //         ['fontsize', ['fontsize']],
+                //         ['color', ['color']],
+                //         ['para', ['ul', 'ol', 'paragraph']],
+                //         // ['height', ['height']]
+                //     ],
+                //     })
+
+                $(document).on('click', function(event) {
+                    // console.log("LAST ID:", last_id)
+
+                    // var addrowid = $('.form-check-label').attr('id');
+                    // console.log("form ID:", addrowid)
+                    // Check if the click event target is not inside #myDiv
+
+                    // last_quiz_type = last_quiz_type
+                    last_quiz_type = $('#quiztype' + last_id).val();
+                    if (!$(event.target).closest('#quiztioncontent' + last_id).length) {
+                        
+                            // var parentId = $(this).parent().parent().parent().parent().attr("id");
+                            console.log("Last ID: ", last_id);
+                            if(last_quiz_type == 'multiple_choice'){
                                 
-                                id = $(this).attr('id');
-                                console.log("ids: ", id)
+                                const textareaValue = $('#multiplechoice' + last_id).val();
+                                console.log("Question: ", textareaValue);
+                                console.log("Quiztype: ", last_quiz_type);
                                 
-                                $('.ui-helper-hidden-accessible').remove();
-                                    $('.btn-group-vertical').remove();
-                                    var addrowid = $(this).attr('id');
+
+                                $.ajax({
+                                    type: "get",
+                                    dataType: 'json',
+                                    url: "/adminviewbook/createquestion",
+                                    data: { 
+                                        question : textareaValue,
+                                        typeofquiz : 1,
+                                        id: last_id
+                                            },
+                                    success: function(response) {
                                     
-                                    // console.log(click)
-                                    $(this).closest('.row').find('.rowhidden').append(
-                                            '<div class="btn-group-vertical">' +
-                                                '<a class="btn btn-sm text-white gfg_tooltip" style="background-color: #3175c2; border: 3px solid #1d62b7;">' +
-                                                '<i class="fas fa-trash m-0"></i><span class="gfg_text">Delete</span>' +
-                                                '</a>' +
-                                                '<a class="btn btn-sm text-white gfg_tooltip newrow" style="background-color: #3175c2; border: 3px solid #1d62b7;">' +
-                                                '<i class="fas fa-plus m-0"></i><span class="gfg_text">Add Question</span>' +
-                                                '</a>' +                                      
-                                            '</div>' +
-                                            '</div>'
-                                    )
+                                        Toast.fire({
+                                            type: 'success',
+                                            title: 'Question Added successfully!'
+                                        })
+
+                                        console.log("Question Succesfully save!");
+                                        
+                                    },
+                                    error: function(xhr) {
+                                        // Handle error here
+                                    }
+                                });
+                                var i = 1;
+                                $('.option' + last_id).each(function() {
+                                        // Get the value of the current label element using its id attribute
+                                        const value = $(this).text();
+
+                                        console.log(i);
+                                        
+                                        $.ajax({
+                                            type: "get",
+                                            dataType: 'json',
+                                            url: "/adminviewbook/createchoices",
+                                            data: { 
+                                                questionid : last_id,
+                                                sortid: i,
+                                                description : value
+                                                    },
+                                            success: function(response) {
+
+                                                console.log("Choices Succesfully save!");
+                                                
+                                            },
+                                            error: function(xhr) {
+                                                // Handle error here
+                                            }
+                                        });
+
+                                        i+=1;
+
+                                        });
+
+
+                                
+
+
+                                // $('#my-toast').rtoast({
+                                //     content: 'This is a toast notification',
+                                //     position: 'bottomLeft',
+                                //     timeout: 3000
+                                //     });
+                                }
+                            else if(last_quiz_type == 'short_answer'){
+
+                        
+                                var textareaValue = $('#shortz_answer_question' + last_id).val();
+                                console.log("Question: ", textareaValue);
+                                console.log("Quiztype: ", last_quiz_type);
+
+
+                                $.ajax({
+                                    type: "get",
+                                    dataType: 'json',
+                                    url: "/adminviewbook/createquestion",
+                                    data: { 
+                                        question : textareaValue,
+                                        typeofquiz : 2,
+                                        id: last_id
+                                            },
+                                    success: function(response) {
+
+                                        Toast.fire({
+                                            type: 'success',
+                                            title: 'Question Added successfully!'
+                                        })
+                                        
+                                    },
+                                    error: function(xhr) {
+                                        // Handle error here
+                                    }
+                                });
+
+                                }
+
+                            else if(last_quiz_type == 'paragraph_answer'){
+                                var textareaValue = $('#long_answer_question' + last_id).val();
+                                console.log("Question: ", textareaValue);
+                                console.log("Quiztype: ", last_quiz_type);
+                                $.ajax({
+                                    type: "get",
+                                    dataType: 'json',
+                                    url: "/adminviewbook/createquestion",
+                                    data: { 
+                                        question : textareaValue,
+                                        typeofquiz : 3,
+                                        id: last_id
+                                            },
+                                    success: function(response) {
+
+                                        Toast.fire({
+                                            type: 'success',
+                                            title: 'Question Added successfully!'
+                                        })
+                                        
+                                    },
+                                    error: function(xhr) {
+                                        // Handle error here
+                                    }
+                                });
+                        
+                                }
                             
-                
-                                })
+                            else if(last_quiz_type == 'enumeration'){
+                        
+                                }
 
-                    var addrow = $('.contentcontainer').children('.row').length;
-                    $(document).on('click', '.newrow', function(){
-                        // console.log(addrow);
-                        option= 1;
-                        $('.btn-group-vertical').remove();
-                        console.log("Hello World")
+                            else if(last_quiz_type == 'instruction'){
+
+                                var textareaValue = $('#instruction_item' + last_id).val();
+                                console.log("Question: ", textareaValue);
+                                console.log("Quiztype: ", last_quiz_type);
+                                
+                                $.ajax({
+                                    type: "get",
+                                    dataType: 'json',
+                                    url: "/adminviewbook/createquestion",
+                                    data: { 
+                                        question : textareaValue,
+                                        typeofquiz : 4,
+                                        id: last_id
+                                            },
+                                    success: function(response) {
+
+                                        Toast.fire({
+                                            type: 'success',
+                                            title: 'Question Added successfully!'
+                                        })
+                                        
+                                    },
+                                    error: function(xhr) {
+                                        // Handle error here
+                                    }
+                                });
+                                }
+
+                            else if(last_quiz_type == 'drag_drop'){
+                            
+                                }
+
+                            else{
+                                var quizTitle = $('#quizTitle h3').text();
+                                var description = $('#description').val();
+                                console.log(quizTitle);
+                                console.log(description);
+                                var quizId = $('#quiz-info').data('quizid');
+                                console.log("Quiz ID: ",quizId)
+
+                                $.ajax({
+                                    type: "get",
+                                    dataType: 'json',
+                                    url: "/adminviewbook/createquiztitle",
+                                    data: { 
+                                        title : quizTitle,
+                                        description : description,
+                                        id: quizId
+                                            },
+                                    success: function(response) {
+
+                                        Toast.fire({
+                                            type: 'success',
+                                            title: 'Title successfully Save!'
+                                        })
+                                        
+                                    },
+                                    error: function(xhr) {
+                                        // Handle error here
+                                    }
+                            });
+
+
+                            }
+                        
+                    
+
+
+                    }
+                });
+                    
+
+
+                var click =0;
+                var id;
+                var last_id;
+                var last_quiz_type = 'multiple_choice';
+                $(document).on('click', '.editcontent', function(){
+                    last_id = id;
                     $('.ui-helper-hidden-accessible').remove();
-                        addrow+=1;
-                        // console.log(addrow)
-                        $(this).closest('.row').find('.rowhidden').empty()
-                        $('.contentcontainer').append(
-                            '<div id="'+addrow+'" class="row p-4 dragrow">' +
-                                '<div class="col-lg-1 col-2 rowhidden d-flex align-items-center">' + 
-                                '<div class="btn-group-vertical">' +
-                                    '<a class="btn btn-sm text-white gfg_tooltip" style="background-color: #3175c2; border: 3px solid #1d62b7;">' +
-                                    '<i class="fas fa-trash m-0"></i><span class="gfg_text">Delete</span>' +
-                                    '</a>' +
-                                    '<a class="btn btn-sm text-white gfg_tooltip newrow" style="background-color: #3175c2; border: 3px solid #1d62b7;">' +
-                                    '<i class="fas fa-plus m-0"></i><span class="gfg_text">Add Question</span>' +
-                                    '</a>' +                                      
-                                '</div>' +
-                                '</div>' +
-                                '<div id="'+addrow+'" class="col-lg-11 col-10 editcontent col-content">' +
-                                '<div class="card-header">' +
-                                    '<div class="row justify-content-end">' +
-                                        '<div class="col-6 mr-1  quizarea">' +
-                                            '<select class="form-control quiztype" id="quiztype">' +
-                                            '<option value="multiple_choice">Multiple Choice</option>' +
-                                            '<option value="short_answer">Short Answer</option>' +
-                                            '<option value="paragraph_answer">Paragraph</option>' +
-                                            '</select>' +
-                                        '</div>' +
-                                        '<div class="col-12">'+
-                                        '<div id="quiztioncontent'+addrow+'">'+
-                                            '<div class="col-12 m-2">'+
-                                                '<textarea class="form-control" placeholder="Untitled question" style="height: 20px !important;" id="exampleTextarea" ></textarea>'+
-                                            '</div>'+
-                                            '<div class="col-12 ml-4"  id="list_option'+addrow+'">' +
-                                                '<input class="form-check-input" type="radio" name="option1" value="1">'+
-                                                '<label class="form-check-label" contenteditable="true">Option '+option+'</label>'+
-                                            '</div>' +
-                                            '<button class="form-control addoption" style="margin: 20px; " id="add_option'+addrow+'">Add option</button>'+
-                                        '</div>' +
-                                        '</div>' +
-                                '</div>' +
-                                '</div>' +
-                            '</div>'
-                            );
+                    $('.editcontent').css({
+                        "border-right": "3px solid white",
+                        "padding": "20px",
+            
+                    });
 
 
-                        $('textarea.quizcontent').summernote({
-                            toolbar: [
-                                // [groupName, [list of button]]
-                                ['style', ['bold', 'italic', 'underline', 'clear']],
-                                ['font', ['strikethrough', 'superscript', 'subscript']],
-                                ['fontsize', ['fontsize']],
-                                ['color', ['color']],
-                                ['para', ['ul', 'ol', 'paragraph']],
-                                ['height', ['height']]
-                            ]
+
+                    
+                    $(this).css({
+                        "border-right": "3px solid dodgerblue",
+                        "padding": "20px",
+                    });
+                        if(id == $(this).attr('id')){
+                        click+=1;
+                        }else{
+                        // option = 0;
+                        click =0;
+                        }
+
+
+                        
+                        id = $(this).attr('id');
+                        id = parseInt(id);
+                        console.log("This ID: ", id);
+                        
+                            $('.btn-group-vertical').remove();
+                            var addrowid = $(this).attr('id');
+                            
+                            // console.log(click)
+                            $(this).closest('.row').find('.rowhidden' + id).append(
+                                    '<div class="btn-group-vertical">' +
+                                        '<a class="btn btn-sm text-white gfg_tooltip delrow" id="'+id+'" style="background-color: #3175c2; border: 3px solid #1d62b7;">' +
+                                        '<i class="fas fa-trash m-0"></i><span class="gfg_text">Delete</span>' + '</a>' + 
+                                        '<a class="btn btn-sm text-white gfg_tooltip newrow" style="background-color: #3175c2; border: 3px solid #1d62b7;">' +
+                                        '<i class="fas fa-plus m-0"></i><span class="gfg_text">Add Question</span>' +
+                                        '</a>' +                                      
+                                    '</div>' +
+                                    '</div>'
+                            )
+                    
+        
                         })
+
+                    $(document).on('click', '.delrow', function(){
+                        console.log($(this).attr('id'));
+                        var rowid = $(this).attr('id');
+                        $('.dragrow' + rowid).remove();
+                    })
+
+
+
+
+                    // $(document).on('click', '.newimage', function(){
+                    //     $('.btn-group-vertical').remove();
+                    //     addrow+=1
+                    //     $(this).closest('.row').find('.rowhidden').empty()
+                    //     $('.contentcontainer').append(
+                    //         '<div id="'+addrow+'" class="row p-4 dragrow">' +
+                    //             '<div class="col-lg-1 col-2 rowhidden d-flex align-items-center">' + 
+                    //             '<div class="btn-group-vertical">' +
+                    //                 '<a class="btn btn-sm text-white gfg_tooltip" style="background-color: #3175c2; border: 3px solid #1d62b7;">' +
+                    //                 '<i class="fas fa-trash m-0"></i><span class="gfg_text">Delete</span>' +
+                    //                 '</a>' + 
+                    //                 '<a class="btn btn-sm text-white gfg_tooltip newrow" style="background-color: #3175c2; border: 3px solid #1d62b7;">' +
+                    //                 '<i class="fas fa-plus m-0"></i><span class="gfg_text">Add Question</span>' +
+                    //                 '</a>' +                                      
+                    //             '</div>' +
+                    //             '</div>')
+
+
+                    // })
+                    function myOtherFunction(quizId) {
+
+
+                    }
+
+                    // var addrow = $('.contentcontainer').children('.row').length;
+                    
+                    $(document).on('click', '.newrow', function(){
+                        var addrow;
+                        var quizId = $('#quiz-info').data('quizid');
+
+                        $.ajax({
+                                    type: "get",
+                                    dataType: 'json',
+                                    url: "/adminviewbook/addquestion",
+                                    data: { 
+                                        quizid : quizId,
+                                            },
+                                    success: function(response) {
+
+                                        addrow = response;
+                                        console.log("Row ID: ", typeof addrow);
+                        
+                        
+                                        $('.ui-helper-hidden-accessible').remove();
+                                        option= 1;
+                                        $('.btn-group-vertical').remove();
+                                        console.log("Hello World")
+                                        console.log(addrow)
+                                        $(this).closest('.row').find('.rowhidden').empty()
+                                        $('.contentcontainer').append(
+                                            '<div id="'+addrow+'" class="row p-4 dragrow'+addrow+'">' +
+                                                '<div class="col-lg-1 col-2 rowhidden d-flex align-items-center">' + 
+                                                '<div class="btn-group-vertical">' +
+                                                    '<a class="btn btn-sm text-white gfg_tooltip delrow" id="'+addrow+'" style="background-color: #3175c2; border: 3px solid #1d62b7;">' +
+                                                    '<i class="fas fa-trash m-0"></i><span class="gfg_text">Delete</span>' +
+                                                    '</a>' + 
+                                                    '<a class="btn btn-sm text-white gfg_tooltip newrow" style="background-color: #3175c2; border: 3px solid #1d62b7;">' +
+                                                    '<i class="fas fa-plus m-0"></i><span class="gfg_text">Add Question</span>' +
+                                                    '</a>' +                                      
+                                                '</div>' +
+                                                '</div>' +
+                                                '<div id="'+addrow+'" class="col-lg-11 col-10 editcontent col-content">' +
+                                                '<div class="card mt-5 shadow-none border-0">' +
+                                                '<div class="card-header">' +
+                                                    '<div class="row justify-content-end">' +
+                                                        '<div class="col-6 mr-1 quizarea">' +
+                                                            '<select class="form-control quiztype" id="quiztype'+addrow+'">' +
+                                                            '<option value="multiple_choice">Multiple Choice</option>' +
+                                                            '<option value="instruction">Instruction</option>' +
+                                                            '<option value="short_answer">Short Answer</option>' +
+                                                            '<option value="paragraph_answer">Paragraph</option>'+
+                                                            '<option value="enumeration">Enumeration</option>' +
+                                                            '<option value="drag_drop">Drag & drop</option>' +
+                                                            '</select>' +
+                                                        '</div>' +
+                                                        '<div class="col-12">'+
+                                                        '<div id="quiztioncontent'+addrow+'">'+
+                                                            '<div class="col-12 m-2">'+
+                                                                '<textarea class="form-control" placeholder="Untitled question" style="height: 20px !important;" id="multiplechoice'+addrow+'" ></textarea>'+
+                                                            '</div>'+
+                                                            '<div class="col-12 ml-4"  id="list_option'+addrow+'">' +
+                                                                '<input class="form-check-input" type="radio" name="option1" value="1">'+
+                                                                '<label class="form-check-label option'+addrow+'" id="option'+addrow+'" contenteditable="true">Option '+option+'</label>'+
+                                                            '</div>' +
+                                                            '<button class="form-control addoption" style="margin: 20px; " id="'+addrow+'">Add option</button>'+
+                                                        '</div>' +
+                                                        '</div>' +
+                                                '</div>' +
+                                                '</div>' +
+                                                '</div>' +
+                                            '</div>');
+
+
+                                        
+                                    },
+                                    error: function(xhr) {
+                                        // Handle error here
+                                    }
+                        });
+
+                            // $('#multiplechoice' + addrow).summernote({
+                            //     height: 200,
+                            //     toolbar: [
+                            //             // [groupName, [list of button]]
+                            //             ['style', ['bold', 'italic', 'underline', 'clear']],
+                            //             // ['font', ['strikethrough', 'superscript', 'subscript']],
+                            //             ['fontsize', ['fontsize']],
+                            //             ['color', ['color']],
+                            //             ['para', ['ul', 'ol', 'paragraph']],
+                            //             // ['height', ['height']]
+                            //                     ]
+                            //     });
+
+
+                            // summernote();
+
                     })
 
                     
                     var option = 0;
-                    $(document).on('change', '#quiztype', function(){
+                    $(document).on('change', '.quiztype', function(){
                         var parentId = $(this).parent().parent().parent().parent().parent().attr("id");
                         var addrowid = $(this).attr('id');
                         var select_quiz_type = $(this).val();
+                        last_quiz_type = select_quiz_type;
                         console.log(select_quiz_type);
                         console.log("Add row ID: ", addrowid)
                         console.log("ID: ", parentId)
+                        
+                        
                         if(select_quiz_type == 'short_answer'){
                             $('#quiztioncontent' + parentId).empty();
-                            $('#quiztioncontent' + parentId).append('<textarea class="form-control m-2" placeholder="Untitled question" style="height: 20px !important;" id="exampleTextarea" ></textarea>');
+                            $('#quiztioncontent' + parentId).append('<textarea class="form-control m-2 shortz_answer_question"'+parentId+'" placeholder="Untitled question" style="height: 20px !important;" id="shortz_answer_question'+parentId+'" ></textarea>');
                             $('#quiztioncontent' + parentId).append('<input type="text" class="form-control m-2 mr-1" placeholder="Short answer text" disabled>');
+                        
+                        // $('#shortz_answer_question' + parentId).summernote({
+                        //         height: 200,
+                        //         toolbar: [
+                        //                 // [groupName, [list of button]]
+                        //                 ['style', ['bold', 'italic', 'underline', 'clear']],
+                        //                 // ['font', ['strikethrough', 'superscript', 'subscript']],
+                        //                 ['fontsize', ['fontsize']],
+                        //                 ['color', ['color']],
+                        //                 ['para', ['ul', 'ol', 'paragraph']],
+                        //                 // ['height', ['height']]
+                        //                         ]
+                        //         });
                         }
 
 
@@ -251,11 +792,69 @@
 
                         if(select_quiz_type == 'paragraph_answer'){
                             $('#quiztioncontent' + parentId).empty();
-                            $('#quiztioncontent' + parentId).append('<textarea class="form-control m-2" placeholder="Untitled question" style="height: 20px !important;" id="exampleTextarea" ></textarea>');
+                            $('#quiztioncontent' + parentId).append('<textarea class="form-control m-2" placeholder="Untitled question" style="height: 20px !important;" id="long_answer_question'+parentId+'" ></textarea>');
                             $('#quiztioncontent' + parentId).append('<input type="text" class="form-control m-2" placeholder="Long answer text" disabled>');
+
+                            // $('#long_answer_question' + parentId).summernote({
+                            //     height: 200,
+                            //     toolbar: [
+                            //             // [groupName, [list of button]]
+                            //             ['style', ['bold', 'italic', 'underline', 'clear']],
+                            //             // ['font', ['strikethrough', 'superscript', 'subscript']],
+                            //             ['fontsize', ['fontsize']],
+                            //             ['color', ['color']],
+                            //             ['para', ['ul', 'ol', 'paragraph']],
+                            //             // ['height', ['height']]
+                            //                     ]
+                            //     });
+                        }
+                        
+                        if(select_quiz_type == 'enumeration'){
+                            $('#quiztioncontent' + parentId).empty();
+                            $('#quiztioncontent' + parentId).append('<textarea class="form-control m-2" placeholder="Untitled question" id="exampleTextarea" ></textarea>');
+                            $('#quiztioncontent' + parentId).append('<div id="item_option'+parentId+'">' + 
+                                '<input type="text" class="form-control m-2" placeholder="Item text" disabled>'+
+                                '</div>');
+                            $('#quiztioncontent' + parentId).append('<button class="form-control additem" style="margin: 8px; " id="add_item'+parentId+'">Add Item</button>')
 
                     
                         }
+
+                        if(select_quiz_type == 'instruction'){
+                            $('#quiztioncontent' + parentId).empty();
+                            $('#quiztioncontent' + parentId).append('<div class="col-12 m-2">'+
+                                                    '<textarea class="form-control" placeholder="Untitled instruction" style="height: 20px !important;" id="instruction_item'+parentId+'" ></textarea>'+
+                                                '</div>'+
+                                            '</div>')
+                            $('#instruction_item' + parentId).summernote({
+                                height: 200,
+                                toolbar: [
+                                        // [groupName, [list of button]]
+                                        ['style', ['bold', 'italic', 'underline', 'clear']],
+                                        // ['font', ['strikethrough', 'superscript', 'subscript']],
+                                        ['fontsize', ['fontsize']],
+                                        ['color', ['color']],
+                                        ['para', ['ul', 'ol', 'paragraph']],
+                                        // ['height', ['height']]
+                                                ]
+                                });
+
+                            
+                            }
+
+                        if(select_quiz_type == 'drag_drop'){
+                            $('#quiztioncontent' + parentId).empty();
+                            $('#quiztioncontent' + parentId).append('<div class="options p-3 mt-2" id="options'+parentId+'" style="border:3px solid #3e416d;border-radius:6px;">'+
+                                    '<div class="drag-option btn bg-primary text-white m-1" contentEditable="true" data-target="drag-1">Option &nbsp;'+option+'</div>' + '</div>' +
+                                    '<button class="form-control add_drag_option" style="margin-top: 10px; " id="add_dragoption'+parentId+'">Add drag option</button>')
+                            $('#quiztioncontent' + parentId).append('<div id="item_question'+parentId+'">'+
+                                                    '<input type="text" class="form-control" style="margin-top: 10px; border: 2px dashed gray" placeholder="Item text &nbsp;'+option+'">'+
+                                                '</div>'+ '<button class="form-control add_drag_question" style="margin-top: 10px; " id="add_dragquestion'+parentId+'">Add drop question</button>'+
+                                            '</div>')
+                                }
+
+
+                            
                         
                         // $(this).closest('.row').find('.quizarea2').empty()
                         // $('#' + addrow).append(content)
@@ -267,20 +866,91 @@
 
                     $(document).on('click', '.addoption', function(){
                         option+=1;
+                        // var parentId = $(this).closest('.dragrow').attr('id');
+                        var parentId = $(this).attr('id');
+                        // console.log("Add row ID: ", addrowid)
+                        console.log("ID: ", parentId)
+                        
+                        // $(this).closest('quizarea2').find('.list_option').empty()
+                        $('#list_option' + parentId).append('<input class="form-check-input" type="radio" name="option1" value="1">'+
+                                                    '<label class="form-check-label option'+parentId+'" contenteditable="true">Option '+option+'</label>')
+
+                    })
+
+                    $(document).on('click', '.add_drag_option', function(){
+                        option+=1;
+                        // var parentId = $(this).parent().parent().parent().parent().parent().attr("id");
+                        var parentId = $(this).closest('.dragrow').attr('id');
+                        var addrowid = $(this).attr('id');
+                        console.log("Add row ID: ", addrowid)
+                        console.log("ID: ", parentId)
+                        
+                        // $(this).closest('quizarea2').find('.list_option').empty()
+                        $('#options' + parentId).append('<div class="drag-option btn bg-primary text-white m-1" contentEditable="true" data-target="drag-1">Option &nbsp;'+option+'</div>')
+
+                    })
+
+                    $(document).on('click', '.add_drag_question', function(){
+                        option+=1;
                         var parentId = $(this).parent().parent().parent().parent().parent().attr("id");
                         var addrowid = $(this).attr('id');
                         console.log("Add row ID: ", addrowid)
                         console.log("ID: ", parentId)
-                        var content =   '<input class="form-check-input" type="radio" name="option1" value="1">'+
-                                        '<label class="form-check-label" contenteditable="true">Option '+option+'</label>'
                         
                         // $(this).closest('quizarea2').find('.list_option').empty()
-                        $('#list_option' + parentId).append('<input class="form-check-input" type="radio" name="option1" value="1">'+
-                                                    '<label class="form-check-label" contenteditable="true">Option '+option+'</label>')
+                        $('#item_question' + parentId).append('<input type="text" class="form-control" style="margin-top: 10px; border:  2px dashed gray" placeholder="Item text &nbsp;'+option+'">')
 
                     })
 
-                            })
+                    $(document).on('click', '.additem', function(){
+                        option+=1;
+                        var parentId = $(this).parent().parent().parent().parent().parent().attr("id");
+                        var addrowid = $(this).attr('id');
+                        console.log("Add row ID: ", addrowid)
+                        console.log("ID: ", parentId)
+                        
+                        // $(this).closest('quizarea2').find('.list_option').empty()
+                        $('#item_option' + parentId).append('<input type="text" class="form-control m-2" placeholder="Item text" disabled>')
+
+                    })
+
+                    $('#select-lesson').select2({
+                            allowClear:true,
+                            placeholder: "All",
+                            "language": {
+                                    "noResults": function(){
+                                    }
+                            },
+                            escapeMarkup: function (markup) {
+                                    return markup;
+                            },
+                            ajax: {
+                                    url: "{{route('lessonSelect')}}",
+                                    data: function (params) {
+                                        var query = {
+                                                quizId: $('#quiz-info').data('quizid'),
+                                                search: params.term,
+                                                page: params.page || 0
+                                        }
+                                        return query;
+                                    },
+                                    dataType: 'json',
+                                    
+                                    processResults: function (data, params) {
+                                        params.page = params.page || 0;
+                                        return {
+                                                results: data.results,
+                                                pagination: {
+                                                    more: data.pagination.more
+                                                }
+                                        };
+                                        
+                                    },
+                            }
+                        })
+
+
+                    });
 
 
         </script>
