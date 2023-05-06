@@ -414,6 +414,7 @@ class BookController extends Controller
 
         $quizquestions = DB::table('lessonquizquestions')
                 ->where('quizid', $id)
+                ->where('deleted', 0)
                 ->get();
 
 
@@ -448,6 +449,20 @@ class BookController extends Controller
         return $id;
     }
 
+    public function delquestion(Request $request)
+    {
+
+
+        date_default_timezone_set('Asia/Manila');
+        DB::table('lessonquizquestions')
+            ->where('id', $request->get('id'))
+            ->update([
+                'deleted'         => 1
+                    ]);
+
+        return 1;
+    }
+
     public function getquiz(Request $request)
     {
 
@@ -470,6 +485,7 @@ class BookController extends Controller
             ->where('id', $request->get('id'))
             ->update([
                 'title'         => $request->get('title'),
+                'coverage'      => $request->get('coverage'),
                 'description'   => $request->get('description')
             ]);
 
@@ -501,7 +517,7 @@ class BookController extends Controller
             ->where('chapterid', $chapter)
             ->where('deleted', 0)
             ->select(
-                                    'lessons.id',
+                                    'lessons.title as id',
                                     'lessons.title as text'
                     )
             ->take(10)

@@ -144,7 +144,9 @@ Route::middleware(['auth', 'isAdministrator','isDefaultPass'])->group(function (
     Route::get('/adminviewbook/addquestion', 'Admin\BookController@addquestion');
     Route::get('/adminviewbook/createquestion', 'Admin\BookController@createquestion');
     Route::get('/adminviewbook/createchoices', 'Admin\BookController@createchoices');
-    Route::get('/adminviewbook/selectlesson', 'Admin\BookController@lessonSelect')->name('lessonSelect');    
+    Route::get('/adminviewbook/selectlesson', 'Admin\BookController@lessonSelect')->name('lessonSelect');
+    Route::get('/adminviewbook/delquestion', 'Admin\BookController@delquestion');
+ 
     
     
     Route::get('/adminviewbook/deletebycontenttype', 'Admin\BookController@deletebycontenttype'); 

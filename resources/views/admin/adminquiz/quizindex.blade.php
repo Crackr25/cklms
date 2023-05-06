@@ -83,6 +83,8 @@
                 padding: 2px 8px; /* Add some padding */
                 margin-right: 5px; /* Add some space between items */
                 }
+
+
     </style>
 
 <body class="dark">
@@ -104,16 +106,45 @@
                                                 <div class="card-header" id="quizTitle">
                                                 <h3 class="text-center" contenteditable="true">{{$quiz->title}}</h3>
                                                 {{-- <input type="text" class="form-control d-none" value="Untitled Quiz"> --}}
+                                                @if(empty($quiz->coverage))
+                                                <label>Coverage:</label>
+                                                <div class="row justify-content-center">
+
+                                                    <div class="col-10 mt-2">
+                                                        {{-- <label>Coverage</label> --}}
+                                                        <select class="form-control-sm select2 pr-3" id="select-lesson" multiple="multiple">
+                                                            <option>Select Student/Personnel</option>    
+                                                            </select>
+                                                    
+                                                    </div>
+                                                </div>
+                                                @else
+                                                <div class="row justify-content-center">
+                                                        <div class="d-flex flex-row">
+                                                        @php
+                                                            $lessons = explode(", ", $quiz->coverage);
+                                                        @endphp
+                                                        
+                                                        @foreach ($lessons as $lesson)
+                                                            <div class="card m-2">
+                                                                <div class="card-body">
+                                                                    <h5 class="card-title">{{ $lesson }}</h5>
+                                                                </div>
+                                                            </div>
+                                                @endforeach
+                                                </div>
+                                                </div>
+                                                @endif
                                                 </div>
                                                 <div class="card-body">
                                                 <form>
                     
                                                     <div class="form-group">
                                                         
-                                                        <label>Coverage</label>
+                                                        {{-- <label>Coverage</label>
                                                         <select class="form-control-sm select2 pr-3" id="select-lesson" multiple="multiple">
                                                             <option>Select Student/Personnel</option>    
-                                                            </select>
+                                                            </select> --}}
                                                                 
                                                         {{-- <label for="quiz_categories">Quiz Categories</label> --}}
                                                     <label for="description">Quiz Description:</label>
@@ -127,7 +158,7 @@
 
                                                 @if(count($quizquestions) > 0)
                                                 @foreach($quizquestions as $question)
-                                                <div id={{$question->id}} class="row p-4 dragrow">
+                                                <div id={{$question->id}} class="row p-4 dragrow{{$question->id}}">
                                                     <div class="col-lg-1 col-2 rowhidden{{$question->id}} d-flex align-items-center">
                                                         {{-- <div class="btn-group-vertical">
                                                             <a class="btn btn-sm text-white gfg_tooltip delrow" id={{$question->id}} style="background-color: #3175c2; border: 3px solid #1d62b7;">
@@ -144,7 +175,7 @@
                                                             <div class="card-header">
                                                                 <div class="row justify-content-end">
                                                                     <div class="col-6 mr-1 quizarea">
-                                                                        <select class="form-control select2 quiztype" id="quiztype{{$question->id}}">
+                                                                        <select class="form-control quiztype" id="quiztype{{$question->id}}">
                                                                         <option value="multiple_choice">Multiple Choice</option>
                                                                         <option value="instruction">Instruction</option>
                                                                         <option value="short_answer">Short Answer</option>
@@ -187,11 +218,12 @@
                                                             <div class="card-header">
                                                                 <div class="row justify-content-end">
                                                                     <div class="col-6 mr-1 quizarea">
-                                                                        <select class="form-control select2 quiztype" id="quiztype{{$question->id}}">
+                                                                        <select class="form-control quiztype" id="quiztype{{$question->id}}">
+                                                                        <option value="short_answer">Short Answer</option>
+                                                                        <option value="paragraph_answer">Paragraph</option>
                                                                         <option value="short_answer">Short Answer</option>
                                                                         {{-- <option value="multiple_choice">Multiple Choice</option> --}}
                                                                         <option value="instruction">Instruction</option>
-                                                                        <option value="paragraph_answer">Paragraph</option>
                                                                         <option value="enumeration">Enumeration</option>
                                                                         <option value="drag_drop">Drag & drop</option>
                                                                         </select>
@@ -214,7 +246,7 @@
                                                             <div class="card-header">
                                                                 <div class="row justify-content-end">
                                                                     <div class="col-6 mr-1 quizarea">
-                                                                        <select class="form-control select2 quiztype" id="quiztype{{$question->id}}">
+                                                                        <select class="form-control quiztype" id="quiztype{{$question->id}}">
                                                                         <option value="paragraph_answer">Paragraph</option>
                                                                         <option value="short_answer">Short Answer</option>
                                                                         {{-- <option value="multiple_choice">Multiple Choice</option> --}}
@@ -241,7 +273,7 @@
                                                             <div class="card-header">
                                                                 <div class="row justify-content-end">
                                                                     <div class="col-6 mr-1 quizarea">
-                                                                        <select class="form-control select2 quiztype" id="quiztype{{$question->id}}">
+                                                                        <select class="form-control quiztype" id="quiztype{{$question->id}}">
                                                                         <option value="instruction">Instruction</option>
                                                                         <option value="paragraph_answer">Paragraph</option>
                                                                         <option value="short_answer">Short Answer</option>
@@ -307,13 +339,15 @@
                 theme: 'bootstrap4'
             })
 
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'bottom-end',
-                showConfirmButton: false,
-                timer: 3000
-                });
-        })  
+            
+        })
+        
+        const Toast = Swal.mixin({
+            toast: true,
+            position: 'bottom-end',
+            showConfirmButton: false,
+            timer: 4000,
+            });
 
 
         $(document).ready(function(){
@@ -377,7 +411,7 @@
                                     
                                         Toast.fire({
                                             type: 'success',
-                                            title: 'Question Added successfully!'
+                                            title: 'Question saved successfully!'
                                         })
 
                                         console.log("Question Succesfully save!");
@@ -448,7 +482,7 @@
 
                                         Toast.fire({
                                             type: 'success',
-                                            title: 'Question Added successfully!'
+                                            title: 'Question saved successfully!'
                                         })
                                         
                                     },
@@ -476,7 +510,7 @@
 
                                         Toast.fire({
                                             type: 'success',
-                                            title: 'Question Added successfully!'
+                                            title: 'Question saved successfully!'
                                         })
                                         
                                     },
@@ -510,7 +544,7 @@
 
                                         Toast.fire({
                                             type: 'success',
-                                            title: 'Question Added successfully!'
+                                            title: 'Question saved successfully!'
                                         })
                                         
                                     },
@@ -527,6 +561,18 @@
                             else{
                                 var quizTitle = $('#quizTitle h3').text();
                                 var description = $('#description').val();
+
+                                // Get the selected values of the select element with id "select-lesson"
+                                var selectedValues = ($('#select-lesson').val());
+
+                                var selectedValuesText = selectedValues.join(', ');
+
+                                // Output the selected values to the console
+                                console.log(selectedValuesText);
+
+                        
+
+
                                 console.log(quizTitle);
                                 console.log(description);
                                 var quizId = $('#quiz-info').data('quizid');
@@ -539,14 +585,15 @@
                                     data: { 
                                         title : quizTitle,
                                         description : description,
+                                        coverage : selectedValuesText,
                                         id: quizId
                                             },
                                     success: function(response) {
 
-                                        Toast.fire({
-                                            type: 'success',
-                                            title: 'Title successfully Save!'
-                                        })
+                                        // Toast.fire({
+                                        //     type: 'success',
+                                        //     title: 'Title successfully Save!'
+                                        //})
                                         
                                     },
                                     error: function(xhr) {
@@ -617,9 +664,45 @@
                         })
 
                     $(document).on('click', '.delrow', function(){
+                        console.log("$(this).attr('id')");
                         console.log($(this).attr('id'));
                         var rowid = $(this).attr('id');
-                        $('.dragrow' + rowid).remove();
+
+                        Swal.fire({
+                        title: 'Are you sure you want to delete selected content?',
+                        text: $(this).attr('label'),
+                        type: 'warning',
+                        confirmButtonColor: '#3085d6',
+                        confirmButtonText: 'Delete',
+                        showCancelButton: true,
+                        allowOutsideClick: false
+                    }).then((confirm) => {
+                        if (confirm.value) {
+
+                            $.ajax({
+                                    type: "get",
+                                    dataType: 'json',
+                                    url: "/adminviewbook/delquestion",
+                                    data: { 
+                                        id: rowid
+                                            },
+                                    complete: function(data){
+                                    $('.dragrow' + rowid).remove()
+                                    Swal.fire({
+                                        title: 'Deleted successfully',
+                                        type: 'success',
+                                        confirmButtonColor: '#3085d6',
+                                        confirmButtonText: 'Close',
+                                        allowOutsideClick: false
+                                    })
+                                }
+                            });
+                        }
+                    })
+
+                        
+
+                        // $('.dragrow' + rowid).remove();
                     })
 
 
