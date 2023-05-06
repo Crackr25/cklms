@@ -323,9 +323,12 @@ Route::group(['middleware' => ['auth', 'web']], function() {
     Route::get('/jitsi',function(){
         return view('jitsimeet');
     });
+    //View quiz
+    Route::get('/quiz/{ids}', 'GlobalController\ViewBookController@viewquiz');  
 
     //View Book    
     Route::get('/viewbook/{ids}', 'GlobalController\ViewBookController@viewbook');     
+
     Route::get('/viewbookchaptertestavailability', 'GlobalController\ViewBookController@chaptertestavailability');
     Route::get('/globalsetting/profileview', 'GlobalController\UserProfileController@profileview');   
     

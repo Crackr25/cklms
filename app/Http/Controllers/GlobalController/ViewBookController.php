@@ -296,6 +296,37 @@ class ViewBookController extends Controller
 
                         
     }
+
+    public function viewquiz($id, Request $request)
+    
+    {
+
+        $ids = explode('-',$id);
+        $classroombookid = $ids[0];
+        $classroomid = $ids[1];
+        $bookid = $ids[2];
+
+
+        $quiz = DB::table('lesssonquiz')
+                        ->where('bookid',$bookid)
+                        ->where("deleted", 0)
+                        ->get();
+        foreach ($quiz as $item) {
+            $item->chapterid = DB::table('chapters')->where('id',$item->chapterid)->value('title');
+            if(empty($item->coverage)){
+            $item->coverage = "Coverage not defined";
+            }
+        }
+
+
+
+
+
+    return view('teacher.quiz.viewquiz')
+            ->with('quizzes', $quiz);
+    }
+
+
     public function chaptertestavailability(Request $request)
     {
 

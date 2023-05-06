@@ -120,7 +120,7 @@
                                                 </div>
                                                 @else
                                                 <div class="row justify-content-center">
-                                                        <div class="d-flex flex-row">
+                                                        <div class="d-flex flex-row" data-quiz="{{ $quiz->coverage }}">
                                                         @php
                                                             $lessons = explode(", ", $quiz->coverage);
                                                         @endphp
@@ -563,12 +563,9 @@
                                 var description = $('#description').val();
 
                                 // Get the selected values of the select element with id "select-lesson"
-                                var selectedValues = ($('#select-lesson').val());
 
-                                var selectedValuesText = selectedValues.join(', ');
-
-                                // Output the selected values to the console
-                                console.log(selectedValuesText);
+                                // // Output the selected values to the console
+                                // console.log(selectedValuesText);
 
                         
 
@@ -577,6 +574,20 @@
                                 console.log(description);
                                 var quizId = $('#quiz-info').data('quizid');
                                 console.log("Quiz ID: ",quizId)
+
+                                if ($('#select-lesson').length) {
+                                    // #select-lesson exists, do something with its value
+                                    var selectedValues = $('#select-lesson').val();
+                                    var selectedValues = ($('#select-lesson').val());
+                                    var selectedValuesText = selectedValues.join(', ');
+                                    console.log(selectedValuesText);
+
+                                    } else {
+                                    // #select-lesson does not exist
+                                    var selectedValuesText = $('.d-flex.flex-row').data('quiz');
+                                    console.log('#select-lesson does not exist');
+                                    }
+
 
                                 $.ajax({
                                     type: "get",

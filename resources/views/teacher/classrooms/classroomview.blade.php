@@ -115,6 +115,9 @@
             <a href="#" target="_blank" type="button" class="btn btn-info uk-first-column" id="modal_view_book_button">
                 <i class="icon-feather-book-open mr-2h mr-2"></i>View Book
             </a>
+            <a href="#" target="_blank" type="button" class="btn btn-info uk-first-column" id="modal_view_quiz_button">
+                <i class="icon-feather-book-open mr-2h mr-2"></i>View Book Quiz
+            </a>
             <a href="#" type="button" class="btn btn-danger uk-first-column remove_book">
                 <i class="icon-feather-trash mr-2"></i>Remove Book
             </a>
@@ -829,6 +832,7 @@
                 $('#modal_book_title').text($(this).attr('data-title'))
                 $('#modal_book_cover').attr('src',$(this).attr('data-cover'))
                 $('#modal_view_book_button').attr('href','/viewbook/'+$(this).attr('view-book-id'))
+                $('#modal_view_quiz_button').attr('href','/quiz/'+$(this).attr('view-book-id'))
                 
             })
 
