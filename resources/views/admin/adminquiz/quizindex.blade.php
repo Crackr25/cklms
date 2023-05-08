@@ -85,8 +85,24 @@
                 }
 
             #header.col-content {
-                border-top: 10px solid #673AB7;
-                border-radius: 10px;
+                border-top: 10px solid #673AB7  !important;
+                border-radius: 10px  !important;
+            }
+
+            .editcontent{
+                border-top: 8px solid black;
+                border-radius: 5px;
+            
+                    }
+
+            #my-card:hover {
+                transform: scale(1.1); /* make the card 10% larger on hover */
+                background-color: red; /* change the background color to red on hover */
+                cursor: pointer; /* show a pointer cursor on hover */
+            }
+
+            #my-card:hover #lessoncardtitle {
+                color: white;
             }
 
 
@@ -119,7 +135,7 @@
                                                     <div class="col-10 mt-2">
                                                         {{-- <label>Coverage</label> --}}
                                                         <select class="form-control-sm select2 pr-3" id="select-lesson" multiple="multiple">
-                                                            <option>Select Student/Personnel</option>    
+                                
                                                             </select>
                                                     
                                                     </div>
@@ -138,6 +154,11 @@
                                                                 </div>
                                                             </div>
                                                 @endforeach
+                                                                <div class="card m-2" id="my-card" data-toggle="tooltip" data-placement="top" title="Delete Coverage Lesson">
+                                                                    <div class="card-body">
+                                                                        <h5 class="card-title" id="lessoncardtitle">X</h5>
+                                                                    </div>
+                                                                </div>
                                                 </div>
                                                 </div>
                                                 @endif
@@ -175,6 +196,7 @@
                                                             </a>
                                                         </div> --}}
                                                     </div>
+                                                    {{-- Multiple choice --}}
                                                     @if($question->typeofquiz == 1)
                                                     <div id={{$question->id}} class="col-lg-11 col-10 editcontent col-content">
                                                         <div class="card mt-5 shadow-none border-0">
@@ -218,6 +240,7 @@
                                                         </div>
                                                     </div>
                                                     @endif
+                                                    {{-- Short Answer --}}
                                                     @if($question->typeofquiz == 2)
                                                     <div id={{$question->id}} class="col-lg-11 col-10 editcontent col-content">
                                                         <div class="card mt-5 shadow-none border-0">
@@ -250,6 +273,7 @@
                                                         </div>
                                                     </div>
                                                     @endif
+                                                    {{-- Paragraph --}}
                                                     @if($question->typeofquiz == 3)
                                                     <div id={{$question->id}} class="col-lg-11 col-10 editcontent col-content">
                                                         <div class="card mt-5 shadow-none border-0">
@@ -279,6 +303,7 @@
                                                         </div>
                                                     </div>
                                                     @endif
+                                                    {{-- Instruction --}}
                                                     @if($question->typeofquiz == 4)
                                                     <div id={{$question->id}} class="col-lg-11 col-10 editcontent col-content">
                                                         <div class="card mt-5 shadow-none border-0">
@@ -299,6 +324,78 @@
                                                                     <div class="row">
                                                                         <div class="col-12">
                                                                             <textarea class="form-control instruction" placeholder="Untitled question" id="instruction_item{{$question->id}}" >{{$question->question}}</textarea>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @endif
+                                                    {{-- Drag and Drop --}}
+                                                    @if($question->typeofquiz == 5)
+                                                    <div id={{$question->id}} class="col-lg-11 col-10 editcontent col-content">
+                                                        <div class="card mt-5 shadow-none border-0">
+                                                            <div class="card-header">
+                                                                <div class="row justify-content-end">
+                                                                    <div class="col-6 mr-1 quizarea">
+                                                                        <select class="form-control quiztype" id="quiztype{{$question->id}}">
+                                                                        <option value="drag_drop">Drag & drop</option>
+                                                                        <option value="instruction">Instruction</option>
+                                                                        <option value="paragraph_answer">Paragraph</option>
+                                                                        <option value="short_answer">Short Answer</option>
+                                                                        {{-- <option value="multiple_choice">Multiple Choice</option> --}}
+                                                                        <option value="instruction">Instruction</option>
+                                                                        <option value="enumeration">Enumeration</option>
+                                                                        <option value="drag_drop">Drag & drop</option>
+                                                                        </select>
+                                                                    </div>
+                                                                <div class="col-12 m-2" id="quiztioncontent{{$question->id}}">
+                                                                    <div class="row">
+                                                                        <div class="col-12">
+                                                                            <div class="options p-3 mt-2" id="options{{$question->id}}" style="border:3px solid #3e416d;border-radius:6px;">
+                                                                                @php
+                                                                                $dragoptions = DB::table('lesson_quiz_drag_option')
+                                                                                    ->where('questionid', $question->id)
+                                                                                    ->orderBy('sortid')
+                                                                                    ->get();
+                                                                                @endphp
+                                                                                @foreach($dragoptions as $item)
+                                                                                <div class="drag-option btn bg-primary text-white m-1 drag{{$question->id}}" contentEditable="true" data-target="drag-1">
+                                                                                    {{ $item->description }}
+                                                                                </div>
+                                                                                @endforeach
+                                                                            </div>
+                                                                            <div class="row justify-content-end p-3 mt-2">
+                                                                                <button class="btn btn-success add_drag_option" id="{{$question->id}}">Add drag option</button>
+                                                                            </div>
+
+                                                                            <p><b>Note: </b>To set up the drop area, please input [~input] where you want the drop zone to appear. Ex. The planet ~input is the biggest planet in the solar system</p>
+                                                                            <div id="item_question{{$question->id}}">
+                                                                                @php
+                                                                                $dropquestions = DB::table('lesson_quiz_drop_question')
+                                                                                    ->where('questionid', $question->id)
+                                                                                    ->orderBy('sortid')
+                                                                                    ->get();
+                                                                                @endphp
+                                                                                @foreach($dropquestions as $item)
+                                                                                @php
+                                                                                    $inputField = '<input class="d-inline form-control q-input drop-option q-input" style="width: 200px; margin: 10px; border-color:black" type="text">';
+                                                                                    $questionWithInput = str_replace('~input', $inputField, $item->question);
+
+
+                                                                                @endphp
+                                                                                <p>
+
+                                                                                    {{$item->sortid}}. {!! $questionWithInput !!}
+
+                                                                                </p>
+                                                                                {{-- <input type="text" class="form-control drop{{$question->id}}" style="margin-top: 10px; border: 2px solid dodgerblue; color: black;" placeholder="Item text &nbsp;{{ $item->sortid }}" value= "{{ $item->question}}"> --}}
+                                                                                @endforeach
+                                                                            </div>
+                                                                            <div class="row justify-content-end p-3 mt-2">
+                                                                                <button class="btn btn-success add_drag_question"  id="{{$question->id}}">Add drop question</button>
+                                                                            </div>
+
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -353,6 +450,8 @@
 
             
         })
+
+
         
         const Toast = Swal.mixin({
             toast: true,
@@ -371,6 +470,27 @@
         $(document).ready(function(){
             var data = {!! json_encode($quizquestions) !!};
             console.log(data);
+
+
+            // drag and drop
+        $( ".drag-option" ).draggable({
+            helper: "clone",
+            revertDuration: 100,
+            revert: 'invalid'
+        });
+
+        $( ".drop-option" ).droppable({
+            drop: function(event, ui) {
+
+                var dragElement = $(ui.draggable)
+                var dropElement = $(this)
+
+                dropElement.val(dragElement.text())
+                dropElement.addClass('bg-primary text-white')
+                dropElement.prop( "disabled", true );
+
+            }
+        });
 
             $('.instruction').summernote({
                                 height: 200,
@@ -410,7 +530,7 @@
                                     success: function(response) {
                                     
                                         Toast.fire({
-                                            type: 'success',
+                                            icon: 'success',
                                             title: 'All the changes have been saved'
                                         })
 
@@ -475,7 +595,7 @@
                                     success: function(response) {
 
                                         Toast.fire({
-                                            type: 'success',
+                                            icon: 'success',
                                             title: 'All the changes have been saved'
                                         })
                                         
@@ -503,7 +623,7 @@
                                     success: function(response) {
 
                                         Toast.fire({
-                                            type: 'success',
+                                            icon: 'success',
                                             title: 'All the changes have been saved'
                                         })
                                         
@@ -537,7 +657,7 @@
                                     success: function(response) {
 
                                         Toast.fire({
-                                            type: 'success',
+                                            icon: 'success',
                                             title: 'All the changes have been saved'
                                         })
                                         
@@ -549,6 +669,94 @@
                                 }
 
                             else if(last_quiz_type == 'drag_drop'){
+
+                                $.ajax({
+                                    type: "get",
+                                    dataType: 'json',
+                                    url: "/adminviewbook/createquestion",
+                                    data: { 
+                                        question : "Drag and drop",
+                                        typeofquiz : 5,
+                                        id: last_id
+                                            },
+                                    success: function(response) {
+
+                                        Toast.fire({
+                                            icon: 'success',
+                                            title: 'All the changes have been saved'
+                                        })
+                                        
+                                    },
+                                    error: function(xhr) {
+                                        // Handle error here
+                                    }
+                                });
+
+                                var i = 1;
+                                console.log("Drag and Drop");
+                                $('.drag' + last_id).each(function() {
+                                        // Get the value of the current label element using its id attribute
+                                        const value = $(this).text();
+                                        console.log(value)
+
+                                        // console.log(i);
+                                        
+                                        $.ajax({
+                                            type: "get",
+                                            dataType: 'json',
+                                            url: "/adminviewbook/createdragoption",
+                                            data: { 
+                                                questionid : last_id,
+                                                sortid: i,
+                                                description : value
+                                                    },
+                                            success: function(response) {
+
+                                                console.log("Options Succesfully save!");
+                                                
+                                            },
+                                            error: function(xhr) {
+                                                // Handle error here
+                                            }
+                                        });
+
+                                        i+=1;
+
+                                        });
+
+                                        var i = 1;
+                                        $('.drop' + last_id).each(function() {
+                                        // Get the value of the current label element using its id attribute
+                                        const value = $(this).val();
+
+
+                                                $.ajax({
+                                                    type: "get",
+                                                    dataType: 'json',
+                                                    url: "/adminviewbook/createdropquestion",
+                                                    data: { 
+                                                        questionid : last_id,
+                                                        sortid: i,
+                                                        description : value
+                                                            },
+                                                    success: function(response) {
+
+                                                        console.log("Drop question Succesfully save!");
+                                                        
+                                                    },
+                                                    error: function(xhr) {
+                                                        // Handle error here
+                                                    }
+                                                    });
+                                                i+=1;
+
+
+                                        });
+
+                                        Toast.fire({
+                                            type: 'success',
+                                            title: 'All the changes have been saved'
+                                        })
                             
                                 }
 
@@ -886,7 +1094,7 @@
                         if(select_quiz_type == 'drag_drop'){
                             $('#quiztioncontent' + parentId).empty();
                             $('#quiztioncontent' + parentId).append('<div class="options p-3 mt-2" id="options'+parentId+'" style="border:3px solid #3e416d;border-radius:6px;">'+
-                                    '<div class="drag-option btn bg-primary text-white m-1" contentEditable="true" data-target="drag-1">Option &nbsp;' + option  + '</div>'+
+                                    '<div class="drag-option btn bg-primary text-white m-1 drag'+parentId+'" contentEditable="true" data-target="drag-1">Option &nbsp;' + option  + '</div>'+
                                     '</div>' +
                                     '<div class="row justify-content-end p-3 mt-2">' +
                                         '<button class="btn btn-success add_drag_option" id="'+parentId+'">Add drag option</button>'+
@@ -896,7 +1104,7 @@
                                 // <button class="form-control add_drag_option" style="margin-top: 10px; " id="add_dragoption'+parentId+'">Add drag option</button>`
                             $('#quiztioncontent' + parentId).append('<p><b>Note: </b>To set up the drop area, please input [~input] where you want the drop zone to appear. Ex. The planet ~input is the biggest planet in the solar system</p>' +
                                                 '<div id="item_question'+parentId+'">'+
-                                                    '<input type="text" class="form-control" style="margin-top: 10px; border: 2px solid dodgerblue;" placeholder="Item text &nbsp;'+option+'">'+
+                                                    '<input type="text" class="form-control drop'+parentId+'" style="margin-top: 10px; border: 2px solid dodgerblue; color: black;" placeholder="Item text &nbsp;'+option+'">'+
                                                 '</div>'+
                                                 '<div class="row justify-content-end p-3 mt-2">' +
                                                     '<button class="btn btn-success add_drag_question"  id="'+parentId+'">Add drop question</button>' +
@@ -937,7 +1145,7 @@
                         console.log("ID: ", parentId)
                         
                         // $(this).closest('quizarea2').find('.list_option').empty()
-                        $('#options' + parentId).append('<div class="drag-option btn bg-primary text-white m-1" contentEditable="true" data-target="drag-1">Option &nbsp;'+option+'</div>')
+                        $('#options' + parentId).append('<div class="drag-option btn bg-primary text-white m-1 drag'+parentId+'" contentEditable="true" data-target="drag-1">Option &nbsp;'+option+'</div>')
 
                     })
 
@@ -949,7 +1157,7 @@
                         console.log("ID: ", parentId)
                         
                         // $(this).closest('quizarea2').find('.list_option').empty()
-                        $('#item_question' + parentId).append('<input type="text" class="form-control" style="margin-top: 10px; border: 2px solid dodgerblue;" placeholder="Item text &nbsp;'+option+'">')
+                        $('#item_question' + parentId).append('<input type="text" class="form-control drop'+parentId+'" style="margin-top: 10px; border: 2px solid dodgerblue; color: black;" placeholder="Item text &nbsp;'+option+'">')
 
                     })
 
@@ -964,6 +1172,43 @@
                         $('#item_option' + parentId).append('<input type="text" class="form-control m-2" placeholder="Item text" disabled>')
 
                     })
+
+
+                    $(document).on('click', '#my-card', function(){
+                        console.log("Hello")
+
+                        var quizId = $('#quiz-info').data('quizid');
+                        console.log(quizId);
+                        $.ajax({
+                                    type: "get",
+                                    dataType: 'json',
+                                    url: "/adminviewbook/delcoverage",
+                                    data: { 
+                                        id: quizId
+                                
+                                            },
+                                    success: function(response) {
+
+                                        console.log("Not Error");
+
+                                        // Toast.fire({
+                                        //     type: 'success',
+                                        //     title: 'Title successfully Save!'
+                                        //})
+                                        
+                                    },
+                                    error: function(xhr) {
+                                        console.log("Error");
+                                        // Handle error here
+                                    }
+                            });
+
+                            window.location.reload();
+                        // $(this).closest('.quizarea2').find('.list_option').empty()
+                    })
+
+
+                    
 
                     $('#select-lesson').select2({
                             allowClear:true,

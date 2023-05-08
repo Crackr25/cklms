@@ -554,6 +554,88 @@ class BookController extends Controller
         return 1;
     }
 
+    public function delcoverage(Request $request)
+    {
+
+        DB::table('lesssonquiz')
+            ->where('id', $request->get('id'))
+            ->update([
+                'coverage'         => "",
+            ]);
+
+        return 1;
+    }
+
+    public function createdragoption(Request $request)
+    {
+
+        date_default_timezone_set('Asia/Manila');
+        $choice = DB::table('lesson_quiz_drag_option')
+            ->where('questionid', $request->get('questionid'))
+            ->where('sortid', $request->get('sortid'))
+            ->count();
+
+        if($choice == 0){
+        DB::table('lesson_quiz_drag_option')
+            ->insert([
+                    'sortid'            =>  $request->get('sortid'),
+                    'questionid'        =>  $request->get('questionid'),
+                    'description'       =>  $request->get('description'),
+                    'createddatetime'   => date('Y-m-d H:i:s')
+                ]);
+
+        }else{
+
+            DB::table('lesson_quiz_drag_option')
+                ->where('questionid', $request->get('questionid'))
+                ->where('sortid', $request->get('sortid'))
+                ->update([
+                    'questionid'             =>  $request->get('questionid'),
+                    'description'       =>  $request->get('description'),
+                    'updateddatetime'   => date('Y-m-d H:i:s')
+                ]);
+
+        }
+        
+
+        return 1;
+    }
+
+    public function createdropquestion(Request $request)
+    {
+
+        date_default_timezone_set('Asia/Manila');
+        $choice = DB::table('lesson_quiz_drop_question')
+            ->where('questionid', $request->get('questionid'))
+            ->where('sortid', $request->get('sortid'))
+            ->count();
+
+        if($choice == 0){
+        DB::table('lesson_quiz_drop_question')
+            ->insert([
+                    'sortid'            =>  $request->get('sortid'),
+                    'questionid'        =>  $request->get('questionid'),
+                    'question'       =>  $request->get('description'),
+                    'createddatetime'   => date('Y-m-d H:i:s')
+                ]);
+
+        }else{
+
+            DB::table('lesson_quiz_drop_question')
+                ->where('questionid', $request->get('questionid'))
+                ->where('sortid', $request->get('sortid'))
+                ->update([
+                    'questionid'             =>  $request->get('questionid'),
+                    'question'       =>  $request->get('description'),
+                    'updateddatetime'   => date('Y-m-d H:i:s')
+                ]);
+
+        }
+        
+
+        return 1;
+    }
+
     public function createchoices(Request $request)
     {
         
