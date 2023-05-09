@@ -307,15 +307,32 @@ class ViewBookController extends Controller
         $bookid = $ids[2];
 
 
+
         $quiz = DB::table('lesssonquiz')
                         ->where('bookid',$bookid)
                         ->where("deleted", 0)
                         ->get();
         foreach ($quiz as $item) {
+            
+            // DB::table('lesson_quiz_record')
+            //             ->insert([
+            //                 'postid'            => $postid,
+            //                 'filename'          => $filename,
+            //                 'filepath'          => 'Classrooms/classroom'.$request->get('classroomid').'/'.'Attachments'.'/'.$file->getClientOriginalName(),
+            //                 'extension'         => $extension
+            //             ]);
+            
+            
             $item->chapterid = DB::table('chapters')->where('id',$item->chapterid)->value('title');
+
+
             if(empty($item->coverage)){
             $item->coverage = "Coverage not defined";
             }
+
+
+
+
         }
 
 

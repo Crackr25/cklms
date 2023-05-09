@@ -109,8 +109,8 @@
                             <tr>
                                 <td>{{ $quiz->chapterid}}</td>
                                 <td>{{ $quiz->coverage }}</td>
-                                <td>{{ strip_tags($quiz->description) }}</td>
                                 <td>{{ $quiz->title }}</td>
+                                <td>{{ strip_tags($quiz->description) }}</td>
                                 <td>
                                     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#activateQuizModal">
                                         Activate

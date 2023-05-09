@@ -1,113 +1,59 @@
 <!DOCTYPE html>
-<!-- saved from url=(0069)# -->
+<!-- saved from url=(0061)# -->
 <html lang="en" class="">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <!-- CSRF Token -->
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <!-- Basic Page Needs
     ================================================== -->
-    <title>{{$bookinfo->title}}</title>
+    <title>CK-LMS</title>
     
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--<meta name="description" content="Courseplus - Professional Learning Management HTML Template">-->
+
 
     <!-- CSS 
-        
     ================================================== -->
     <link rel="stylesheet" href="{{asset('templatefiles/style.css')}}">
-    <link rel="stylesheet" href="{{asset('templatefiles/night-mode.css')}}">
+    {{-- <link rel="stylesheet" href="{{asset('templatefiles/night-mode.css')}}"> --}}
     <link rel="stylesheet" href="{{asset('templatefiles/framework.css')}}">
-    <link rel="stylesheet" href="{{asset('templatefiles/bootstrap.css')}}"> 
+    <link rel="stylesheet" href="{{asset('templatefiles/bootstrap.css')}}">
+
+    <link rel="stylesheet" href="{{asset('plugins/fontawesome-free/css/all.min.css')}}">
+<!-- SweetAlert2 -->
+    <link rel="stylesheet" href="{{asset('plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css')}}">
+    <link rel="stylesheet" href="{{asset('plugins/datatables-bs4/css/dataTables.bootstrap4.css')}}">
+<!-- summernote -->
+
+<!-- include libraries(jQuery, bootstrap) -->
+    <link rel="stylesheet" href="{{asset('plugins/select2/css/select2.min.css')}}">
+    <link rel="stylesheet" href="{{asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css')}}">
+
+
+<!-- include summernote css/js -->
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 
     <!-- icons
     ================================================== -->
     <link rel="stylesheet" href="{{asset('templatefiles/icons.css')}}">
-    <!-- summernote -->
-    <link rel="stylesheet" href="{{asset('plugins/summernote/summernote-bs4.css')}}">
 
+    <!-- Import SweetAlert CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css">
 
-
-    <link rel="stylesheet" href="{{asset('plugins/fontawesome-free/css/all.min.css')}}">
-
-    <!-- Syntax Highlighter -->
-    <link rel="stylesheet" type="text/css" href="{{asset('templatefiles/shCore.css')}}" media="all">
-    <link rel="stylesheet" type="text/css" href="{{asset('templatefiles/shCoreMidnight.css')}}" media="all">
-
-    {{-- <link rel="stylesheet" href="{{asset('plugins/daterangepicker/daterangepicker.css')}}"> --}}
-    <!-- iCheck for checkboxes and radio inputs -->
-    <link rel="stylesheet" href="{{asset('plugins/icheck-bootstrap/icheck-bootstrap.min.css')}}">
-    
-    {{-- <script>
-        (function (window, document, undefined) {
-            'use strict';
-            if (!('localStorage' in window)) return;
-            var nightMode = localStorage.getItem('gmtNightMode');
-            if (nightMode) {
-                document.documentElement.className += ' night-mode';
-            }
-        })(window, document);
-
-
-        (function (window, document, undefined) {
-
-            'use strict';
-
-            // Feature test
-            if (!('localStorage' in window)) return;
-
-            // Get our newly insert toggle
-            var nightMode = document.querySelector('#night-mode');
-            if (!nightMode) return;
-
-            // When clicked, toggle night mode on or off
-            nightMode.addEventListener('click', function (event) {
-                event.preventDefault();
-                document.documentElement.classList.toggle('night-mode');
-                if (document.documentElement.classList.contains('night-mode')) {
-                    localStorage.setItem('gmtNightMode', true);
-                    return;
-                }
-                localStorage.removeItem('gmtNightMode');
-            }, false);
-
-        })(window, document);
-    </script> --}}
-
-  
-
-
-
-    <!-- javaScripts
-    ================================================== -->
-    <script src="{{asset('templatefiles/framework.js')}}"></script>
-    <script src="{{asset('templatefiles/jquery-3.3.1.min.js')}}"></script>
-    <script src="{{asset('templatefiles/simplebar.js')}}"></script>
-    <script src="{{asset('templatefiles/main.js')}}"></script>
-    <script src="{{asset('templatefiles/bootstrap-select.min.js')}}"></script>
-
-
-    <!-- jQuery -->
-    <script src="{{asset('plugins/jquery/jquery.min.js')}}"></script>
-    <!-- Bootstrap 4 -->
-    <script src="{{asset('plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
-    <!-- AdminLTE App -->
-    <script src="{{asset('dist/js/adminlte.min.js')}}"></script>
-    <!-- AdminLTE for demo purposes -->
-    <script src="{{asset('dist/js/demo.js')}}"></script>
-    <!-- Summernote -->
-    {{-- <script src="{{asset('plugins/summernote/summernote-bs4.min.js')}}"></script>
-    <!-- InputMask -->
-    <script src="{{asset('plugins/moment/moment.min.js')}}"></script>
-    <!-- date-range-picker -->
-    <script src="{{asset('plugins/daterangepicker/daterangepicker.js')}}"></script>
-    <!-- SweetAlert2 -->
-    <script src="{{asset('plugins/sweetalert2/sweetalert2.min.js')}}"></script>
-    <script src="{{asset('plugins/sweetalert2/sweetalert2.all.min.js')}}"></script> --}}
-
-    <!-- Essential JavaScript Libraries
-	==============================================-->
-    <script type="text/javascript" src="{{asset('templatefiles/shCore.js')}}"></script>
-    <script type="text/javascript" src="{{asset('templatefiles/shBrushJScript.js')}}"></script>
-    <script type="text/javascript" src="{{asset('templatefiles/shBrushXml.js')}}"></script>
+    <!-- Import SweetAlert and Toast libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
     
     <style>
         .gutter,
@@ -209,9 +155,12 @@
 
             background-image: url('{{asset($bookinfo->picurl)}}');
             background-repeat: repeat-y;
-            background-size: 100%;
+            background-size:contain;
+            background-position: center;
+        
 
         }
+
 
     </style>
 </head>
@@ -306,6 +255,32 @@
         {{-- </div> --}}
     </div>
 
+    {{-- <i class="fas fa-spinner fa-spin"></i> --}}
+
+
+        <!-- javaScripts
+    ================================================== -->
+        <script src="{{asset('plugins/jquery/jquery.min.js')}}"></script>
+        <script src="{{asset('templatefiles/framework.js')}}"></script>
+        <script src="{{asset('templatefiles/jquery-3.3.1.min.js')}}"></script>
+        <script src="{{asset('templatefiles/simplebar.js')}}"></script>
+        {{-- <script src="{{asset('templatefiles/main.js')}}"></script> --}}
+        <script src="{{asset('templatefiles/bootstrap-select.min.js')}}"></script>
+        <script src="{{asset('plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+        <script src="{{asset('plugins/summernote/summernote-bs4.js')}}"></script>
+        <script src="{{asset('templatefiles/chart.min.js')}}"></script>
+        {{-- <script type="text/javascript" src="{{asset('plugins/jquery-ui/jquery-ui.min.js')}}"></script> --}}
+        <script src="{{asset('templatefiles/chart-custom.js')}}"></script>
+        <script src="{{asset('plugins/jquery-ui/jquery-ui.min.js')}}"></script>
+        <!-- Select2 -->
+        <script src="{{asset('plugins/select2/js/select2.full.min.js')}}"></script>
+        <!-- SweetAlert2 -->
+        <script src="{{asset('plugins/sweetalert2/sweetalert2.min.js')}}"></script>
+        <script src="{{asset('plugins/sweetalert2/sweetalert2.all.min.js')}}"></script>
+        <script src="{{asset('plugins/datatables/jquery.dataTables.js')}}"></script>
+        <script src="{{asset('plugins/datatables-bs4/js/dataTables.bootstrap4.js')}}"></script>
+
+
     <script>
         
         $(document).ready(function(){
@@ -334,6 +309,7 @@
                     type:"GET",
                     success: function(data){
                         $('#book_part_holder').empty()
+                        console.log(data);
                         $('#book_part_holder').append(data)
                     }
                 })
@@ -363,6 +339,7 @@
                     success: function(data){
 
                         $(data).insertAfter(selectedChapterElement)
+                        console.log(data)
                         $("Quiz").insertAfter(selectedChapterElement)
                     }
                 })
@@ -383,7 +360,7 @@
 
             }
 
-          
+
 
             @if(auth()->user()->type == 2)
 
@@ -394,6 +371,7 @@
                         url: '/quizContent/'+selectedQuiz+'/'+'{{$classroomid}}',
                         type:"GET",
                         success: function(data){
+                            console.log(data)
                             $('#lesson_content_holder').append(data)
                         }
                     })
@@ -437,8 +415,7 @@
                 })
 
 
-               
-              
+
 
                 
 
@@ -469,7 +446,7 @@
                             UIkit.notification("<span uk-icon='icon: check'></span>Graded Successfully", {status:'success'});
                             loadQuizContent()
                             loadStudentAnswer()
-                           
+
                         }
                     })
                 })
@@ -501,10 +478,14 @@
 
                 function loadQuizContent(){
 
+
+                    $('#lesson_content_holder').css('background-image', 'none');
+
                     $.ajax({
                         url: '/studentQuizContent/'+selectedQuiz+'/'+'{{$classroomid}}',
                         type:"GET",
                         success: function(data){
+                            console.log(data)
                             $('#lesson_content_holder').append(data)
                         }
                     })
@@ -522,6 +503,7 @@
                             }
                         })
                     })
+                    
 
 
             @endif
@@ -557,6 +539,8 @@
 
             $(document).on('click','.view_lesson',function(e){
 
+                // $('.spinner').show();
+
                 selectedChapter = $(this).attr('data-id')
                 selectedChapterElement = $(this)
                 clearSchedModal()
@@ -566,6 +550,7 @@
                 if($('li[data-id="'+selectedChapter+'"][book="lesson"]').hasClass('uk-open')){
                     console.log("Hello");
                     loadlesson()
+                    // $('.spinner').hide();
 
                 }
                 else{

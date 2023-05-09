@@ -1032,207 +1032,208 @@ class ClassroomController extends Controller
     public function allbooks(Request $request){
 
 
-        $books = DB::table('books')
-                ->where('books.deleted',0);
+            $books = DB::table('books')
+                    ->where('books.deleted',0);
 
-     
-        if($request->get('search') != null && $request->has('search')){
-
-            $books =  $books->where(function($query) use($request){
-                $query->where('books.title','like','%'.$request->get('search').'%');
-            });
-
-        }
-        // else if($request->get('search') == null && $request->has('search')){
-
-        //     $books =  $books->where('books.id',0);
-
-        // }
-     
-        if($request->get('classroomid') != null && $request->has('classroomid')){
-
-            $books =  $books->leftJoin('classroombooks',function($join) use($request){
-                                $join->on('books.id','=','classroombooks.bookid');
-                                $join->where('classroombooks.classroomid',$request->get('classroomid'));
-                                $join->where('classroombooks.deleted',0);
-                            });
-
-        }
         
+            if($request->get('search') != null && $request->has('search')){
 
-        if($request->get('bookid') != null && $request->has('bookid')){
+                $books =  $books->where(function($query) use($request){
+                    $query->where('books.title','like','%'.$request->get('search').'%');
+                });
 
-            $books =  $books->where('books.id',$request->get('bookid'));
+            }
+            // else if($request->get('search') == null && $request->has('search')){
 
-        }
+            //     $books =  $books->where('books.id',0);
 
-        if($request->get('list') == 'list' && $request->has('list')){
-
-            $teacher = DB::table('teachers')
-                            ->where('userid',auth()->user()->id)
-                            ->select('id')
-                            ->first();
-
-            $books = $books->join('teacherbooks',function($join) use($teacher){
-                        $join->on('books.id','=','teacherbooks.bookid');
-                        $join->where('teacherbooks.deleted',0);
-                        $join->where('teacherbooks.teacherid',$teacher->id);
-                    });
-                            
-
-            $books =  $books->select('books.*','classroombooks.id as classroomid' )->get();
-
-            return view('teacher.classrooms.books.booklist')
-                    ->with('books',$books);
-
-        }
-        else if($request->get('parts') == 'parts' && $request->has('parts')){
-
-
-
-            $bookParts = $books->join('parts',function($join){
-                                $join->on('books.id','=','parts.bookid');
-                                $join->where('parts.deleted',0);
-                            });
-
-            if(count($books->get()) == 0){
-
-                $type = 2;
-
-                $books = DB::table('books')
-                                ->where('books.deleted',0);
-
-                if($request->get('bookid') != null && $request->has('bookid')){
-
-                    $books =  $books->where('books.id',$request->get('bookid'));
+            // }
         
+            if($request->get('classroomid') != null && $request->has('classroomid')){
+
+                $books =  $books->leftJoin('classroombooks',function($join) use($request){
+                                    $join->on('books.id','=','classroombooks.bookid');
+                                    $join->where('classroombooks.classroomid',$request->get('classroomid'));
+                                    $join->where('classroombooks.deleted',0);
+                                });
+
+            }
+            
+
+            if($request->get('bookid') != null && $request->has('bookid')){
+
+                $books =  $books->where('books.id',$request->get('bookid'));
+
+            }
+
+            if($request->get('list') == 'list' && $request->has('list')){
+
+                $teacher = DB::table('teachers')
+                                ->where('userid',auth()->user()->id)
+                                ->select('id')
+                                ->first();
+
+                $books = $books->join('teacherbooks',function($join) use($teacher){
+                            $join->on('books.id','=','teacherbooks.bookid');
+                            $join->where('teacherbooks.deleted',0);
+                            $join->where('teacherbooks.teacherid',$teacher->id);
+                        });
+                                
+
+                $books =  $books->select('books.*','classroombooks.id as classroomid' )->get();
+
+                return view('teacher.classrooms.books.booklist')
+                        ->with('books',$books);
+
+            }
+            else if($request->get('parts') == 'parts' && $request->has('parts')){
+
+
+
+                $bookParts = $books->join('parts',function($join){
+                                    $join->on('books.id','=','parts.bookid');
+                                    $join->where('parts.deleted',0);
+                                });
+
+                if(count($books->get()) == 0){
+
+                    $type = 2;
+
+                    $books = DB::table('books')
+                                    ->where('books.deleted',0);
+
+                    if($request->get('bookid') != null && $request->has('bookid')){
+
+                        $books =  $books->where('books.id',$request->get('bookid'));
+            
+                    }
+                    
+                    $bookChapter =  $books->join('chapters',function($join){
+                                        $join->on('books.id','=','chapters.bookid');
+                                        $join->where('chapters.deleted',0);
+                                    });
+
+                    $books = $bookChapter->select('chapters.*')->get();
+
+                }
+                else{
+
+                    $type = 1;
+
+                    $bookParts = $books->select('parts.*')->get();
+
+                    $books = $bookParts ;
                 }
                 
-                $bookChapter =  $books->join('chapters',function($join){
+                return view('global.viewbook.booklist.parts')
+                                ->with('parts',$books)
+                                ->with('type',$type);
+
+
+            }
+            else if($request->get('chapters') == 'chapters' && $request->has('chapters')){
+
+                $books = $books->join('chapters',function($join){
                                     $join->on('books.id','=','chapters.bookid');
                                     $join->where('chapters.deleted',0);
                                 });
 
-                $books = $bookChapter->select('chapters.*')->get();
 
-            }
-            else{
+                if($request->get('partid') != null && $request->has('partid')){
 
-                $type = 1;
+                    $books = $books->where('chapters.partid',$request->get('partid'));
 
-                $bookParts = $books->select('parts.*')->get();
-
-                $books = $bookParts ;
-            }
-            
-            return view('global.viewbook.booklist.parts')
-                            ->with('parts',$books)
-                            ->with('type',$type);
-
-
-        }
-        else if($request->get('chapters') == 'chapters' && $request->has('chapters')){
-
-            $books = $books->join('chapters',function($join){
-                                $join->on('books.id','=','chapters.bookid');
-                                $join->where('chapters.deleted',0);
-                            });
-
-
-            if($request->get('partid') != null && $request->has('partid')){
-
-                $books = $books->where('chapters.partid',$request->get('partid'));
-
-            }
-
-            
-      
-            return view('global.viewbook.booklist.chapter')
-                    ->with('chapters',$books->select('chapters.*')->get());
-
-
-        }
-
-        else if($request->get('lessons') == 'lessons' && $request->has('lessons')){
-
-
-            $lessons = array();
-
-            if($request->get('chapterid') != null && $request->has('chapterid')){
-
-                
-                $lessons = DB::table('lessons')
-                            ->where('chapterid',$request->get('chapterid'))
-                            ->where('lessons.deleted',0)
-                            ->get();
-
-
-                $chapter = DB::table('chapters')
-                            ->where('id',$request->get('chapterid'))
-                            ->where('chapters.deleted',0)
-                            ->first();
-
-                $chapterQuiz = DB::table('chapterquiz')
-                            ->where('chapterid',$request->get('chapterid'))
-                            ->where('chapterquiz.deleted',0)
-                            ->get();
-
-                $lessons = collect($lessons)->toArray();
-
-                foreach($chapterQuiz as $item){
-
-                    $item->quiz = true;
-
-                    array_push($lessons,$item);
-    
                 }
 
+                
+        
+                return view('global.viewbook.booklist.chapter')
+                        ->with('chapters',$books->select('chapters.*')->get());
+
+
             }
 
-            if(isset($chapter->title) && $chapter->title == 'Download Links'){
+            else if($request->get('lessons') == 'lessons' && $request->has('lessons')){
 
 
-                foreach($lessons as $item){
+                $lessons = array();
 
-                    $item->type = 2;
+                if($request->get('chapterid') != null && $request->has('chapterid')){
 
-                    $links = DB::table('lessoncontents')
-                                ->where('lessonid',$item->id)
-                                ->where('deleted',0)
+                    
+                    $lessons = DB::table('lessons')
+                                ->where('chapterid',$request->get('chapterid'))
+                                ->where('lessons.deleted',0)
+                                ->get();
+
+
+                    $chapter = DB::table('chapters')
+                                ->where('id',$request->get('chapterid'))
+                                ->where('chapters.deleted',0)
                                 ->first();
 
-                    // return collect($links);
+                    $chapterQuiz = DB::table('lesssonquiz')
+                                ->where('chapterid',$request->get('chapterid'))
+                                ->where('lesssonquiz.deleted',0)
+                                ->get();
 
-                    if(isset($links->content) && $links->type == 4){
+                    $lessons = collect($lessons)->toArray();
 
-                        $item->description = $links->content;
+                    foreach($chapterQuiz as $item){
 
-                    }    
-                    else{
+                        $item->quiz = true;
+                        $item->type = 1;
 
-                        $item->description = "#";
-                    }    
-                   
+                        array_push($lessons,$item);
+        
+                    }
 
                 }
-              
 
+                if(isset($chapter->title) && $chapter->title == 'Download Links'){
+
+
+                    foreach($lessons as $item){
+
+                        $item->type = 2;
+
+                        $links = DB::table('lessoncontents')
+                                    ->where('lessonid',$item->id)
+                                    ->where('deleted',0)
+                                    ->first();
+
+                        // return collect($links);
+
+                        if(isset($links->content) && $links->type == 4){
+
+                            $item->description = $links->content;
+
+                        }    
+                        else{
+
+                            $item->description = "#";
+                        }    
+                    
+
+                    }
                 
+
+                    
+
+
+                }
+
+        
+                return view('global.viewbook.booklist.lesson')
+                        ->with('lessons',$lessons);
 
 
             }
 
-      
-            return view('global.viewbook.booklist.lesson')
-                    ->with('lessons',$lessons);
 
+            
 
         }
-
-
-        
-
-    }
 
 
 

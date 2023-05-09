@@ -75,7 +75,7 @@
                     </div>
                 @endif
             @else
-                  
+
                 <div>
                     <div class="uk-card uk-card-primary uk-card-body bg-info">
                         <h4 class="uk-card-title">THIS QUIZ IS ACTIVATED!</h4>
