@@ -339,7 +339,6 @@
                     success: function(data){
 
                         $(data).insertAfter(selectedChapterElement)
-                        console.log(data)
                         $("Quiz").insertAfter(selectedChapterElement)
                     }
                 })
@@ -485,7 +484,6 @@
                         url: '/studentQuizContent/'+selectedQuiz+'/'+'{{$classroomid}}',
                         type:"GET",
                         success: function(data){
-                            console.log(data)
                             $('#lesson_content_holder').append(data)
                         }
                     })

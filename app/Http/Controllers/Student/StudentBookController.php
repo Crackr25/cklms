@@ -114,7 +114,8 @@ class StudentBookController extends Controller
                     $choices = DB::table('lessonquizchoices')
                                     ->where('questionid',$item->id)
                                     ->where('deleted',0)
-                                    ->select('description','id','answer')
+                                    ->select('description','id','answer', 'sortid')
+                                    ->orderBy('sortid')
                                     ->get();
 
                     $item->choices = $choices;

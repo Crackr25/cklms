@@ -182,6 +182,17 @@
                             </div>
                         @endif
 
+
+                        @if($item->typeofquiz == 4)
+                            <div class="card mt-5">
+                                <div class="card-body">
+                                    
+                                            <p>{{$key+=1}}. {!! $item->question !!}</p>
+
+                                </div>
+                            </div>
+                        @endif
+
                     
 
 
@@ -201,7 +212,7 @@
 
                                         @foreach($item->drop as $item)
                                             @php
-                                                $inputField = '<input class="d-inline form-control q-input drop-option q-input" style="width: 200px; margin: 10px; border-color:black" type="text">';
+                                                $inputField = '<input class="d-inline form-control q-input drop-option q-input" style="width: 200px; margin: 10px; border-color:black" type="text" disabled>';
                                                 $questionWithInput = str_replace('~input', $inputField, $item->question);
                                             @endphp
                                     
@@ -368,8 +379,9 @@
                 </div>
             </div>
         </div> <!-- end main row --> --}}
+         <button id="scroll-to-bottom" class="btn btn-dark btn-lg mb-3 mr-3"><i class="fas fa-arrow-circle-down"></i></button>
     </div> <!-- end container quizcontent -->
-    <button id="scroll-to-bottom" class="btn btn-dark btn-lg mb-3 mr-3"><i class="fas fa-arrow-circle-down"></i></button>
+   
 </body>
 
 
@@ -397,16 +409,16 @@
                     }
                 });
 
-        		function previewImage(input) {
-        			if (input.files && input.files[0]) {
-        				var reader = new FileReader();
-        				reader.onload = function (e) {
-        					$('#preview').attr('src', e.target.result);
-                            $('#preview').show();
-        				}
-        				reader.readAsDataURL(input.files[0]);
-        			}
-        		}
+                    function previewImage(input) {
+                        if (input.files && input.files[0]) {
+                            var reader = new FileReader();
+                            reader.onload = function (e) {
+                                $('#preview').attr('src', e.target.result);
+                                $('#preview').show();
+                            }
+                            reader.readAsDataURL(input.files[0]);
+                        }
+                    }
 
                 function autoSaveAnswer(thisElement) {
                     // Get the answer data
