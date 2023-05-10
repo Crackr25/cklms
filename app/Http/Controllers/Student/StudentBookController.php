@@ -78,7 +78,6 @@ class StudentBookController extends Controller
                         ->select('id','title', 'coverage', 'description' )
                         ->first();
 
-        if(isset($quizInfo->id) > 0){
 
             // $chapterquizsched = DB::table('chapterquizsched')
             //                 ->where('chapterquizid',$quizid)
@@ -109,18 +108,18 @@ class StudentBookController extends Controller
 
             foreach($quizQuestions as $item){
 
-                if($item->typeofquiz == 1){
+                // if($item->typeofquiz == 1){
 
-                    $choices = DB::table('lessonquizchoices')
-                                    ->where('questionid',$item->id)
-                                    ->where('deleted',0)
-                                    ->select('description','id','answer', 'sortid')
-                                    ->orderBy('sortid')
-                                    ->get();
+                //     $choices = DB::table('lessonquizchoices')
+                //                     ->where('questionid',$item->id)
+                //                     ->where('deleted',0)
+                //                     ->select('description','id','answer', 'sortid')
+                //                     ->orderBy('sortid')
+                //                     ->get();
 
-                    $item->choices = $choices;
+                //     $item->choices = $choices;
 
-                }
+                // }
 
 
                 if($item->typeofquiz == 5){
@@ -146,6 +145,7 @@ class StudentBookController extends Controller
                 }
 
             }
+
 
             // $isAnswered = false;
 
@@ -235,7 +235,6 @@ class StudentBookController extends Controller
                         ->with('quizQuestions',$quizQuestions);
 
         }
-    }
 
     public function retakeQuiz($id){
 

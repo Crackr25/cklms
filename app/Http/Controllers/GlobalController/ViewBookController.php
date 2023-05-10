@@ -323,7 +323,7 @@ class ViewBookController extends Controller
             //             ]);
             
             
-            $item->chapterid = DB::table('chapters')->where('id',$item->chapterid)->value('title');
+            $item->tilte = DB::table('chapters')->where('id',$item->chapterid)->value('title');
 
 
             if(empty($item->coverage)){

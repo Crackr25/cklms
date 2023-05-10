@@ -1,111 +1,37 @@
+<Style>
 
 
 
+</Style>
 
-<style>
-
-        <style>
-        .swal-wide{
-            width:850px !important;
-        }
-        .note-toolbar {
-            position: relative;
-            z-index: 0 !important;
-        }
-        .gfg_tooltip { 
-            position: relative; 
-            display: inline-block; 
-            border-bottom: 1px dotted black; 
-            background-color: gray; 
-            color: black; 
-            padding: 15px; 
-            text-align: center; 
-            display: inline-block; 
-            font-size: 16px; 
-        }
-        .gfg_tooltip:hover {
-            -ms-transform: scale(1.2); /* IE 9 */
-            -webkit-transform: scale(1.2); /* Safari 3-8 */
-            transform: scale(1.2); 
-        }
-        .gfg_tooltip .gfg_text { 
-            visibility: hidden; 
-            width: 120px; 
-            background-color: gray; 
-            color: white; 
-            text-align: center; 
-            border-radius: 6px; 
-            padding: 5px 0; 
-            position: absolute; 
-            z-index: 1; 
-            top: 5%; 
-            left: 115%; 
-        }
-        .gfg_tooltip .gfg_text::after { 
-            content: ""; 
-            position: absolute; 
-            top: 50%; 
-            right: 100%; 
-            margin-top: -5px; 
-            border-width: 5px; 
-            border-style: solid; 
-            border-color: transparent gray transparent  
-                            transparent; 
-        }
-        .gfg_tooltip:hover .gfg_text { 
-            visibility: visible; 
-        } 
-        iframe {
-            width: 100%;
-            height: 100%;
-        }
-        .options {
-            position: relative;
-            z-index: 1;
-        }
-        .drop-option {
-            position: relative;
-            z-index: 0;
-        }
-        .instruction {
-            font-weight:600;
-            font-size:1.0pc;
-        }
-        .mutiple-choice > div > ol > li {
-            margin-top: 1.7em;
-        }
-        .q-input {
-            border:1px solid #b6b6b6 !important;
-            border-radius:6px !important;
-            width:200px !important;
-        }
-        .error-input {
-            border-color: #dc3545 !important;
-        }
-        #scroll-to-bottom {
-            position: fixed;
-            bottom: 0px;
-            right: 0px;
-            padding: 9px 15px 9px 15px !important;
-        }
-        .list-group li {
-            padding-top: 10px;
-            padding-bottom: 10px;
-        }
-        .quizcontent{
-            background-color: #fff !important;
-        }
-    </style>
-
-
-</head>
-
-
-
-    <div class="container quizcontent">
+    <div class="container quizcontent" style="background-color: #fff !important;">
         <div class="row justify-content-center">
             <div class="col-md-8">
-                <div class="card mt-5">
+                
+                <div class="card mt-5" style= "border-top: 10px solid #673AB7  !important;
+                border-radius: 10px  !important;" id="quiz-info">
+                        <div class="card-header">
+                            <h1 class="card-title">
+                                Quiz Status
+                            </h1>
+                        </div>
+                        
+                        
+                        <div class="card-body">
+                        <h4><span> Status: </span> <b>Active</b> </h4>
+                        <ul class="list-unstyled">
+                            <li class="border-bottom py-2"><span>Quiz Result:</span> 80%</li>
+                            <li class="border-bottom py-2"><span>Attempts:</span> 2/5</li>
+                            <li class="border-bottom py-2"><span>Time from:</span> March 20 2023 10 AM</li>
+                            <li class="border-bottom py-2"><span>Deadline:</span> March 21 2023 10 AM</li>
+                        </ul>
+                        <div class="card-footer border-top-0 text-center">
+                            <button class="btn btn-success mt-3">Attempt Quiz</button>
+                        </div>
+                    </div>
+                </div>            
+                
+                <div class="card mt-5 editcontent" id="quiz-info">
                     <div class="card-body">
                         <h1 class="card-title">
                             {{$quizInfo->title}}
@@ -119,7 +45,7 @@
                             @endphp
 
                             @foreach ($lessons as $lesson)
-                            <div class="btn bg-success text-white m-1">{{$lesson}}</div>
+                            <div class="btn bg-primary text-white m-1">{{$lesson}}</div>
                             @endforeach
                             @endif
                             {{-- <div class="btn bg-success text-white m-1">Lesson 2: VLAN</div>
@@ -129,38 +55,53 @@
                         </div>
 
                         <p class="card-text">{{$quizInfo->description}}</p>
+
+        
                     </div>
                 </div>
-
+            
                 @foreach($quizQuestions as $key=>$item)
                     @if($item->typeofquiz == 1)
-                <div id="questions">
 
-                    <!-- multiple choice -->
-                    
-                        <div class="card mt-5 mutiple-choice">
-                            <div class="card-body">
-                
+                            <!-- multiple choice -->
+                            
+                                <div class="card mt-5 editcontent" id="quiz-question-{{$item->id}}">
+                                    <div class="card-body ">
+                        
+                                                
+                                                <p>{{$key+=1}}. {{$item->question}}</p>
+
+                                                @php
+
+
+                                                $choices = DB::table('lessonquizchoices')
+                                                    ->where('questionid',$item->id)
+                                                    ->where('deleted',0)
+                                                    ->select('description','id','answer', 'sortid')
+                                                    ->orderBy('sortid')
+                                                    ->get();
+
+
+                                                @endphp
+                                                
+
+                                                @foreach ($choices as $questioninfo)
+                                                <div class="form-check mt-2">
+                                                    <input data-question-id="{{ $questioninfo->id}}" id="{{ $questioninfo->id}}" class="answer-field form-check-input" type="radio" name="{{ $item->id }}" value="{{ $questioninfo->id}}">
+                                                    <label for="{{ $item->id }}" class="form-check-label">
+                                                        {{$questioninfo->description}}
+                                                    </label>
+                                                </div>
+                                                @endforeach
+                            
                                         
-                                        <p>{{$key+=1}}. {{$item->question}}</p>
-
-                                        @foreach ($item->choices as $questioninfo)
-                                        <div class="form-check mt-2">
-                                            <input data-question-id="{{ $questioninfo->id}}" id="{{ $questioninfo->id}}" class="answer-field form-check-input" type="radio" name="{{ $item->id}}" value="{{ $questioninfo->id}}">
-                                            <label for="{{ $questioninfo->id}}" class="form-check-label">
-                                                {{$questioninfo->description}}
-                                            </label>
-                                        </div>
-                                        @endforeach
-                    
-                                
-                        </div>
-                    </div>
+                                    </div>
+                                </div>
                         @endif
                     
 
                         @if($item->typeofquiz == 2)
-                    <div class="card mt-5">
+                    <div class="card mt-5 editcontent">
                         <div class="card-body">
                             
                                     <p>{{$key+=1}}. {{$item->question}}</p>
@@ -172,7 +113,7 @@
 
 
                         @if($item->typeofquiz == 3)
-                            <div class="card mt-5">
+                            <div class="card mt-5 editcontent">
                                 <div class="card-body">
                                     
                                             <p>{{$key+=1}}. {{$item->question}}</p>
@@ -184,10 +125,10 @@
 
 
                         @if($item->typeofquiz == 4)
-                            <div class="card mt-5">
+                            <div class="card mt-5 editcontent">
                                 <div class="card-body">
                                     
-                                            <p>{{$key+=1}}. {!! $item->question !!}</p>
+                                            <p>Instruction. {!! $item->question !!}</p>
 
                                 </div>
                             </div>
@@ -198,7 +139,7 @@
 
                         @if($item->typeofquiz == 5)
                             <!-- drag and drop -->
-                            <div class="card mt-5">
+                            <div class="card mt-5 editcontent">
                                 <div class="card-body">
                                     <p class="instruction">
                                         Drag the correct option and drop it onto the corresponding box. 
@@ -210,7 +151,14 @@
                                         @endforeach
                                     </div>
 
-                                        @foreach($item->drop as $item)
+                                        @php
+                                        $dropquestions = DB::table('lesson_quiz_drop_question')
+                                            ->where('questionid', $item->id)
+                                            ->orderBy('sortid')
+                                            ->get();
+                                        @endphp
+
+                                        @foreach($dropquestions as $item)
                                             @php
                                                 $inputField = '<input class="d-inline form-control q-input drop-option q-input" style="width: 200px; margin: 10px; border-color:black" type="text" disabled>';
                                                 $questionWithInput = str_replace('~input', $inputField, $item->question);
@@ -227,6 +175,14 @@
                                 </div>
                         @endif
                     @endforeach
+
+                    <div class="save mb-5">
+                    <div class="row">
+                        <div class="col-md-12 d-flex justify-content-end">
+                            <div class="btn btn-success btn-lg" id="save-quiz">Save</div>
+                        </div>
+                    </div>
+                    </div>
 
                     
                     {{-- <!-- fill in the blanks -->
@@ -379,9 +335,17 @@
                 </div>
             </div>
         </div> <!-- end main row --> --}}
-         <button id="scroll-to-bottom" class="btn btn-dark btn-lg mb-3 mr-3"><i class="fas fa-arrow-circle-down"></i></button>
-    </div> <!-- end container quizcontent -->
-   
+        <button id="scroll-to-bottom" class="btn btn-dark btn-lg mb-3 mr-3" style= "
+            position: fixed;
+            bottom: 0px;
+            right: 320px;
+            padding: 9px 15px 9px 15px !important;
+        }"><i class="fas fa-arrow-circle-down"></i></button>
+    </div> 
+    </div> 
+    
+    </div> 
+
 </body>
 
 
@@ -389,9 +353,12 @@
 {{-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script> --}}
 
-        <script>
+    <script>
 
             $(document).ready(function(){
+
+                var data = {!! json_encode($quizQuestions) !!};
+                console.log(data);
 
                 console.log("Hello");
 
@@ -572,5 +539,25 @@
         $("#imageInput").change(function() {
 			previewImage(this);
         });
+
+
+        $(document).on('click', '.editcontent', function(){
+                    console.log("Clicked on")
+                    $('.ui-helper-hidden-accessible').remove();
+                    $('.editcontent').css({
+                        "border": "2px solid white",
+                        "border-radius": "5px"
+                        // "padding": "20px",
+            
+                    });
+
+                    $(this).css({
+                        "border": "2px solid dodgerblue",
+                        "border-radius": "5px"
+    
+                        // "padding": "20px",
+                    });
+
+                });
     })
-</script>
+    </script>

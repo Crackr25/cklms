@@ -90,6 +90,46 @@
                 position: absolute;
                 overflow: hidden;
             }
+
+
+            .swal-wide{
+            width:850px !important;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+        }
+        .options {
+            position: relative;
+            z-index: 1;
+        }
+        .drop-option {
+            position: relative;
+            z-index: 0;
+        }
+        .instruction {
+            font-weight:600;
+            font-size:1.0pc;
+        }
+        .q-input {
+            border:1px solid #b6b6b6 !important;
+            border-radius:6px !important;
+            width:200px !important;
+        }
+        .error-input {
+            border-color: #dc3545 !important;
+        }
+        #scroll-to-bottom {
+            position: fixed;
+            bottom: 0px;
+            right: 0px;
+            padding: 9px 15px 9px 15px !important;
+        }
+        .list-group li {
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+        
         }
         
         div::-webkit-scrollbar-track, html::-webkit-scrollbar-track
@@ -263,17 +303,12 @@
         <script src="{{asset('plugins/jquery/jquery.min.js')}}"></script>
         <script src="{{asset('templatefiles/framework.js')}}"></script>
         <script src="{{asset('templatefiles/jquery-3.3.1.min.js')}}"></script>
-        <script src="{{asset('templatefiles/simplebar.js')}}"></script>
-        {{-- <script src="{{asset('templatefiles/main.js')}}"></script> --}}
-        <script src="{{asset('templatefiles/bootstrap-select.min.js')}}"></script>
-        <script src="{{asset('plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
-        <script src="{{asset('plugins/summernote/summernote-bs4.js')}}"></script>
+
         <script src="{{asset('templatefiles/chart.min.js')}}"></script>
         {{-- <script type="text/javascript" src="{{asset('plugins/jquery-ui/jquery-ui.min.js')}}"></script> --}}
         <script src="{{asset('templatefiles/chart-custom.js')}}"></script>
         <script src="{{asset('plugins/jquery-ui/jquery-ui.min.js')}}"></script>
         <!-- Select2 -->
-        <script src="{{asset('plugins/select2/js/select2.full.min.js')}}"></script>
         <!-- SweetAlert2 -->
         <script src="{{asset('plugins/sweetalert2/sweetalert2.min.js')}}"></script>
         <script src="{{asset('plugins/sweetalert2/sweetalert2.all.min.js')}}"></script>
@@ -480,13 +515,21 @@
 
                     $('#lesson_content_holder').css('background-image', 'none');
 
-                    $.ajax({
-                        url: '/studentQuizContent/'+selectedQuiz+'/'+'{{$classroomid}}',
-                        type:"GET",
-                        success: function(data){
-                            $('#lesson_content_holder').append(data)
+                    async function loadData() {
+                            try {
+                                const data = await $.ajax({
+                                    url: '/studentQuizContent/' + selectedQuiz + '/' + '{{$classroomid}}',
+                                    type: 'GET'
+                                });
+                                $('#contentdesktopview').remove();
+                                $('#lesson_content_holder').prepend(data);
+                            } catch (error) {
+                                console.log(error);
+                            }
                         }
-                    })
+
+                        loadData();
+
 
                 }   
 
@@ -659,6 +702,211 @@
                 })
 
             })
+
+
+
+            // var data = {!! json_encode($quizQuestions ?? '') !!};
+            //     console.log(data);
+
+            //     console.log("Hello");
+
+                var STUDENT_ID = 2;
+
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                });
+
+                    function previewImage(input) {
+                        if (input.files && input.files[0]) {
+                            var reader = new FileReader();
+                            reader.onload = function (e) {
+                                $('#preview').attr('src', e.target.result);
+                                $('#preview').show();
+                            }
+                            reader.readAsDataURL(input.files[0]);
+                        }
+                    }
+
+                function autoSaveAnswer(thisElement) {
+                    // Get the answer data
+                    var answer = $(thisElement).val();
+                    var questionId = $(thisElement).data('question-id');
+                    var studentId = STUDENT_ID
+
+                    console.log(`student answer: ${answer}, question-id: ${questionId}, student-id: ${STUDENT_ID}`)
+
+                    // // Send an AJAX request to save the answer data
+                    // $.ajax({
+                    //     url: '/save-answer',
+                    //     method: 'POST',
+                    //     data: {
+                    //     answer: answer,
+                    //     question_id: questionId,
+                    //     student_id: studentId
+                    //     },
+                    //     success: function(response) {
+                    //     // Handle the response from the server if needed
+                    //     }
+                    // });
+                }
+
+                // drag and drop
+                $( ".drag-option" ).draggable({
+                    helper: "clone",
+                    revertDuration: 100,
+                    revert: 'invalid'
+                });
+
+                $( ".drop-option" ).droppable({
+                    drop: function(event, ui) {
+
+                        var dragElement = $(ui.draggable)
+                        var dropElement = $(this)
+
+                        dropElement.val(dragElement.text())
+                        dropElement.addClass('bg-primary text-white')
+                        dropElement.prop( "disabled", true );
+
+                        dragElement.removeClass('bg-primary')
+                        dragElement.addClass('bg-dark')
+
+                        // auto save answer
+                        autoSaveAnswer(dropElement)
+                    }
+                });
+
+        // select choice by clicking label
+        $("label").click(function() {
+            var radioBtnId = $(this).attr("for");
+            var inputElement = $(`input.answer-field[id='${radioBtnId}']`);
+
+            inputElement.prop("checked", true);
+            autoSaveAnswer(inputElement);
+        });
+
+        // auto save answer when switching to 
+        $('.answer-field').on('change', function() {
+            autoSaveAnswer(this);
+        });
+
+        // save all answers quiz
+        $('#save-quiz').on('click', function() {
+            var isvalid = true
+
+            $('.answer-field').each(function() {
+                $(this).removeClass('error-input')
+                $(this).removeClass('is-invalid')
+
+                if ($(this).val() == "" ) {
+                    
+                    if ($(this).prop("disabled")) {
+                        $(this).prop('disabled', false);
+                        $(this).focus();
+                        $(this).prop('disabled', true);
+                    } else {
+                        $(this).focus();
+                    }
+                    
+                    
+                    $(this).addClass('error-input')
+                    isvalid = false
+                }
+
+                if ($(this).is(":radio")) {
+                    
+                    if (!$("input[name='" + $(this).attr("name") + "']:checked").length) {
+
+                        $(this).focus();
+                        $(this).addClass('is-invalid')
+
+                        isValid = false;
+                    }
+                }
+
+            })
+
+            if (isvalid) {
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Quiz submitted successfully.'
+                })
+                // set quiz status as finished
+                // disable retake of quiz
+                // show quiz complete form
+            } else {
+                // Swal.fire({
+                //     // template: '#my-template'
+                //     titleText: 'Unanswered items detected!',
+                //     html: '<p class="text-center" style="font-size:1rem;">Are you sure you want to continue and submit the quiz?</p>',
+                //     icon: 'error',
+                //     showCancelButton: true,
+                //     confirmButtonColor: '#3085d6',
+                //     cancelButtonColor: '#d33',
+                //     confirmButtonText: 'Save'
+                // })
+                // .then((result) => {
+                //     if (result.value) {
+                //         event.preventDefault();
+                //         Toast.fire({
+                //             icon: 'success',
+                //             title: 'Quiz w/ unanswered items submitted successfully.'
+                //         })
+                //     }
+                // })
+            }
+        })
+
+        // show the button when the user scrolls past a certain point
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 700) {
+                $('#scroll-to-bottom').fadeIn();
+            } else {
+                $('#scroll-to-bottom').fadeOut();
+            }
+        });
+        
+        // scroll to the bottom of the page when the button is clicked
+        $('#scroll-to-bottom').click(function() {
+            $('html, body').animate({
+                scrollTop: $(document).height(),
+            }, 'slow', function() {
+                $('#scroll-to-bottom').fadeOut();
+            });
+            return false;
+        });
+
+        // show preview image
+        $("#imageInput").change(function() {
+			previewImage(this);
+        });
+
+
+        $(document).on('click', '.editcontent', function(){
+                    console.log("Clicked on")
+                    $('.ui-helper-hidden-accessible').remove();
+                    $('.editcontent').css({
+                        "border": "2px solid white",
+                        "border-radius": "5px"
+                        // "padding": "20px",
+            
+                    });
+
+                    $(this).css({
+                        "border": "2px solid dodgerblue",
+                        "border-radius": "5px"
+    
+                        // "padding": "20px",
+                    });
+
+                });
            
         })
     </script>
