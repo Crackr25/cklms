@@ -323,7 +323,7 @@ class ViewBookController extends Controller
             //             ]);
             
             
-            $item->tilte = DB::table('chapters')->where('id',$item->chapterid)->value('title');
+            $item->chapter = DB::table('chapters')->where('id',$item->chapterid)->value('title');
 
 
             if(empty($item->coverage)){
@@ -340,8 +340,40 @@ class ViewBookController extends Controller
 
 
     return view('teacher.quiz.viewquiz')
-            ->with('quizzes', $quiz);
+            ->with('quizzes', $quiz)
+            ->with('classroomid', $classroomid);
     }
+
+    public function getActiveQuiz(Request $request)
+    {
+        $quiz = DB::table('chapterquizsched')
+                ->where('chapterquizsched.deleted', 0)
+                ->where('classroomid', $request->get('classroomid'))
+                ->join('lesssonquiz',function($join){
+                                    $join->on('chapterquizsched.chapterquizid','=','lesssonquiz.id');
+                                })
+                ->select(
+                                    'lesssonquiz.title',
+                                    'lesssonquiz.id',
+                                    'datefrom',
+                                    'timefrom',
+                                    'dateto',
+                                    'timeto',
+                                    'noofattempts',
+                                    'chapterquizsched.createddatetime'
+                        )
+                ->get();
+
+
+        foreach($quiz as $item){
+            $item->search = $item->datefrom.' '.$item->timefrom.', '.$item->dateto.' '.$item->timeto.' '.$item->title;
+        }
+        
+        return $quiz;
+    }
+
+
+
 
 
     public function chaptertestavailability(Request $request)
@@ -376,16 +408,17 @@ class ViewBookController extends Controller
 
             DB::table('chapterquizsched')
                 ->insertGetId([
-                    'chapterquizid'         => $request->get('chaptertestid'),
-                    'classroomid'           => $request->get('classroomid'),
-                    'datefrom'              => $request->get('datestart'),
-                    'timefrom'              => $request->get('timestart'),
-                    'dateto'                => $request->get('dateend'),
-                    'timeto'                => $request->get('timeend'),
-                    'noofattempts'          => $request->get('noofattempts'),
+                    'chapterquizid'         => $request->get('quizId'),
+                    'classroomid'           => $request->get('classroomId'),
+                    'datefrom'              => $request->get('dateFrom'),
+                    'timefrom'              => $request->get('timeFrom'),
+                    'dateto'                => $request->get('dateTo'),
+                    'timeto'                => $request->get('timeTo'),
+                    'noofattempts'          => $request->get('attempts'),
                     'createdby'             => auth()->user()->id,
                     'createddatetime'       => \Carbon\Carbon::now('Asia/Manila')
                 ]);
+
 
             // $schedinfo = Db::table('chapterquizsched')
             //     ->where('id', $schedid)
@@ -401,6 +434,8 @@ class ViewBookController extends Controller
         // }else{
 
         // }
+
+        return 1;
 
 
     }

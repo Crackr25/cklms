@@ -29,46 +29,28 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <span>Active Quiz</span>
                         <div>
-                            <button class="btn btn-sm btn-default mr-2" type="button" data-toggle="collapse" data-target="#quizTable2" aria-expanded="false" aria-controls="quizTable2"><i class="fa fa-plus text-white"></i></button>
-                            <button class="btn btn-sm btn-default">Refresh</button>
+                            {{-- <button class="btn btn-sm btn-default mr-2" type="button" data-toggle="collapse" data-target="#quizTable2" aria-expanded="false" aria-controls="quizTable2"><i class="fa fa-plus text-white"></i></button> --}}
+                            <button class="btn btn-sm btn-default refresh_table">Refresh</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="card-body">
-                    <div class="collapse" id="quizTable2">
-                        <table id="quizDataTable2" class="table table-bordered">
+                    <div id="quizTable2">
+                        <table id="quizDataTable2" class="table table-bordered" style="width:100%">
                             <thead>
                                 <tr>
-                                    <th>Chapter</th>
-                                    <th>Lesson</th>
-                                    <th>Title</th>
-                                    <th>Description</th>
+                                    <th>Quiz Title</th>
+                                    <th>Date start</th>
+                                    <th>Time start</th>
+                                    <th>Date end</th>
+                                    <th>Time end</th>
+                                    <th>Attempts</th>
+                                    <th>Activated on</th>
                                     <th>Response</th>
-
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>Chapter 1</td>
-                                    <td>Lesson 1</td>
-                                    <td>Description 1</td>
-                                </tr>
-                                <tr>
-                                    <td>Chapter 1</td>
-                                    <td>Lesson 2</td>
-                                    <td>Description 2</td>
-                                </tr>
-                                <tr>
-                                    <td>Chapter 2</td>
-                                    <td>Lesson 1</td>
-                                    <td>Description 3</td>
-                                </tr>
-                                <tr>
-                                    <td>Chapter 2</td>
-                                    <td>Lesson 2</td>
-                                    <td>Description 4</td>
-                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -78,7 +60,7 @@
     </div>
 </div>
 
-<div class="container-fluid">
+<div class="container-fluid classroom" data-id="{{$classroomid}}">
     <div class="row justify-content-center">
         <div class="col-md-10">
             <div class="card">
@@ -87,7 +69,6 @@
                         <span>Quiz Table</span>
                         <div>
                             <button class="btn btn-sm btn-default mr-2" type="button" data-toggle="collapse" data-target="#quizTable" aria-expanded="false" aria-controls="quizTable"><i class="fa fa-plus"></i></button>
-                            <button class="btn btn-sm btn-default">Refresh</button>
                         </div>
                     </div>
                 </div>
@@ -107,12 +88,12 @@
                             <tbody>
                             @foreach ($quizzes as $quiz)
                             <tr>
-                                <td>{{ $quiz->title}}</td>
+                                <td>{{ $quiz->chapter}}</td>
                                 <td>{{ $quiz->coverage }}</td>
                                 <td>{{ $quiz->title }}</td>
                                 <td>{{ strip_tags($quiz->description) }}</td>
                                 <td>
-                                    <button type="button" class="btn btn-success" data-id="{{$quiz->id}}" data-toggle="modal" data-target="#activateQuizModal">
+                                    <button type="button" class="btn btn-success modal_activate" data-id="{{$quiz->id}}" data-toggle="modal" data-target="#activateQuizModal">
                                         Activate
                                     </button>
                                 </td>
@@ -195,7 +176,23 @@
 @endpush --}}
 
 <script>
+
+    const Toast = Swal.mixin({
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 3000
+        });
+
+
+        var activequiz;
+
+
+
     $(document).ready(function() {
+
+
+        getactivequiz()
 
         // target the modal element
         var myModal = $('#activateQuizModal');
@@ -210,13 +207,14 @@
         $('#attempts').val('');
         });
 
-        var quizId = $("button[data-target='#activateQuizModal']").data("id");
 
         // Set the data-id attribute of the second button when it is clicked
         $("button[type='submit']").click(function(event) {
 
             event.preventDefault();
-            $(this).attr("data-id", quizId);
+            var quizid = $(this).attr('data-id');
+
+            var classroomId = $('.container-fluid.classroom').data('id');
 
             var dateFrom = $('#date-from').val();
             var timeFrom = $('#time-from').val();
@@ -234,8 +232,185 @@
                 return;
             }
             // if the form inputs are valid, submit the form
-            console.log(dateFrom);
+            $.ajax({
+					type:'GET',
+					url: '/viewbookchaptertestavailability',
+                    data:{
+
+                        dateFrom : dateFrom,
+                        timeFrom : timeFrom,
+                        dateTo   : dateTo,
+                        timeTo   : timeTo,
+                        attempts : attempts,
+                        quizId   : quizid,
+                        classroomId : classroomId
+                    },
+                    success:function(data) {
+                        if(data ==1){
+                            $('.close').click();
+                            Toast.fire({
+                                    type: 'success',
+                                    title: 'Added successfully!'
+                                })
+
+                            getactivequiz()
+                        }
+                    
+                    }
+
+                    })
         });
+
+        $(document).on('click','.modal_activate',function(){
+            var quizid = $(this).attr('data-id');
+            $('.activate').attr('data-id', quizid)
+
+        })
+
+
+        
+        $(document).on('click','.refresh_table',function(){
+                console.log("Refreshed")
+                getactivequiz()
+        })
+
+        function getactivequiz(){
+
+            var classroomid = $('.container-fluid.classroom').data('id');     
+            
+            $.ajax({
+                    type:'GET',
+                    url: '/getactivequiz',
+                            data:{
+                                classroomid: classroomid
+                            },
+
+                    success:function(data) {
+                        activequiz = data
+                        console.log(activequiz);
+                        loaddatatable()
+                    }
+                })
+
+
+
+
+        }
+
+
+
+        function loaddatatable(){
+
+
+                            $("#quizDataTable2").DataTable({
+                                        destroy: true,
+                                        data:activequiz,
+                                        order: [[0, 'asc']],
+                                        lengthChange: false,
+                                        responsive: true,
+                                        ordering: false,
+                                        columns: [
+                                            { "data": null},
+                                            { "data": null},
+                                            { "data": null},
+                                            { "data": null},
+                                            { "data": null},
+                                            { "data": null},
+                                            { "data": null},
+                                            { "data": "search"}
+                                        ],
+
+                                        columnDefs: [
+                                                        {
+                                            'targets': 0,
+                                            'orderable': false, 
+                                            'createdCell':  function (td, cellData, rowData, row, col) {
+                                                                    var text = '<a class="mb-0">'+rowData.title+'</a>'
+                                                                    $(td)[0].innerHTML =  text
+                                                                    
+                                            }
+                                                    },
+                                                        {
+                                            'targets': 1,
+                                            'orderable': false, 
+                                            'createdCell':  function (td, cellData, rowData, row, col) {
+
+                                                                    var date2 =  new Date(Date.parse(rowData.datefrom));
+                                                                    var markdate = date2.toLocaleDateString("en-US", {month: "long", year: "numeric", day: "numeric"});
+                                                                    var text = '<a class="mb-0">'+markdate+'</a>'
+                                                                    $(td)[0].innerHTML =  text
+                                                                    
+                                            }
+                                                    },
+                                                        {
+                                            'targets': 2,
+                                            'orderable': false, 
+                                            'createdCell':  function (td, cellData, rowData, row, col) {
+                                                                    
+                                                                    var date2 =  new Date(Date.parse( '1970-01-01T' + rowData.timefrom));
+                                                                    const timeString = date2.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit"});
+                                                                    var text = '<a class="mb-0">'+timeString+'</a>';
+                                                                    $(td)[0].innerHTML = text;
+                                            }
+                                                    },
+                                                        {
+                                            'targets': 3,
+                                            'orderable': false, 
+                                            'createdCell':  function (td, cellData, rowData, row, col) {
+
+                                                                    var date2 =  new Date(Date.parse(rowData.dateto));
+                                                                    var markdate = date2.toLocaleDateString("en-US", {month: "long", year: "numeric", day: "numeric"});
+                                                                    var text = '<a class="mb-0">'+markdate+'</a>'
+                                                                    $(td)[0].innerHTML =  text
+                                            }
+                                                    },
+                                                        {
+                                            'targets': 4,
+                                            'orderable': false, 
+                                            'createdCell':  function (td, cellData, rowData, row, col) {
+
+                                                                    var date2 =  new Date(Date.parse( '1970-01-01T' + rowData.timeto));
+                                                                    const timeString = date2.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit"});
+                                                                    var text = '<a class="mb-0">'+timeString+'</a>'
+                                                                    $(td)[0].innerHTML =  text
+                                            }
+                                                    },
+                                                        {
+                                            'targets': 5,
+                                            'orderable': false, 
+                                            'createdCell':  function (td, cellData, rowData, row, col) {
+                                                                    var text = '<a class="mb-0">'+rowData.noofattempts+'</a>'
+                                                                    $(td)[0].innerHTML =  text
+                                            }
+                                                    },
+                                        {
+                                            'targets': 6,
+                                            'orderable': false, 
+                                            'createdCell':  function (td, cellData, rowData, row, col) {
+
+                                                                    var date2 = new Date(Date.parse(rowData.createddatetime));
+                                                                    const dateString = date2.toLocaleDateString("en-US", { year: "numeric", month: "2-digit", day: "2-digit" });
+                                                                    const timeString = date2.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit", second: "2-digit" });
+                                                                    var text = '<a class="mb-0">'+ dateString + ' ' + timeString +'</a>'
+                                                                    $(td)[0].innerHTML =  text
+                                            }
+                                                    },
+                                                        {
+                                            'targets': 7,
+                                            'orderable': false, 
+                                            'createdCell':  function (td, cellData, rowData, row, col) {
+                                                var buttons = '<a href="#" class="response ml-4 text-blue-500" data-id="'+rowData.id+'">View response('+rowData.id+')</a>';
+                                                $(td)[0].innerHTML =  buttons
+                                                $(td).addClass('text-center')
+                                                                    $(td).addClass('align-middle')
+                                            }
+                                                    },
+
+                                    ]                                                      
+                            });
+
+                    
+                    }
 
 
     });

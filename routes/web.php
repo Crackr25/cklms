@@ -254,7 +254,8 @@ Route::middleware(['auth', 'isTeacher','isDefaultPass'])->group(function () {
     Route::get('/teacherclassrooms', 'Teacher\ClassroomController@index');   
     Route::get('/teacherclassroom/create', 'Teacher\ClassroomController@create');   
     Route::get('/teachergetavailablecode', 'Teacher\ClassroomController@getavailablecode');    
-      
+
+
     Route::get('/teacherbooks/{id}', 'Teacher\BookController@index');      
     Route::get('/teacherviewbook/{id}', 'Teacher\BookController@viewbook');  
     Route::get('/teachermessages', 'Teacher\BookController@messages');   
@@ -333,6 +334,7 @@ Route::group(['middleware' => ['auth', 'web']], function() {
     Route::get('/viewbook/{ids}', 'GlobalController\ViewBookController@viewbook');     
 
     Route::get('/viewbookchaptertestavailability', 'GlobalController\ViewBookController@chaptertestavailability');
+    Route::get('/getactivequiz', 'GlobalController\ViewBookController@getActiveQuiz');
     Route::get('/globalsetting/profileview', 'GlobalController\UserProfileController@profileview');   
     
     Route::get('/videoconference/start','GlobalController\VideoConferenceController@startcall');
