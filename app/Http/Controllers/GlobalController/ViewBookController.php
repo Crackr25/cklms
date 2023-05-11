@@ -397,17 +397,17 @@ class ViewBookController extends Controller
         // $dateto = date('Y-m-d', strtotime($datetimeto[0]));
         // $timeto = date('H:i:s', strtotime($datetimeto[1].' '.$datetimeto[2])); 
 
-        // $checkifexists = DB::table('chapterquizsched')
-        //     ->where('chapterquizid', $chaptertestid)
-        //     ->where('classroomid', $classroomid)
-        //     ->where('deleted','0')
-        //     ->get();
+        $checkifexists = DB::table('chapterquizsched')
+            ->where('chapterquizid', $request->get('quizId'))
+            ->where('classroomid', $request->get('classroomId'))
+            ->where('deleted','0')
+            ->get();
 
-        // if(count($checkifexists) == 0)
-        // {
+        if(count($checkifexists) == 0)
+        {
 
             DB::table('chapterquizsched')
-                ->insertGetId([
+                ->insert([
                     'chapterquizid'         => $request->get('quizId'),
                     'classroomid'           => $request->get('classroomId'),
                     'datefrom'              => $request->get('dateFrom'),
@@ -418,6 +418,29 @@ class ViewBookController extends Controller
                     'createdby'             => auth()->user()->id,
                     'createddatetime'       => \Carbon\Carbon::now('Asia/Manila')
                 ]);
+
+                return 1;
+
+        }else{
+
+            DB::table('chapterquizsched')
+                        ->where('id', $checkifexists[0]->id)
+                        ->update([
+                            'chapterquizid'         => $request->get('quizId'),
+                            'classroomid'           => $request->get('classroomId'),
+                            'datefrom'              => $request->get('dateFrom'),
+                            'timefrom'              => $request->get('timeFrom'),
+                            'dateto'                => $request->get('dateTo'),
+                            'timeto'                => $request->get('timeTo'),
+                            'noofattempts'          => $request->get('attempts'),
+                            'updateddatetime'       => \Carbon\Carbon::now('Asia/Manila')
+                        ]);
+
+
+            return 0;
+
+
+        }
 
 
             // $schedinfo = Db::table('chapterquizsched')
@@ -435,7 +458,7 @@ class ViewBookController extends Controller
 
         // }
 
-        return 1;
+        
 
 
     }

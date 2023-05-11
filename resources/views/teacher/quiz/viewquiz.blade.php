@@ -255,6 +255,16 @@
 
                             getactivequiz()
                         }
+
+                        if(data ==0){
+                            $('.close').click();
+                            Toast.fire({
+                                    type: 'success',
+                                    title: 'The quiz has been reactivated successfully!'
+                                })
+
+                            getactivequiz()
+                        }
                     
                     }
 

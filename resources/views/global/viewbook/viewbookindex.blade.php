@@ -531,7 +531,33 @@
                         loadData();
 
 
-                }   
+                }  
+                
+                function loadQuizContentattempt(){
+
+
+                    $('#lesson_content_holder').css('background-image', 'none');
+
+                    async function loadData() {
+                            try {
+                                const data = await $.ajax({
+                                url: '/studentQuizContentattempt/' + selectedQuiz + '/' + '{{$classroomid}}' + '/',
+                                data: {recordid : recordid},
+                                type: 'GET'
+                            });
+
+                                $('#contentdesktopview').remove();
+                                $('#lesson_content_holder').empty()
+                                $('#lesson_content_holder').prepend(data);
+                            } catch (error) {
+                                console.log(error);
+                            }
+                        }
+
+                        loadData();
+
+
+                } 
 
                 $(document).on('click','#retakeQuiz',function(){
                         $.ajax({
@@ -659,6 +685,37 @@
             $(document).on('click','.uk-close',function(){
                 $('#submit_classsched').text( 'Create Quiz Schedule')
             })
+
+
+            var recordid;
+            $(document).on('click','#btn-attemptquiz',function(){
+                console.log("Hi car");
+
+                console.log("selectedQuiz: ", selectedQuiz )
+                console.log("classroomid: ",'{{$classroomid}}' )
+
+                $.ajax({
+                        url: '/attempt-quiz',
+                        type: 'get',
+                        data: {
+
+                            quizid: selectedQuiz,
+                            classroomid: '{{$classroomid}}'
+
+                        },
+                        success:function(data) {
+
+                            recordid = data;
+                            loadQuizContentattempt();
+
+                        }
+                    })
+    
+
+                
+            });
+
+            
 
             $(document).on('click','#submit_classsched',function(){
 
@@ -909,6 +966,219 @@
                 });
            
         })
+    </script>
+
+    <script>
+
+    $(document).ready(function(){
+
+                console.log("hello world")
+
+                var STUDENT_ID = 2;
+
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: 'top-end',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                    }
+                });
+
+                    function previewImage(input) {
+                        if (input.files && input.files[0]) {
+                            var reader = new FileReader();
+                            reader.onload = function (e) {
+                                $('#preview').attr('src', e.target.result);
+                                $('#preview').show();
+                            }
+                            reader.readAsDataURL(input.files[0]);
+                        }
+                    }
+
+                function autoSaveAnswer(thisElement) {
+                    // Get the answer data
+                    var quizId = $('#quiz-info').data('quizid');
+                    var roomid = $('#roomid').data('roomid');
+                    var answer = $(thisElement).val();
+                    var questionId = $(thisElement).data('question-id');
+
+
+                    
+
+                    console.log(`student answer: ${answer}, question-id: ${questionId}, student-id: ${STUDENT_ID}`)
+
+                    // Send an AJAX request to save the answer data
+                    // $.ajax({
+                    //     url: '/save-answer',
+                    //     method: 'POST',
+                    //     data: {
+                    //     chapterquizid : quizId,
+                    //     answer: answer,
+                    //     question_id: questionId,
+
+                    //     },
+                    //     success: function(response) {
+                    //     Handle the response from the server if needed
+                    //     }
+                    // });
+                }
+
+                // drag and drop
+                $( ".drag-option" ).draggable({
+                    helper: "clone",
+                    revertDuration: 100,
+                    revert: 'invalid'
+                });
+
+                $( ".drop-option" ).droppable({
+                    drop: function(event, ui) {
+
+                        var dragElement = $(ui.draggable)
+                        var dropElement = $(this)
+
+                        dropElement.val(dragElement.text())
+                        dropElement.addClass('bg-primary text-white')
+                        dropElement.prop( "disabled", true );
+
+                        dragElement.removeClass('bg-primary')
+                        dragElement.addClass('bg-dark')
+
+                        // auto save answer
+                        autoSaveAnswer(dropElement)
+                    }
+                });
+
+        // select choice by clicking label
+        $("label").click(function() {
+            var radioBtnId = $(this).attr("for");
+            var inputElement = $(`input.answer-field[id='${radioBtnId}']`);
+
+            inputElement.prop("checked", true);
+            autoSaveAnswer(inputElement);
+        });
+
+        // auto save answer when switching to 
+        $(document).on('change', '.answer-field', function(){
+            autoSaveAnswer(this);
+        });
+
+        // save all answers quiz
+
+        $('#save-quiz').on('click', function() {
+            var isvalid = true
+
+            $('.answer-field').each(function() {
+                $(this).removeClass('error-input')
+                $(this).removeClass('is-invalid')
+
+                if ($(this).val() == "" ) {
+                    
+                    if ($(this).prop("disabled")) {
+                        $(this).prop('disabled', false);
+                        $(this).focus();
+                        $(this).prop('disabled', true);
+                    } else {
+                        $(this).focus();
+                    }
+                    
+                    
+                    $(this).addClass('error-input')
+                    isvalid = false
+                }
+
+                if ($(this).is(":radio")) {
+                    
+                    if (!$("input[name='" + $(this).attr("name") + "']:checked").length) {
+
+                        $(this).focus();
+                        $(this).addClass('is-invalid')
+
+                        isValid = false;
+                    }
+                }
+
+            })
+
+            if (isvalid) {
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Quiz submitted successfully.'
+                })
+                // set quiz status as finished
+                // disable retake of quiz
+                // show quiz complete form
+            } else {
+                // Swal.fire({
+                //     // template: '#my-template'
+                //     titleText: 'Unanswered items detected!',
+                //     html: '<p class="text-center" style="font-size:1rem;">Are you sure you want to continue and submit the quiz?</p>',
+                //     icon: 'error',
+                //     showCancelButton: true,
+                //     confirmButtonColor: '#3085d6',
+                //     cancelButtonColor: '#d33',
+                //     confirmButtonText: 'Save'
+                // })
+                // .then((result) => {
+                //     if (result.value) {
+                //         event.preventDefault();
+                //         Toast.fire({
+                //             icon: 'success',
+                //             title: 'Quiz w/ unanswered items submitted successfully.'
+                //         })
+                //     }
+                // })
+            }
+        })
+
+        // show the button when the user scrolls past a certain point
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 700) {
+                $('#scroll-to-bottom').fadeIn();
+            } else {
+                $('#scroll-to-bottom').fadeOut();
+            }
+        });
+        
+        // scroll to the bottom of the page when the button is clicked
+        $('#scroll-to-bottom').click(function() {
+            $('html, body').animate({
+                scrollTop: $(document).height(),
+            }, 'slow', function() {
+                $('#scroll-to-bottom').fadeOut();
+            });
+            return false;
+        });
+
+        // show preview image
+
+        $(document).on('change', '#imageInput', function(){
+			previewImage(this);
+        });
+
+
+
+        $(document).on('click', '.editcontent', function(){
+                    $('.ui-helper-hidden-accessible').remove();
+                    $('.editcontent').css({
+                        "border": "2px solid white",
+                        "border-radius": "5px"
+                        // "padding": "20px",
+            
+                    });
+
+                    $(this).css({
+                        "border": "2px solid dodgerblue",
+                        "border-radius": "5px"
+    
+                        // "padding": "20px",
+                    });
+
+                });
+    })
     </script>
 
     <!-- For Night mode -->

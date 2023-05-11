@@ -301,6 +301,8 @@ Route::middleware(['auth', 'isStudent','isDefaultPass'])->group(function () {
     Route::get('/chaptertesttakethetest','GlobalController\ViewBookController@takethetest');
     Route::post('/chaptertestsubmitanswers','Student\StudentBookController@submitanswers');
     Route::get('/retakeQuiz/{id}','Student\StudentBookController@retakeQuiz');
+    Route::get('/attempt-quiz','Student\StudentBookController@attemptQuiz');
+
 
     Route::get('/studentfeed','Student\StudentClassroomController@studentfeed');
     Route::get('/studentclassmates','Student\StudentClassroomController@studentclassmates');
@@ -308,6 +310,7 @@ Route::middleware(['auth', 'isStudent','isDefaultPass'])->group(function () {
     Route::get('/checkForNewComments','Student\StudentClassroomController@checkForNewComments');
 
     Route::get('/studentQuizContent/{id}/{classroomid}', 'Student\StudentBookController@studentQuizContent');
+    Route::get('/studentQuizContentattempt/{id}/{classroomid}', 'Student\StudentBookController@studentQuizContentattempt');
 });
   
 
