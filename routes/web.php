@@ -137,6 +137,8 @@ Route::middleware(['auth', 'isAdministrator','isDefaultPass'])->group(function (
     Route::get('/adminviewbook/addpart', 'Admin\BookController@addpart');  
     Route::get('/adminviewbook/addchapter', 'Admin\BookController@addchapter');  
     Route::get('/adminviewbook/addlesson', 'Admin\BookController@addlesson');  
+    
+    //admin create quiz
     Route::get('/adminviewbook/addquiz/{id}', 'Admin\BookController@addquiz');
     Route::get('/adminviewbook/createquiz', 'Admin\BookController@createquiz'); 
     Route::get('/adminviewbook/getquizlist', 'Admin\BookController@getquiz');  
@@ -149,6 +151,12 @@ Route::middleware(['auth', 'isAdministrator','isDefaultPass'])->group(function (
     Route::get('/adminviewbook/delcoverage', 'Admin\BookController@delcoverage');
     Route::get('/adminviewbook/createdragoption', 'Admin\BookController@createdragoption');
     Route::get('/adminviewbook/createdropquestion', 'Admin\BookController@createdropquestion');
+    
+    //Answer Key
+    Route::get('/adminviewbook/getquestion', 'Admin\BookController@getquestion');
+    Route::get('/adminviewbook/save-answer-key', 'Admin\BookController@setAnswerKey');
+    Route::get('/adminviewbook/returneditquiz', 'Admin\BookController@returneditquiz');
+    
 
     
     
@@ -302,6 +310,7 @@ Route::middleware(['auth', 'isStudent','isDefaultPass'])->group(function () {
     Route::post('/chaptertestsubmitanswers','Student\StudentBookController@submitanswers');
     Route::get('/retakeQuiz/{id}','Student\StudentBookController@retakeQuiz');
     Route::get('/attempt-quiz','Student\StudentBookController@attemptQuiz');
+    Route::get('/save-answer','Student\StudentBookController@saveAnswer');
 
 
     Route::get('/studentfeed','Student\StudentClassroomController@studentfeed');

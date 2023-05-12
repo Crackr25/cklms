@@ -370,4 +370,49 @@ class StudentBookController extends Controller
 
     }
 
+
+    public function saveAnswer(Request $request){
+
+        $checkIfexist =  DB::table('chapterquizrecordsdetail')
+            ->where('headerid',$request->get('headerId'))
+            ->where('questionid',$request->get('question_id'))
+            ->count();
+
+
+        if ($checkIfexist == 0) {
+                $data = [
+                    'headerid' => $request->get('headerId'),
+                    'questionid' => $request->get('question_id'),
+                    'typeofquestion' => $request->get('questionType'),
+                ];
+
+                if ($request->get('questionType') != 1) {
+                    $data['stringanswer'] = $request->get('answer');
+                } else {
+                    $data['choiceid'] = $request->get('answer');
+                }
+
+                DB::table('chapterquizrecordsdetail')->insert($data);
+
+                return 1;
+        }else{
+
+                if ($request->get('questionType') != 1) {
+                    $data['stringanswer'] = $request->get('answer');
+                } else {
+                    $data['choiceid'] = $request->get('answer');
+                }
+
+                DB::table('chapterquizrecordsdetail')
+                ->where('headerid', $request->get('headerId'))
+                ->where('questionid',$request->get('question_id'))
+                ->update($data);
+
+                return 0;
+
+
+        }
+
+    }
+
 }

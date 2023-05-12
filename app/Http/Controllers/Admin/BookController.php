@@ -994,4 +994,74 @@ class BookController extends Controller
             return '0';
         }
     }
+
+
+    public function getquestion(Request $request)
+    {
+        $question = DB::table('lessonquizquestions')
+            ->where('id', $request->get('id'))
+            ->select('id','question')
+            ->where('deleted', 0)
+            ->first();
+
+        $question->choices = DB::table('lessonquizchoices')
+        ->where('questionid', $question->id)
+        ->select('id', 'questionid' , 'description')
+        ->orderBy('sortid')
+        ->get();
+
+        return response()->json($question);
+        
+    }
+
+
+    public function setAnswerKey(Request $request)
+    {
+        DB::table('lessonquizchoices')
+                ->where('questionid', $request->get('question_id'))
+                ->where('answer', 1)
+                ->update([
+                    'answer'   => '0'
+                ]);
+
+        
+        DB::table('lessonquizchoices')
+                ->where('id', $request->get('answer'))
+                ->where('questionid', $request->get('question_id'))
+                ->update([
+                    'answer'   => '1'
+                ]);
+
+    return 1;
+        
+    }
+
+    public function returneditquiz(Request $request)
+
+    {
+
+
+    $question = DB::table('lessonquizquestions')
+            ->where('id', $request->get('id'))
+            ->select('id','question')
+            ->where('deleted', 0)
+            ->first();
+
+    $question->choices = DB::table('lessonquizchoices')
+    ->where('questionid', $question->id)
+    ->select('id', 'questionid' , 'description' , 'answer')
+    ->orderBy('sortid')
+    ->get();
+
+    // foreach($question->choices as $item){
+    //     if($item->answer == 1){
+    //         $item->description.= '<span><i class="fa fa-check" style="color:rgb(7, 255, 7)" aria-hidden="true"></i></span>';
+    //     }
+    // }
+
+
+    return response()->json($question);
+    
+        
+    }
 }

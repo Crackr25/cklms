@@ -105,6 +105,16 @@
                 color: white;
             }
 
+            .col-12 .m-2 {
+                width:500px;
+            }
+
+            .selected {
+                background-color: green;
+            }
+
+
+
 
 
     </style>
@@ -187,15 +197,9 @@
                                                 @foreach($quizquestions as $question)
                                                 <div id={{$question->id}} class="row p-4 dragrow{{$question->id}}">
                                                     <div class="col-lg-1 col-2 rowhidden{{$question->id}} d-flex align-items-center">
-                                                        {{-- <div class="btn-group-vertical">
-                                                            <a class="btn btn-sm text-white gfg_tooltip delrow" id={{$question->id}} style="background-color: #3175c2; border: 3px solid #1d62b7;">
-                                                                <i class="fas fa-trash m-0"></i><span class="gfg_text">Delete</span>
-                                                            </a>
-                                                            <a class="btn btn-sm text-white gfg_tooltip newrow" style="background-color: #3175c2; border: 3px solid #1d62b7;">
-                                                                <i class="fas fa-plus m-0"></i><span class="gfg_text">Add Question</span>
-                                                            </a>
-                                                        </div> --}}
                                                     </div>
+
+
                                                     {{-- Multiple choice --}}
                                                     @if($question->typeofquiz == 1)
                                                     <div id={{$question->id}} class="col-lg-11 col-10 editcontent col-content">
@@ -229,11 +233,19 @@
                                                                             @if(count($quizchoices) > 0)
                                                                             @foreach($quizchoices as $choice)
                                                                             <input class="form-check-input ml-2" type="radio" name="option1" value="1">
-                                                                            <label class="form-check-label ml-5 option{{$question->id}}" id="option{{$question->id}}" contenteditable="true">{{$choice->description}}</label>
+                                                                            <label class="form-check-label ml-5 option{{$question->id}}" id="option{{$question->id}}" contenteditable="true">{{$choice->description}} 
+                                                                                @if($choice->answer==1)
+                                                                                    <span><i class="fa fa-check" style="color:rgb(7, 255, 7)" aria-hidden="true"></i></span>
+                                                                                @endif
+                                                                            </label>
+                                                                            
                                                                             @endforeach
                                                                             @endif
                                                                         </div>
                                                                     <button class="form-control addoption" style="margin: 20px; " id="{{$question->id}}">Add option</button>
+                                                                    <div class="col-12">
+                                                                        <button class="btn btn-link btn-sm answer-key" id="{{$question->id}}">Answer key</button>
+                                                                    </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -474,10 +486,10 @@
 
             // drag and drop
         $( ".drag-option" ).draggable({
-            helper: "clone",
-            revertDuration: 100,
-            revert: 'invalid'
-        });
+                    helper: "clone",
+                    revertDuration: 100,
+                    revert: 'invalid'
+                });
 
         $( ".drop-option" ).droppable({
             drop: function(event, ui) {
@@ -489,8 +501,14 @@
                 dropElement.addClass('bg-primary text-white')
                 dropElement.prop( "disabled", true );
 
+                dragElement.removeClass('bg-primary')
+                dragElement.addClass('bg-dark')
+
+                // auto save answer
+                // autoSaveAnswer(dropElement)
             }
-        });
+
+            });
 
             $('.instruction').summernote({
                                 height: 200,
@@ -517,59 +535,63 @@
                                 console.log("Question: ", textareaValue);
                                 console.log("Quiztype: ", last_quiz_type);
                                 
-
-                                $.ajax({
-                                    type: "get",
-                                    dataType: 'json',
-                                    url: "/adminviewbook/createquestion",
-                                    data: { 
-                                        question : textareaValue,
-                                        typeofquiz : 1,
-                                        id: last_id
-                                            },
-                                    success: function(response) {
-                                    
-                                        Toast.fire({
-                                            icon: 'success',
-                                            title: 'All the changes have been saved'
-                                        })
-
-                                        console.log("Question Succesfully save!");
+                                // the textarea has some text
+                                if (textareaValue.length != 0) {
+                                
+                                    $.ajax({
+                                        type: "get",
+                                        dataType: 'json',
+                                        url: "/adminviewbook/createquestion",
+                                        data: { 
+                                            question : textareaValue,
+                                            typeofquiz : 1,
+                                            id: last_id
+                                                },
+                                        success: function(response) {
                                         
-                                    },
-                                    error: function(xhr) {
-                                        // Handle error here
-                                    }
-                                });
-                                var i = 1;
-                                $('.option' + last_id).each(function() {
-                                        // Get the value of the current label element using its id attribute
-                                        const value = $(this).text();
+                                            Toast.fire({
+                                                icon: 'success',
+                                                title: 'All the changes have been saved'
+                                            })
 
-                                        console.log(i);
-                                        
-                                        $.ajax({
-                                            type: "get",
-                                            dataType: 'json',
-                                            url: "/adminviewbook/createchoices",
-                                            data: { 
-                                                questionid : last_id,
-                                                sortid: i,
-                                                description : value
-                                                    },
-                                            success: function(response) {
+                                            console.log("Question Succesfully save!");
+                                            
+                                        },
+                                        error: function(xhr) {
+                                            // Handle error here
+                                        }
+                                    });
+                                    var i = 1;
+                                    $('.option' + last_id).each(function() {
+                                            // Get the value of the current label element using its id attribute
+                                            const value = $(this).text();
 
-                                                console.log("Choices Succesfully save!");
-                                                
-                                            },
-                                            error: function(xhr) {
-                                                // Handle error here
-                                            }
-                                        });
+                                            console.log(i);
+                                            
+                                            $.ajax({
+                                                type: "get",
+                                                dataType: 'json',
+                                                url: "/adminviewbook/createchoices",
+                                                data: { 
+                                                    questionid : last_id,
+                                                    sortid: i,
+                                                    description : value
+                                                        },
+                                                success: function(response) {
 
-                                        i+=1;
+                                                    console.log("Choices Succesfully save!");
+                                                    
+                                                },
+                                                error: function(xhr) {
+                                                    // Handle error here
+                                                }
+                                            });
 
-                                        });
+                                            i+=1;
+
+                                            });
+
+                                }
 
 
                                 
@@ -1245,8 +1267,173 @@
                             }
                         })
 
+                        
+                    // Add click event listener to answer key button
+                    $('.answer-key').click(function() {
 
+                        var parentId = $(this).attr('id');
+
+
+                        console.log(parentId)
+
+                        $.ajax({
+                                    type: "get",
+                                    dataType: 'json',
+                                    url: "/adminviewbook/getquestion",
+                                    data: { 
+                                        id: parentId
+                                
+                                            },
+                                    success: function(response) {
+                                            console.log(response);
+
+                                            $('#quiztype' + parentId).prop('disabled', true);
+
+
+                                            var html = `<div class="row">
+                                                            <div class="col-12 m-2">
+                                                                <label>1. ${response.question}</label>`;
+
+                                            response.choices.forEach(function(item) {
+                                                html += `<div class="form-check mt-2">
+                                                            <input data-question-type="${item.typeofquiz}" data-question-id="${response.id}" id="${item.id}" class="answer-field form-check-input" type="radio" name="${response.id}" value="${item.id}">
+                                                            <label for="${item.id}" class="form-check-label itemchoices">
+                                                                ${item.description}
+                                                            </label>
+                                                        </div>`;
+                                            });
+
+                                            html += `</div><div class="col-12 p-3 text-end">
+                                                                        <button class="btn btn-primary btn-sm answerdone" id="${response.id}">Done</button>
+                                                                    </div></div>`;
+
+                                            $('#quiztioncontent' + parentId).empty().append(html);
+                                        },
+                                    error: function(xhr) {
+                                        console.log("Error");
+                                        // Handle error here
+                                    }
+                            });
+
+                        
+
+
+
+
+                        })
+
+                        $(document).on('click', '.answerdone', function(){
+
+                            var id = $(this).attr("id");
+                            console.log(id);
+
+
+                            $.ajax({
+                                    type: "get",
+                                    dataType: 'json',
+                                    url: "/adminviewbook/returneditquiz",
+                                    data: { 
+                                        id: id
+                                
+                                            },
+                                    success: function(response) {
+                                            console.log(response);
+
+                                            $('#quiztype' + id).prop('disabled', false);
+
+
+                                            var html = `<div class="row">
+                                                            <div class="col-12 m-2">
+                                                                <textarea class="form-control" placeholder="Untitled question" id="multiplechoice${response.id}" > ${response.question}</textarea>`;
+
+                                            response.choices.forEach(function(item) {
+                                                html += `<div class="col-12">
+                                                <input class="form-check-input ml-2" type="radio" name="option${response.id}" value="${item.id}">
+                                                <label class="form-check-label ml-5 option${response.id}" id="option${response.id}" contenteditable="true">
+                                                ${item.description}`;
+                                                
+                                                if(item.answer == 1){
+                                                    html +=`<span class= "ml-2"><i class="fa fa-check" style="color:rgb(7, 255, 7)" aria-hidden="true"></i></span>`;
+                                                }
+                                                
+                                                
+                                                html += `</label>
+                                                </div>`;
+                                            });
+
+
+                                            
+
+                                            html += `<button class="form-control addoption" style="margin: 20px; " id="${response.id}">Add option</button>`;
+
+                                            $('#quiztioncontent' + id).empty().append(html);
+                                        },
+                                    error: function(xhr) {
+                                        console.log("Error");
+                                        // Handle error here
+                                    }
+                            });
+
+
+
+                        });
+
+
+
+                        $(document).on('click', '.itemchoices', function(){
+                            var radioBtnId = $(this).attr("for");
+                            var inputElement = $(`input.answer-field[id='${radioBtnId}']`);
+
+                            inputElement.prop("checked", true);
+                            autoSaveAnswer(inputElement);
+
+                            $('.form-check-label').css({
+                                "background": "white",
+                                "padding": "2px"
+            
+                            });
+
+                            $(this).css({
+                                "background-color": "rgba(0, 128, 0, 0.5)",
+                                "padding": "2px"
+            
+                                // "padding": "20px",
+                            });
+                        });
+
+    
+
+                        //auto save answer when switching to 
+                        $(document).on('change', '.answer-field', function(){
+                            autoSaveAnswer(this);
+                            
+
+                        });
+
+                        function autoSaveAnswer(thisElement) {
+                            var answer = $(thisElement).val();
+                            var questionId = $(thisElement).data('question-id');
+
+                            console.log(`student answer: ${answer}, question-id: ${questionId}`)
+
+                            $.ajax({
+                                url: '/adminviewbook/save-answer-key',
+                                method: 'GET',
+                                data: {
+                                answer: answer,
+                                question_id: questionId
+
+                                },
+                                success: function(response) {
+                                    console.log(response);
+                                
+                                    //Handle the response from the server if needed
+                                }
+                            });
+
+                        }
                     });
+
 
 
         </script>
