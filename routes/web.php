@@ -156,6 +156,7 @@ Route::middleware(['auth', 'isAdministrator','isDefaultPass'])->group(function (
     Route::get('/adminviewbook/getquestion', 'Admin\BookController@getquestion');
     Route::get('/adminviewbook/save-answer-key', 'Admin\BookController@setAnswerKey');
     Route::get('/adminviewbook/returneditquiz', 'Admin\BookController@returneditquiz');
+    Route::get('/adminviewbook/getdropquestion', 'Admin\BookController@getDropQuestion');
     
 
     

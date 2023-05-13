@@ -1014,6 +1014,38 @@ class BookController extends Controller
         
     }
 
+    public function getDropQuestion(Request $request)
+    {
+        $question = DB::table('lessonquizquestions')
+            ->where('id', $request->get('id'))
+            ->select('id','question')
+            ->where('deleted', 0)
+            ->first();
+
+        $question->drag = DB::table('lesson_quiz_drag_option')
+        ->where('questionid', $question->id)
+        ->select('id', 'description')
+        ->get();
+
+        $question->drop = DB::table('lesson_quiz_drop_question')
+        ->where('questionid', $question->id)
+        ->select('id', 'questionid' , 'question', 'sortid')
+        ->orderBy('sortid')
+        ->get();
+
+        foreach ($question->drop as $item){
+            $inputField = '<input class="d-inline form-control q-input drop-option q-input" data-question-id="'.$item->id.'" style="width: 200px; margin: 10px; border-color:black" type="text" disabled>';
+            $questionWithInput = str_replace('~input', $inputField, $item->question);
+
+            $item->question = $questionWithInput;
+
+
+        }
+        return response()->json($question);
+        
+    }
+
+
 
     public function setAnswerKey(Request $request)
     {

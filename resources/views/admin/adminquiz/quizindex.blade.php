@@ -390,24 +390,25 @@
                                                                                     ->get();
                                                                                 @endphp
                                                                                 @foreach($dropquestions as $item)
-                                                                                @php
-                                                                                    $inputField = '<input class="d-inline form-control q-input drop-option q-input" style="width: 200px; margin: 10px; border-color:black" type="text">';
+                                                                                {{-- @php
+                                                                                    $inputField = '<input class="d-inline form-control q-input drop-option q-input" style="width: 200px; margin: 10px; border-color:black" type="text" disabled>';
                                                                                     $questionWithInput = str_replace('~input', $inputField, $item->question);
-
-
-                                                                                @endphp
-                                                                                <p>
+                                                                                @endphp --}}
+                                                                                <input type="text" class="form-control drop'+parentId+'" style="margin-top: 10px; border: 2px solid dodgerblue; color: black;" placeholder="Item text" value = "{{$item->question}}">
+                                                                                {{-- <p>
 
                                                                                     {{$item->sortid}}. {!! $questionWithInput !!}
 
-                                                                                </p>
+                                                                                </p> --}}
                                                                                 {{-- <input type="text" class="form-control drop{{$question->id}}" style="margin-top: 10px; border: 2px solid dodgerblue; color: black;" placeholder="Item text &nbsp;{{ $item->sortid }}" value= "{{ $item->question}}"> --}}
                                                                                 @endforeach
                                                                             </div>
                                                                             <div class="row justify-content-end p-3 mt-2">
                                                                                 <button class="btn btn-success add_drag_question"  id="{{$question->id}}">Add drop question</button>
                                                                             </div>
-
+                                                                        <div class="col-12">
+                                                                            <button class="btn btn-link btn-sm answer-key-drag" id="{{$question->id}}">Answer key</button>
+                                                                        </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -1313,14 +1314,96 @@
                                         console.log("Error");
                                         // Handle error here
                                     }
+
+                                    });
                             });
+                        
+                        $('.answer-key-drag').click(function() {
+                            var parentId = $(this).attr('id');
+
+                            $.ajax({
+                                    type: "get",
+                                    dataType: 'json',
+                                    url: "/adminviewbook/getdropquestion",
+                                    data: { 
+                                        id: parentId
+                                
+                                            },
+                                    success: function(response) {
+                                            console.log(response);
+
+                                            $('#quiztype' + parentId).prop('disabled', true);
+
+                                            var html = `<div class="options p-3 mt-2" style="border:3px solid #3e416d;border-radius:6px;">`;
+                                            
+                                            
+
+                                            response.drag.forEach(function(item) {
+                                                html += `<div class="drag-option btn bg-primary text-white m-1" data-target="drag-1">${item.description}</div>`;
+                                            
+                                            });
+
+                                            html += `</div>`
+
+                                            response.drop.forEach(function(item) {
+                                                html += `<p class="ml-2">${item.sortid}. ${item.question} </p>`;
+                                            
+                                            });
+
+                                            
+
+                                            html += `</div><div class="col-12 p-3 text-end">
+                                                                        <button class="btn btn-primary btn-sm answerdonedrag" id="${response.id}">Done</button>
+                                                                    </div></div>`;
+
+                                            $('#quiztioncontent' + parentId).empty().append(html);
+
+
+                                            $( ".drag-option" ).draggable({
+                                                    helper: "clone",
+                                                    revertDuration: 100,
+                                                    revert: 'invalid'
+                                                });
+
+                                            $( ".drop-option" ).droppable({
+                                                drop: function(event, ui) {
+
+                                                var dragElement = $(ui.draggable)
+                                                var dropElement = $(this)
+
+                                                dropElement.val(dragElement.text())
+                                                dropElement.addClass('bg-primary text-white')
+                                                dropElement.prop( "disabled", true );
+
+                                                dragElement.removeClass('bg-primary')
+                                                dragElement.addClass('bg-dark')
+
+                                                console.log("Ambot what to say")
+
+
+                                                autoSaveAnswerdragandrop(dropElement)
+
+                                                // auto save answer
+                                                // autoSaveAnswer(dropElement)
+                                            }
+
+                                            });
+                                        },
+                                    error: function(xhr) {
+                                        console.log("Error");
+                                        // Handle error here
+                                    }
+                            })
+
+
+                            
+
+
+                        console.log(parentId)
 
                         
 
-
-
-
-                        })
+                        });
 
                         $(document).on('click', '.answerdone', function(){
 
@@ -1373,6 +1456,8 @@
                                         // Handle error here
                                     }
                             });
+
+                        
 
 
 
@@ -1430,6 +1515,30 @@
                                     //Handle the response from the server if needed
                                 }
                             });
+
+                        }
+
+
+                        function autoSaveAnswerdragandrop(thisElement) {
+                            var answer = $(thisElement).val();
+                            var questionId = $(thisElement).data('question-id');
+
+                            console.log(`student answer: ${answer}, question-id: ${questionId}`)
+
+                            // $.ajax({
+                            //     url: '/adminviewbook/save-answer-key',
+                            //     method: 'GET',
+                            //     data: {
+                            //     answer: answer,
+                            //     question_id: questionId
+
+                            //     },
+                            //     success: function(response) {
+                            //         console.log(response);
+                                
+                            //         //Handle the response from the server if needed
+                            //     }
+                            // });
 
                         }
                     });

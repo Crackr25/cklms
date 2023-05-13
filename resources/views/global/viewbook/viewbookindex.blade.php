@@ -763,6 +763,8 @@
 
             })
 
+        });
+
 
 
     //         // var data = {!! json_encode($quizQuestions ?? '') !!};
@@ -976,44 +978,6 @@
     // </script>
 
 
-    <!-- For Night mode -->
-    {{-- <script type="text/javascript">
-        SyntaxHighlighter.all()
-        
-        $(document).ready(function(){
-            $('.otherinfo').summernote({
-                airMode: true
-            });
-            $('.lessondescription').summernote({
-                airMode: true
-            });
-            $('.quizdescription').summernote({
-                airMode: true
-            });
-            $('.chapterarticle').hide();
-            $('.containerlessonsview').hide();
-            $(document).on('click','.vidlist-3 li', function(){
-                $('.containerlessonsview').hide();
-                $('ul#chapter-video-slider-'+$(this).attr('chapterid')).show()
-                $('.chapterarticle').hide();
-                $('#articlechapter'+$(this).attr('chapterid')).show();
-                $('#bookcontentsoverview').hide()
-            })
-            $('.note-editable').attr('contenteditable',false)
-            $('.note-popover').remove()
-        })
-        
-            $.each($('.vidlist-3 li'), function(){
-                if($(this).hasClass('uk-active'))
-                {
-                    $(this).find('a').attr('aria-expanded',false)
-                }
-                $(this).removeClass('uk-active')
-            })
-    </script> --}}
 
 
 
-
-
-</body></html>
