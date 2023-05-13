@@ -388,13 +388,31 @@
                                                                                     ->where('questionid', $question->id)
                                                                                     ->orderBy('sortid')
                                                                                     ->get();
+
+                                                                                foreach($dropquestions as $item){
+
+                                                                                $answer = DB::table('lesson_quiz_drop_answer')
+                                                                                    ->where('headerid', $item->id)
+                                                                                    ->orderBy('sortid')
+                                                                                    ->pluck('answer');
+
+                                                                                $answerString = implode(',', $answer->toArray());
+
+                                                                                $item->answer = $answerString;
+
+                                                                                }
                                                                                 @endphp
                                                                                 @foreach($dropquestions as $item)
-                                                                                {{-- @php
-                                                                                    $inputField = '<input class="d-inline form-control q-input drop-option q-input" style="width: 200px; margin: 10px; border-color:black" type="text" disabled>';
-                                                                                    $questionWithInput = str_replace('~input', $inputField, $item->question);
-                                                                                @endphp --}}
                                                                                 <input type="text" class="form-control drop'+parentId+'" style="margin-top: 10px; border: 2px solid dodgerblue; color: black;" placeholder="Item text" value = "{{$item->question}}">
+                                                                                
+                                                                                <span>Answer is 
+                                                                                    @if(empty($item->answer))
+                                                                                        <em>undefined</em>
+                                                                                    @else
+                                                                                        <em>{{$item->answer}}</em>.
+                                                                                    @endif
+                                                                                    
+                                                                                </span>
                                                                                 {{-- <p>
 
                                                                                     {{$item->sortid}}. {!! $questionWithInput !!}
@@ -481,7 +499,8 @@
         var last_id;
         var last_quiz_type = 'multiple_choice';
         $(document).ready(function(){
-            var data = {!! json_encode($quizquestions) !!};
+            // var data = {!! json_encode($quizquestions) !!};
+            var data = {!! json_encode($dropquestions) !!};
             console.log(data);
 
 
@@ -777,7 +796,7 @@
                                         });
 
                                         Toast.fire({
-                                            type: 'success',
+                                            icon: 'success',
                                             title: 'All the changes have been saved'
                                         })
                             
@@ -1353,7 +1372,7 @@
                                             
 
                                             html += `</div><div class="col-12 p-3 text-end">
-                                                                        <button class="btn btn-primary btn-sm answerdonedrag" id="${response.id}">Done</button>
+                                                                        <button class="btn btn-dark btn-sm answerdonedrag" id="${response.id}">Done</button>
                                                                     </div></div>`;
 
                                             $('#quiztioncontent' + parentId).empty().append(html);
@@ -1465,6 +1484,66 @@
 
 
 
+                        $(document).on('click', '.answerdonedrag', function(){
+
+                            var id = $(this).attr("id");
+                            console.log(id);
+
+
+                            // $.ajax({
+                            //         type: "get",
+                            //         dataType: 'json',
+                            //         url: "/adminviewbook/returneditquiz",
+                            //         data: { 
+                            //             id: id
+                                
+                            //                 },
+                            //         success: function(response) {
+                            //                 console.log(response);
+
+                            //                 $('#quiztype' + id).prop('disabled', false);
+
+
+                            //                 var html = `<div class="row">
+                            //                                 <div class="col-12 m-2">
+                            //                                     <textarea class="form-control" placeholder="Untitled question" id="multiplechoice${response.id}" > ${response.question}</textarea>`;
+
+                            //                 response.choices.forEach(function(item) {
+                            //                     html += `<div class="col-12">
+                            //                     <input class="form-check-input ml-2" type="radio" name="option${response.id}" value="${item.id}">
+                            //                     <label class="form-check-label ml-5 option${response.id}" id="option${response.id}" contenteditable="true">
+                            //                     ${item.description}`;
+                                                
+                            //                     if(item.answer == 1){
+                            //                         html +=`<span class= "ml-2"><i class="fa fa-check" style="color:rgb(7, 255, 7)" aria-hidden="true"></i></span>`;
+                            //                     }
+                                                
+                                                
+                            //                     html += `</label>
+                            //                     </div>`;
+                            //                 });
+
+
+                                            
+
+                            //                 html += `<button class="form-control addoption" style="margin: 20px; " id="${response.id}">Add option</button>`;
+
+                            //                 $('#quiztioncontent' + id).empty().append(html);
+                            //             },
+                            //         error: function(xhr) {
+                            //             console.log("Error");
+                            //             // Handle error here
+                            //         }
+                            // });
+
+                        
+
+
+
+                        });
+
+
+
                         $(document).on('click', '.itemchoices', function(){
                             var radioBtnId = $(this).attr("for");
                             var inputElement = $(`input.answer-field[id='${radioBtnId}']`);
@@ -1522,23 +1601,25 @@
                         function autoSaveAnswerdragandrop(thisElement) {
                             var answer = $(thisElement).val();
                             var questionId = $(thisElement).data('question-id');
+                            var sortId = $(thisElement).data('sortid');
 
-                            console.log(`student answer: ${answer}, question-id: ${questionId}`)
+                            console.log(`student answer: ${answer}, question-id: ${questionId}, sort-id: ${sortId}`)
 
-                            // $.ajax({
-                            //     url: '/adminviewbook/save-answer-key',
-                            //     method: 'GET',
-                            //     data: {
-                            //     answer: answer,
-                            //     question_id: questionId
+                            $.ajax({
+                                url: '/adminviewbook/save-answer-drop',
+                                method: 'GET',
+                                data: {
+                                answer: answer,
+                                question_id: questionId,
+                                sortId: sortId
 
-                            //     },
-                            //     success: function(response) {
-                            //         console.log(response);
+                                },
+                                success: function(response) {
+                                    console.log(response);
                                 
-                            //         //Handle the response from the server if needed
-                            //     }
-                            // });
+                                    //Handle the response from the server if needed
+                                }
+                            });
 
                         }
                     });
