@@ -42,23 +42,13 @@
                                                     
                                                     <p class="question" data-question-type="{{$item->typeofquiz}}">{{$key+=1}}. {{$item->question}}</p>
 
-                                                    @php
-
-
-                                                    $choices = DB::table('lessonquizchoices')
-                                                        ->where('questionid',$item->id)
-                                                        ->where('deleted',0)
-                                                        ->select('description','id','answer', 'sortid')
-                                                        ->orderBy('sortid')
-                                                        ->get();
-
-
-                                                    @endphp
-                                                    
-
-                                                    @foreach ($choices as $questioninfo)
+                                                    @foreach ($item->choices as $questioninfo)
                                                     <div class="form-check mt-2">
-                                                        <input data-question-type="{{$item->typeofquiz}}" data-question-id="{{  $item->id }}" id="{{ $questioninfo->id}}" class="answer-field form-check-input" type="radio" name="{{ $item->id }}" value="{{ $questioninfo->id}}">
+                                                        @if($questioninfo->id == $item->answer)
+                                                            <input data-question-type="{{$item->typeofquiz}}" data-question-id="{{  $item->id }}" id="{{ $questioninfo->id}}" class="answer-field form-check-input" type="radio" name="{{ $item->id }}" value="{{ $questioninfo->id}}" checked>
+                                                        @else
+                                                            <input data-question-type="{{$item->typeofquiz}}" data-question-id="{{  $item->id }}" id="{{ $questioninfo->id}}" class="answer-field form-check-input" type="radio" name="{{ $item->id }}" value="{{ $questioninfo->id}}">
+                                                        @endif
                                                         <label for="{{ $item->id }}" class="form-check-label">
                                                             {{$questioninfo->description}}
                                                         </label>
@@ -122,22 +112,11 @@
                                             @endforeach
                                         </div>
 
-                                            @php
-                                            $dropquestions = DB::table('lesson_quiz_drop_question')
-                                                ->where('questionid', $item->id)
-                                                ->orderBy('sortid')
-                                                ->get();
-                                            @endphp
-
-                                            @foreach($dropquestions as $items)
-                                                @php
-                                                    $inputField = '<input class="d-inline form-control q-input drop-option q-input" data-question-type="'.$item->typeofquiz.'" data-question-id="'.$items->id.'" style="width: 200px; margin: 10px; border-color:black" type="text" disabled>';
-                                                    $questionWithInput = str_replace('~input', $inputField, $items->question);
-                                                @endphp
+                                            @foreach($item->drop as $items)
                                         
                                                 <p>
 
-                                                    {{$items->sortid}}. {!! $questionWithInput !!}
+                                                    {{$items->sortid}}. {!! $items->question !!}
 
                                                 </p>
                                             @endforeach
@@ -173,6 +152,9 @@
 
                 console.log("hello world")
 
+                var data = {!! json_encode($quizQuestions) !!};
+                console.log(data);
+
                 var STUDENT_ID = 2;
 
                 const Toast = Swal.mixin({
@@ -205,6 +187,7 @@
                     var answer = $(thisElement).val();
                     var questionId = $(thisElement).data('question-id');
                     var questionType = $(thisElement).data('question-type');
+                    var sortId = $(thisElement).data('sortid');
 
 
                     
@@ -220,7 +203,8 @@
                         answer: answer,
                         headerId: headerId,
                         questionType: questionType,
-                        question_id: questionId
+                        question_id: questionId,
+                        sortId: sortId
 
                         },
                         success: function(response) {
@@ -316,6 +300,9 @@
                     icon: 'success',
                     title: 'Quiz submitted successfully.'
                 })
+
+
+                console.log($(this).val());
                 // set quiz status as finished
                 // disable retake of quiz
                 // show quiz complete form

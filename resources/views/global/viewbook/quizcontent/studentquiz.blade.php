@@ -101,7 +101,11 @@
                                         <li class="border-bottom"><span>Score:</span> Not yet Graded </li>
                                     </ul>
                                     <div class="card-footer border-top-0 text-center">
+                                        @if(!empty($continuequiz))
+                                        <button class="btn btn-success mt-3" data-id= "{{ $continuequiz }}" id="btn-continue">Continue</button>
+                                        @else
                                         <button class="btn btn-success mt-3"id="btn-attemptquiz">{{$chapterquizsched->btn}}</button>
+                                        @endif
                                     </div>
                                 </div>
                             </div>            

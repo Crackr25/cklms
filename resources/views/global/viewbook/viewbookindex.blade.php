@@ -697,7 +697,26 @@
                 console.log("selectedQuiz: ", selectedQuiz )
                 console.log("classroomid: ",'{{$classroomid}}' )
 
-                $.ajax({
+                const swalWithBootstrapButtons = Swal.mixin({
+                customClass: {
+                    confirmButton: 'btn btn-success',
+                    cancelButton: 'btn btn-danger'
+                },
+                buttonsStyling: true
+                })
+
+                swalWithBootstrapButtons.fire({
+                        title: 'Attempt Quiz',
+                        type: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: 'Yes, Atempt now!',
+                        cancelButtonText: 'No, cancel!',
+                        reverseButtons: true
+                }).then((result) => {
+
+                    console.log(result.value)
+                if (result.value == true) {
+                    $.ajax({
                         url: '/attempt-quiz',
                         type: 'get',
                         data: {
@@ -713,6 +732,46 @@
 
                         }
                     })
+                }
+                })
+
+                
+    
+
+                
+            });
+
+
+            $(document).on('click','#btn-continue',function(){
+                console.log("Hi car");
+
+                console.log("selectedQuiz: ", selectedQuiz )
+                console.log("classroomid: ",'{{$classroomid}}' )
+
+                id = $(this).attr('data-id');
+
+
+
+                $.ajax({
+                        url: '/attempt-quiz',
+                        type: 'get',
+                        data: {
+
+                            quizid: selectedQuiz,
+                            classroomid: '{{$classroomid}}',
+                            id : id
+
+                        },
+                        success:function(data) {
+
+                            recordid = id;
+                            loadQuizContentattempt();
+
+                        }
+                    })
+
+
+                
     
 
                 
