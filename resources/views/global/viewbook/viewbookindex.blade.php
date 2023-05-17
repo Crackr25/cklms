@@ -167,6 +167,10 @@
             overflow: hidden 
         }
 
+        .red-border {
+        border: 2px solid red;
+    }
+
 
 
     </style>
@@ -519,6 +523,7 @@
                 $('.answer-field').each(function() {
                     $(this).removeClass('error-input')
                     $(this).removeClass('is-invalid')
+                    console.log($(this).val())
 
                     if ($(this).val() == "" ) {
                         
@@ -528,6 +533,13 @@
                             $(this).prop('disabled', true);
                         } else {
                             $(this).focus();
+                        }
+
+                        if ($(this).data('question-type') == 5){
+                            console.log($(this).data('question-type'))
+                            $(this).focus();
+                            $(this).addClass('red-border');
+                            
                         }
                         
                         

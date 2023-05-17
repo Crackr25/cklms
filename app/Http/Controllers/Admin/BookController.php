@@ -636,6 +636,39 @@ class BookController extends Controller
         return 1;
     }
 
+
+    public function createFillquestion(Request $request)
+    {
+
+        date_default_timezone_set('Asia/Manila');
+        $checkifexist = DB::table('lesson_fill_question')
+            ->where('questionid', $request->get('questionid'))
+            ->where('sortid', $request->get('sortid'))
+            ->count();
+
+        if($checkifexist == 0){
+        DB::table('lesson_fill_question')
+            ->insert([
+                    'sortid'            =>  $request->get('sortid'),
+                    'questionid'        =>  $request->get('questionid'),
+                    'question'       =>  $request->get('description'),
+                ]);
+
+        }else{
+
+            DB::table('lesson_fill_question')
+                ->where('questionid', $request->get('questionid'))
+                ->where('sortid', $request->get('sortid'))
+                ->update([
+                    'question'       =>  $request->get('description'),
+                ]);
+
+        }
+        
+
+        return 1;
+    }
+
     public function createchoices(Request $request)
     {
         
@@ -1025,6 +1058,7 @@ class BookController extends Controller
         $question->drag = DB::table('lesson_quiz_drag_option')
         ->where('questionid', $question->id)
         ->select('id', 'description')
+        ->orderBy('sortid')
         ->get();
 
         $question->drop = DB::table('lesson_quiz_drop_question')
@@ -1139,6 +1173,45 @@ class BookController extends Controller
     //         $item->description.= '<span><i class="fa fa-check" style="color:rgb(7, 255, 7)" aria-hidden="true"></i></span>';
     //     }
     // }
+
+
+    return response()->json($question);
+    
+        
+    }
+
+
+    public function returnEditdrag(Request $request)
+
+    {
+        $question = DB::table('lessonquizquestions')
+            ->where('id', $request->get('id'))
+            ->select('id','question')
+            ->where('deleted', 0)
+            ->first();
+
+
+        $question->drag = DB::table('lesson_quiz_drag_option')
+            ->where('questionid', $question->id)
+            ->orderBy('sortid')
+            ->get();
+                                                            
+        $question->drop = DB::table('lesson_quiz_drop_question')
+            ->where('questionid', $question->id)
+            ->orderBy('sortid')
+            ->get();
+
+        foreach($question->drop as $item){
+
+        $answer = DB::table('lesson_quiz_drop_answer')
+            ->where('headerid', $item->id)
+            ->orderBy('sortid')
+            ->pluck('answer');
+
+        $answerString = implode(',', $answer->toArray());
+        $item->answer = $answerString;
+
+        }
 
 
     return response()->json($question);

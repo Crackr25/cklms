@@ -126,14 +126,19 @@
                             @endif
 
                             @if($item->typeofquiz == 6)
-                                <!-- Image Answer -->
+                                <!-- upload image -->
                                 <div class="card mt-5 editcontent">
                                     <div class="card-body">
-                                        
-                                                <p>Instruction: {!! $item->question !!}</p>
+                                        <p>{!! $item->question !!}</p>
+                                        <div class="form-group">
+                                            <input class="answer-field form-control-file imageInput" data-question-type="{{$item->typeofquiz}}" data-question-id="{{$item->id}}" id="{{$questioninfo->id}}" type="file" accept="image/*">
+                                            <img id="preview" src="#" alt="Preview" style="max-width: 250px; max-height: 250px;display:none;">
+                                        </div>
                                     </div>
                                 </div>
                             @endif
+
+
                         @endforeach
 
                         <div class="save mb-5">
@@ -179,16 +184,16 @@
                     }
                 });
 
-                    function previewImage(input) {
-                        if (input.files && input.files[0]) {
-                            var reader = new FileReader();
-                            reader.onload = function (e) {
-                                $('#preview').attr('src', e.target.result);
-                                $('#preview').show();
-                            }
-                            reader.readAsDataURL(input.files[0]);
+                function previewImage(input) {
+                    if (input.files && input.files[0]) {
+                        var reader = new FileReader();
+                        reader.onload = function (e) {
+                            $('#preview').attr('src', e.target.result);
+                            $('#preview').show();
                         }
+                        reader.readAsDataURL(input.files[0]);
                     }
+                }
 
                 function autoSaveAnswer(thisElement) {
                     // Get the answer data
@@ -205,29 +210,36 @@
                     console.log(`student answer: ${answer}, question-id: ${questionId}, question-type: ${questionType}`)
 
                     //Send an AJAX request to save the answer data
-                    $.ajax({
-                        url: '/save-answer',
-                        method: 'GET',
-                        data: {
-                        chapterquizid : quizId,
-                        answer: answer,
-                        headerId: headerId,
-                        questionType: questionType,
-                        question_id: questionId,
-                        sortId: sortId
 
-                        },
-                        success: function(response) {
-                            if (response == 1){
-                                console.log("Answer Inserted successfully");
-                            }else{
-                                console.log("Answer Updated successfully");
+
+                    if (questionType !== 6) {
+                    //Send an AJAX request to save the answer data
+                        $.ajax({
+                            url: '/save-answer',
+                            method: 'GET',
+                            data: {
+                            chapterquizid : quizId,
+                            answer: answer,
+                            headerId: headerId,
+                            questionType: questionType,
+                            question_id: questionId
+                            },
+                            success: function(response) {
+                                if (response == 1){
+                                    console.log("Answer Inserted successfully");
+                                }else{
+                                    console.log("Answer Updated successfully");
+                                }
+
+                                //Handle the response from the server if needed
                             }
-                        
-                            //Handle the response from the server if needed
-                        }
-                    });
+                        });
+                    }
                 }
+
+                
+
+
 
                 // drag and drop
                 $( ".drag-option" ).draggable({
@@ -268,76 +280,57 @@
             autoSaveAnswer(this);
         });
 
-        // save all answers quiz
+        $(document).on('change', '.imageInput', function(){
+            // Get the answer data
+            var quizId = $('#quiz-info').data('quizid');
+            var headerId = $('.card-body').data('headerid');
+            var questionId = $(this).data('question-id');
+            var questionType = $(this).data('question-type');
 
-        // $('#save-quiz').on('click', function() {
-        //     var isvalid = true
+            console.log(questionId, questionType)
 
-        //     $('.answer-field').each(function() {
-        //         $(this).removeClass('error-input')
-        //         $(this).removeClass('is-invalid')
+            // Get the file input element
+            var fileInput = $(this)[0];
+            var file = fileInput.files[0];
 
-        //         if ($(this).val() == "" ) {
-                    
-        //             if ($(this).prop("disabled")) {
-        //                 $(this).prop('disabled', false);
-        //                 $(this).focus();
-        //                 $(this).prop('disabled', true);
-        //             } else {
-        //                 $(this).focus();
-        //             }
-                    
-                    
-        //             $(this).addClass('error-input')
-        //             isvalid = false
-        //         }
-
-        //         if ($(this).is(":radio")) {
-                    
-        //             if (!$("input[name='" + $(this).attr("name") + "']:checked").length) {
-
-        //                 $(this).focus();
-        //                 $(this).addClass('is-invalid')
-
-        //                 isValid = false;
-        //             }
-        //         }
-
-        //     })
-
-        //     if (isvalid) {
-        //         Toast.fire({
-        //             icon: 'success',
-        //             title: 'Quiz submitted successfully.'
-        //         })
+            // Create a FormData object to store the file data
+            var formData = new FormData();
+            formData.append('chapterquizid', quizId);
+            formData.append('answer', file);
+            formData.append('headerId', headerId);
+            formData.append('questionType', questionType);
+            formData.append('question_id', questionId);
 
 
-        //         console.log($(this).val());
-        //         // set quiz status as finished
-        //         // disable retake of quiz
-        //         // show quiz complete form
-        //     } else {
-        //         // Swal.fire({
-        //         //     // template: '#my-template'
-        //         //     titleText: 'Unanswered items detected!',
-        //         //     html: '<p class="text-center" style="font-size:1rem;">Are you sure you want to continue and submit the quiz?</p>',
-        //         //     icon: 'error',
-        //         //     showCancelButton: true,
-        //         //     confirmButtonColor: '#3085d6',
-        //         //     cancelButtonColor: '#d33',
-        //         //     confirmButtonText: 'Save'
-        //         // })
-        //         // .then((result) => {
-        //         //     if (result.value) {
-        //         //         event.preventDefault();
-        //         //         Toast.fire({
-        //         //             icon: 'success',
-        //         //             title: 'Quiz w/ unanswered items submitted successfully.'
-        //         //         })
-        //         //     }
-        //         // })
-        //     }
-        // })
+            // Get the CSRF token value
+            var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+            // Set the CSRF token in the request headers
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                }
+            });
+
+            // Send an AJAX request to save the answer data
+            $.ajax({
+                url: '/save-image',
+                method: 'POST', // Use POST method instead of GET
+                data: formData,
+                processData: false, // Prevent jQuery from processing the data
+                contentType: false, // Prevent jQuery from setting content type
+                success: function(response) {
+                    if (response == 1) {
+                        console.log("Answer inserted successfully");
+                    } else {
+                        console.log("Answer updated successfully");
+                    }
+                    // Handle the response from the server if needed
+                }
+            });
+
+			previewImage(this);
+        });
 
         // show the button when the user scrolls past a certain point
         $(window).scroll(function() {

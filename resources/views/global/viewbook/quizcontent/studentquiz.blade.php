@@ -101,7 +101,7 @@
                                         @if(!empty($lastattempt))
                                             <li class=""><span>Last Attempt:</span> {{\Carbon\Carbon::create($lastattempt)->isoFormat('MMMM DD, YYYY hh:mm A')}}</li>
                                         @endif
-                                        <li class="border-bottom"><span>Score:</span> Not yet Graded </li>
+                                        {{-- <li class="border-bottom"><span>Score:</span> Not yet Graded </li> --}}
                                     </ul>
                                     <div class="card-footer border-top-0 text-center">
                                             @if(!empty($continuequiz))

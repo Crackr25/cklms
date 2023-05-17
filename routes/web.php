@@ -151,6 +151,7 @@ Route::middleware(['auth', 'isAdministrator','isDefaultPass'])->group(function (
     Route::get('/adminviewbook/delcoverage', 'Admin\BookController@delcoverage');
     Route::get('/adminviewbook/createdragoption', 'Admin\BookController@createdragoption');
     Route::get('/adminviewbook/createdropquestion', 'Admin\BookController@createdropquestion');
+    Route::get('/adminviewbook/createfillquestion', 'Admin\BookController@createFillquestion');
     
     //Answer Key
     Route::get('/adminviewbook/getquestion', 'Admin\BookController@getquestion');
@@ -158,6 +159,7 @@ Route::middleware(['auth', 'isAdministrator','isDefaultPass'])->group(function (
     Route::get('/adminviewbook/save-answer-drop', 'Admin\BookController@setAnswerdrop');
     Route::get('/adminviewbook/returneditquiz', 'Admin\BookController@returneditquiz');
     Route::get('/adminviewbook/getdropquestion', 'Admin\BookController@getDropQuestion');
+    Route::get('/adminviewbook/returneditquizdrag', 'Admin\BookController@returnEditdrag');
     
 
     
@@ -313,6 +315,7 @@ Route::middleware(['auth', 'isStudent','isDefaultPass'])->group(function () {
     Route::get('/retakeQuiz/{id}','Student\StudentBookController@retakeQuiz');
     Route::get('/attempt-quiz','Student\StudentBookController@attemptQuiz');
     Route::get('/save-answer','Student\StudentBookController@saveAnswer');
+    Route::post('/save-image','Student\StudentBookController@saveImage');
 
 
     Route::get('/studentfeed','Student\StudentClassroomController@studentfeed');

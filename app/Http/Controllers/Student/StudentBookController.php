@@ -197,7 +197,7 @@ class StudentBookController extends Controller
                                         ->value('stringanswer');
                             
                             $questionWithInputs = preg_replace_callback('/~input/', function($matches) use ($item, &$inputCounter, &$key) {
-                            $inputField = '<input class="d-inline form-control q-input drop-option q-input ui-droppable bg-primary text-white" data-question-type="5" data-sortid="'.++$inputCounter.'" data-question-id="'.$item->id.'" style="width: 200px; margin: 10px; border-color:black" type="text" id="input-'.$item->id.'" value="'.$item->answer.'" disabled>';
+                            $inputField = '<input class="d-inline form-control q-input drop-option q-input ui-droppable bg-primary text-white answer-field" data-question-type="5" data-sortid="'.++$inputCounter.'" data-question-id="'.$item->id.'" style="width: 200px; margin: 10px; border-color:black" type="text" id="input-'.$item->id.'" value="'.$item->answer.'" disabled>';
                             return $inputField;
                             }, $item->question);
                             $inputCounter = 0;
@@ -217,7 +217,7 @@ class StudentBookController extends Controller
 
                             $sort = -1;
                             $questionWithInputs = preg_replace_callback('/~input/', function($matches) use ($item, &$inputCounter, &$key , &$sort , &$answer) {
-                            $inputField = '<input class="d-inline form-control q-input drop-option q-input ui-droppable bg-primary text-white" data-question-type="5" data-sortid="'.++$inputCounter.'" data-question-id="'.$item->id.'" value="'.$answer[++$sort]->stringanswer.'" style="width: 200px; margin: 10px; border-color:black" type="text" id="input-'.$item->id.'" disabled>';
+                            $inputField = '<input class="d-inline form-control q-input drop-option q-input ui-droppable bg-primary text-white answer-field" data-question-type="5" data-sortid="'.++$inputCounter.'" data-question-id="'.$item->id.'" value="'.$answer[++$sort]->stringanswer.'" style="width: 200px; margin: 10px; border-color:black" type="text" id="input-'.$item->id.'" disabled>';
                             return $inputField;
                             }, $item->question);
                             $inputCounter = 0;
@@ -233,7 +233,7 @@ class StudentBookController extends Controller
                         else{
 
                             $questionWithInputs = preg_replace_callback('/~input/', function($matches) use ($item, &$inputCounter, &$key) {
-                            $inputField = '<input class="d-inline form-control q-input drop-option q-input ui-droppable" data-question-type="5" data-sortid="'.++$inputCounter.'" data-question-id="'.$item->id.'" style="width: 200px; margin: 10px; border-color:black" type="text" id="input-'.$item->id.'" disabled>';
+                            $inputField = '<input class="d-inline form-control q-input drop-option q-input ui-droppable answer-field" data-question-type="5" data-sortid="'.++$inputCounter.'" data-question-id="'.$item->id.'" style="width: 200px; margin: 10px; border-color:black" type="text" id="input-'.$item->id.'" disabled>';
                             return $inputField;
                             }, $item->question);
                             $inputCounter = 0;
@@ -551,6 +551,52 @@ class StudentBookController extends Controller
                 return 0;
 
 
+        }
+
+    }
+
+    public function saveImage(Request $request)
+    {
+
+        $headerId = $request->get('headerId');
+        $question_id = $request->get('question_id');
+        $imageFile = $request->file('answer');
+
+        $checkIfexist =  DB::table('chapterquizrecordsdetail')
+            ->where('headerid',$headerId)
+            ->where('questionid',$question_id)
+            ->count();
+
+        $data = [
+            'headerid' => $request->get('headerId'),
+            'questionid' => $request->get('question_id'),
+            'typeofquestion' => $request->get('questionType'),
+        ];
+
+
+        // Save the image locally
+        $imageName = time() . '_' . $imageFile->getClientOriginalName();
+        $imageFile->move(public_path('quizzes'), $imageName);
+
+        // Store the image URL path
+        $data['picurl'] = 'quizzes/' . $imageName;
+
+        // insert data
+        if ($checkIfexist == 0) {
+
+            DB::table('chapterquizrecordsdetail')->insert($data);
+
+            return 1;
+
+        // update data
+        } else {
+
+                DB::table('chapterquizrecordsdetail')
+                ->where('headerid', $request->get('headerId'))
+                ->where('questionid',$request->get('question_id'))
+                ->update($data);
+
+                return 0;
         }
 
     }
