@@ -309,7 +309,7 @@ Route::middleware(['auth', 'isStudent','isDefaultPass'])->group(function () {
     Route::get('/studentrefreshposts', 'Student\StudentClassroomController@refreshpost');     
     
     Route::get('/chaptertesttakethetest','GlobalController\ViewBookController@takethetest');
-    Route::post('/chaptertestsubmitanswers','Student\StudentBookController@submitanswers');
+    Route::get('/chaptertestsubmitanswers','Student\StudentBookController@submitanswers');
     Route::get('/retakeQuiz/{id}','Student\StudentBookController@retakeQuiz');
     Route::get('/attempt-quiz','Student\StudentBookController@attemptQuiz');
     Route::get('/save-answer','Student\StudentBookController@saveAnswer');

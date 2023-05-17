@@ -98,13 +98,20 @@
                                     <ul class="list-unstyled">
                                         <li class=""><span>Deadline:</span> {{\Carbon\Carbon::create($chapterquizsched->dateto.' '.$chapterquizsched->timeto)->isoFormat('MMMM DD, YYYY hh:mm A')}}</li>
                                         <li class=""><span>Attempts:</span> {{$attemptsLeft}} / {{$chapterquizsched->noofattempts}} </li>
+                                        @if(!empty($lastattempt))
+                                            <li class=""><span>Last Attempt:</span> {{\Carbon\Carbon::create($lastattempt)->isoFormat('MMMM DD, YYYY hh:mm A')}}</li>
+                                        @endif
                                         <li class="border-bottom"><span>Score:</span> Not yet Graded </li>
                                     </ul>
                                     <div class="card-footer border-top-0 text-center">
-                                        @if(!empty($continuequiz))
-                                        <button class="btn btn-success mt-3" data-id= "{{ $continuequiz }}" id="btn-continue">Continue</button>
-                                        @else
-                                        <button class="btn btn-success mt-3"id="btn-attemptquiz">{{$chapterquizsched->btn}}</button>
+                                            @if(!empty($continuequiz))
+                                            <button class="btn btn-success mt-3" data-id= "{{ $continuequiz }}" id="btn-continue">Continue</button>
+                                            @else
+                                            @if($attemptsLeft > 0)
+                                            <button class="btn btn-success mt-3"id="btn-attemptquiz">{{$chapterquizsched->btn}}</button>
+                                            @else
+                                            <span>No attempts left</span>
+                                            @endif
                                         @endif
                                     </div>
                                 </div>

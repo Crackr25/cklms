@@ -202,7 +202,7 @@
 
                                                     {{-- Multiple choice --}}
                                                     @if($question->typeofquiz == 1)
-                                                    <div id={{$question->id}} class="col-lg-11 col-10 editcontent col-content">
+                                                    <div id={{$question->id}} class="col-lg-11 col-10 editcontent col-content identifier{{$question->id}}">
                                                         <div class="card mt-5 shadow-none border-0">
                                                             <div class="card-header">
                                                                 <div class="row justify-content-end">
@@ -252,9 +252,11 @@
                                                         </div>
                                                     </div>
                                                     @endif
+
                                                     {{-- Short Answer --}}
+
                                                     @if($question->typeofquiz == 2)
-                                                    <div id={{$question->id}} class="col-lg-11 col-10 editcontent col-content">
+                                                    <div id={{$question->id}} class="col-lg-11 col-10 editcontent col-content identifier{{$question->id}}">
                                                         <div class="card mt-5 shadow-none border-0">
                                                             <div class="card-header">
                                                                 <div class="row justify-content-end">
@@ -275,7 +277,7 @@
                                                                                 <textarea class="form-control m-2" placeholder="Untitled question" id="shortz_answer_question{{$question->id}}" >{{$question->question}}</textarea>
                                                                             </div>
                                                                             <div class="col-12">    
-                                                                                <input type="text" class="form-control m-2" placeholder="Short answer text" disabled>
+                                                                                <input type="text" class="form-control mt-2" placeholder="Short answer text" disabled>
                                                                             </div>
                                                             
                                                                         </div>
@@ -287,7 +289,7 @@
                                                     @endif
                                                     {{-- Paragraph --}}
                                                     @if($question->typeofquiz == 3)
-                                                    <div id={{$question->id}} class="col-lg-11 col-10 editcontent col-content">
+                                                    <div id={{$question->id}} class="col-lg-11 col-10 editcontent col-content identifier{{$question->id}}">
                                                         <div class="card mt-5 shadow-none border-0">
                                                             <div class="card-header">
                                                                 <div class="row justify-content-end">
@@ -307,7 +309,7 @@
                                                                             <textarea class="form-control m-2" placeholder="Untitled question" id="long_answer_question{{$question->id}}" >{{$question->question}}</textarea>
                                                                         </div>
                                                                         <div class="col-12">    
-                                                                            <input type="text" class="form-control m-2" placeholder="Long answer text" disabled>
+                                                                            <input type="text" class="form-control mt-2" placeholder="Long answer text" disabled>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -315,9 +317,11 @@
                                                         </div>
                                                     </div>
                                                     @endif
+
                                                     {{-- Instruction --}}
+
                                                     @if($question->typeofquiz == 4)
-                                                    <div id={{$question->id}} class="col-lg-11 col-10 editcontent col-content">
+                                                    <div id={{$question->id}} class="col-lg-11 col-10 editcontent col-content identifier{{$question->id}}">
                                                         <div class="card mt-5 shadow-none border-0">
                                                             <div class="card-header">
                                                                 <div class="row justify-content-end">
@@ -345,9 +349,9 @@
                                                     @endif
                                                     {{-- Drag and Drop --}}
                                                     @if($question->typeofquiz == 5)
-                                                    <div id={{$question->id}} class="col-lg-11 col-10 editcontent col-content">
+                                                    <div id={{$question->id}} class="col-lg-11 col-10 editcontent col-content identifier{{$question->id}}">
                                                         <div class="card mt-5 shadow-none border-0">
-                                                            <div class="card-header">
+                                                            <div class="card-header"> 
                                                                 <div class="row justify-content-end">
                                                                     <div class="col-6 mr-1 quizarea">
                                                                         <select class="form-control quiztype" id="quiztype{{$question->id}}">
@@ -427,6 +431,36 @@
                                                                         <div class="col-12">
                                                                             <button class="btn btn-link btn-sm answer-key-drag" id="{{$question->id}}">Answer key</button>
                                                                         </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @endif
+
+                                                    @if($question->typeofquiz == 6)
+                                                    <div id={{$question->id}} class="col-lg-11 col-10 editcontent col-content identifier{{$question->id}}">
+                                                        <div class="card mt-5 shadow-none border-0">
+                                                            <div class="card-header">
+                                                                <div class="row justify-content-end">
+                                                                    <div class="col-6 mr-1 quizarea">
+                                                                        <select class="form-control quiztype" id="quiztype{{$question->id}}">
+                                                                        <option value="drag_drop">Image Answer</option>
+                                                                        <option value="instruction">Instruction</option>
+                                                                        <option value="paragraph_answer">Paragraph</option>
+                                                                        <option value="short_answer">Short Answer</option>
+                                                                        {{-- <option value="multiple_choice">Multiple Choice</option> --}}
+                                                                        <option value="instruction">Instruction</option>
+                                                                        <option value="enumeration">Enumeration</option>
+                                                                        <option value="drag_drop">Drag & drop</option>
+                                                                        </select>
+                                                                    </div>
+                                                                <div class="col-12 m-2" id="quiztioncontent{{$question->id}}">
+                                                                    <div class="row">
+                                                                        <div class="col-12 m-2">
+                                                                            <textarea class="form-control" placeholder="Untitled instruction" style="height: 20px !important;" id="image_item{{$question->id}}">{{$question->question}}</textarea>
+                                                                            <input type="file" class="mt-2" disabled>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -546,7 +580,7 @@
 
                 $(document).on('click', function(event) {
                     last_quiz_type = $('#quiztype' + last_id).val();
-                    if (!$(event.target).closest('#quiztioncontent' + last_id).length) {
+                    if (!$(event.target).closest('.identifier' + last_id).length) {
                         
                             console.log("Last ID: ", last_id);
                             if(last_quiz_type == 'multiple_choice'){
@@ -802,6 +836,35 @@
                             
                                 }
 
+                            else if(last_quiz_type == 'image'){
+
+                                var textareaValue = $('#image_item' + last_id).val();
+                                console.log("Question: ", textareaValue);
+                                console.log("Quiztype: ", last_quiz_type);
+                                
+                                $.ajax({
+                                    type: "get",
+                                    dataType: 'json',
+                                    url: "/adminviewbook/createquestion",
+                                    data: { 
+                                        question : textareaValue,
+                                        typeofquiz : 6,
+                                        id: last_id
+                                            },
+                                    success: function(response) {
+
+                                        Toast.fire({
+                                            icon: 'success',
+                                            title: 'All the changes have been saved'
+                                        })
+                                        
+                                    },
+                                    error: function(xhr) {
+                                        // Handle error here
+                                    }
+                                });
+                                }
+
                             else{
                                 var quizTitle = $('#quizTitle h3').text();
                                 var description = $('#description').val();                        
@@ -989,7 +1052,7 @@
                                                     '</a>' +                                      
                                                 '</div>' +
                                                 '</div>' +
-                                                '<div id="'+addrow+'" class="col-lg-11 col-10 editcontent col-content">' +
+                                                '<div id="'+addrow+'" class="col-lg-11 col-10 editcontent col-content identifier'+addrow+'">' +
                                                 '<div class="card mt-5 shadow-none border-0">' +
                                                 '<div class="card-header">' +
                                                     '<div class="row justify-content-end">' +
@@ -1001,10 +1064,12 @@
                                                             '<option value="paragraph_answer">Paragraph</option>'+
                                                             '<option value="enumeration">Enumeration</option>' +
                                                             '<option value="drag_drop">Drag & drop</option>' +
+                                                            '<option value="image">Image Answer</option>' +
                                                             '</select>' +
                                                         '</div>' +
                                                         '<div class="col-12">'+
                                                         '<div id="quiztioncontent'+addrow+'">'+
+                                                            '<div class="row">' +  
                                                             '<div class="col-12 m-2">'+
                                                                 '<textarea class="form-control" placeholder="Untitled question" style="height: 20px !important;" id="multiplechoice'+addrow+'" ></textarea>'+
                                                             '</div>'+
@@ -1013,6 +1078,7 @@
                                                                 '<label class="form-check-label option'+addrow+'" id="option'+addrow+'" contenteditable="true">Option '+option+'</label>'+
                                                             '</div>' +
                                                             '<button class="form-control addoption" style="margin: 20px; " id="'+addrow+'">Add option</button>'+
+                                                        '</div>' +
                                                         '</div>' +
                                                         '</div>' +
                                                 '</div>' +
@@ -1061,7 +1127,7 @@
                         if(select_quiz_type == 'short_answer'){
                             $('#quiztioncontent' + parentId).empty();
                             $('#quiztioncontent' + parentId).append('<textarea class="form-control m-2 shortz_answer_question"'+parentId+'" placeholder="Untitled question" style="height: 20px !important;" id="shortz_answer_question'+parentId+'" ></textarea>');
-                            $('#quiztioncontent' + parentId).append('<input type="text" class="form-control m-2 mr-1" placeholder="Short answer text" disabled>');
+                            $('#quiztioncontent' + parentId).append('<input type="text" class="form-control mt-2" placeholder="Short answer text" disabled>');
                         
                         }
 
@@ -1084,20 +1150,9 @@
                         if(select_quiz_type == 'paragraph_answer'){
                             $('#quiztioncontent' + parentId).empty();
                             $('#quiztioncontent' + parentId).append('<textarea class="form-control m-2" placeholder="Untitled question" style="height: 20px !important;" id="long_answer_question'+parentId+'" ></textarea>');
-                            $('#quiztioncontent' + parentId).append('<input type="text" class="form-control m-2" placeholder="Long answer text" disabled>');
+                            $('#quiztioncontent' + parentId).append('<input type="text" class="form-control mt-2" placeholder="Long answer text" disabled>');
 
-                            // $('#long_answer_question' + parentId).summernote({
-                            //     height: 200,
-                            //     toolbar: [
-                            //             // [groupName, [list of button]]
-                            //             ['style', ['bold', 'italic', 'underline', 'clear']],
-                            //             // ['font', ['strikethrough', 'superscript', 'subscript']],
-                            //             ['fontsize', ['fontsize']],
-                            //             ['color', ['color']],
-                            //             ['para', ['ul', 'ol', 'paragraph']],
-                            //             // ['height', ['height']]
-                            //                     ]
-                            //     });
+                            
                         }
                         
                         if(select_quiz_type == 'enumeration'){
@@ -1113,10 +1168,11 @@
 
                         if(select_quiz_type == 'instruction'){
                             $('#quiztioncontent' + parentId).empty();
-                            $('#quiztioncontent' + parentId).append('<div class="col-12 m-2">'+
-                                                    '<textarea class="form-control" placeholder="Untitled instruction" style="height: 20px !important;" id="instruction_item'+parentId+'" ></textarea>'+
-                                                '</div>'+
-                                            '</div>')
+                            $('#quiztioncontent' + parentId).append('<div class="row">'+
+                            '                                           <div class="col-12 m-2">'+
+                                                                            '<textarea class="form-control mt-2" placeholder="Untitled instruction" style="width: 100% !important;" id="instruction_item'+parentId+'" ></textarea>'+
+                                                                        '</div>'+
+                                                                    '</div>')
                             $('#instruction_item' + parentId).summernote({
                                 height: 200,
                                 toolbar: [
@@ -1153,6 +1209,30 @@
                                                 '</div>'+
                                             '</div>')
                                 }
+
+                            if(select_quiz_type == 'image'){
+                                $('#quiztioncontent' + parentId).empty();
+                                $('#quiztioncontent' + parentId).append(`<div class="row">
+                                                                            <div class="col-12 m-2">
+                                                                                '<textarea class="form-control" placeholder="Untitled instruction" style="height: 20px !important;" id="image_item${parentId}" ></textarea>
+                                                                                <input type="file" class="mt-2" disabled>
+                                                                            </div>
+                                                                        </div>`);
+                                $('#image_item' + parentId).summernote({
+                                    height: 200,
+                                    toolbar: [
+                                            // [groupName, [list of button]]
+                                            ['style', ['bold', 'italic', 'underline', 'clear']],
+                                            // ['font', ['strikethrough', 'superscript', 'subscript']],
+                                            ['fontsize', ['fontsize']],
+                                            ['color', ['color']],
+                                            ['para', ['ul', 'ol', 'paragraph']],
+                                            // ['height', ['height']]
+                                                    ]
+                                    });
+
+                            
+                            }
 
 
                             

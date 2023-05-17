@@ -66,7 +66,7 @@
                             <div class="card-body">
                                 
                                         <p class="question" data-question-type="{{$item->typeofquiz}}">{{$key+=1}}. {{$item->question}}</p>
-                                        <input type="text" data-question-type="{{$item->typeofquiz}}" data-question-id="{{ $item->id}}" id="{{ $questioninfo->id}}" class="answer-field form-control mt-2" placeholder="Answer here" >
+                                        <input type="text" data-question-type="{{$item->typeofquiz}}" data-question-id="{{ $item->id}}" id="{{ $questioninfo->id}}" class="answer-field form-control mt-2" placeholder="Answer here" value="{{$item->answer}}" >
 
                             </div>
                         </div>
@@ -78,7 +78,7 @@
                                     <div class="card-body">
                                         
                                                 <p class="question" data-question-type="{{$item->typeofquiz}}">{{$key+=1}}. {{$item->question}}</p>
-                                                <textarea data-question-type="{{$item->typeofquiz}}" data-question-id="{{ $item->id}}" id="{{ $questioninfo->id}}" class="answer-field form-control mt-2"type="text"></textarea>
+                                                <textarea data-question-type="{{$item->typeofquiz}}" data-question-id="{{ $item->id}}" id="{{ $questioninfo->id}}" class="answer-field form-control mt-2"type="text" value="{{$item->answer}}">{{$item->answer}}</textarea>
 
                                     </div>
                                 </div>
@@ -124,12 +124,22 @@
                                         </div>
                                     </div>
                             @endif
+
+                            @if($item->typeofquiz == 6)
+                                <!-- Image Answer -->
+                                <div class="card mt-5 editcontent">
+                                    <div class="card-body">
+                                        
+                                                <p>Instruction: {!! $item->question !!}</p>
+                                    </div>
+                                </div>
+                            @endif
                         @endforeach
 
                         <div class="save mb-5">
                         <div class="row">
                             <div class="col-md-12 d-flex justify-content-end">
-                                <div class="btn btn-success btn-lg" id="save-quiz">Save</div>
+                                <div class="btn btn-success btn-lg" data-id="{{$headerid}}" id="save-quiz">Save</div>
                             </div>
                         </div>
                         </div>
@@ -260,74 +270,74 @@
 
         // save all answers quiz
 
-        $('#save-quiz').on('click', function() {
-            var isvalid = true
+        // $('#save-quiz').on('click', function() {
+        //     var isvalid = true
 
-            $('.answer-field').each(function() {
-                $(this).removeClass('error-input')
-                $(this).removeClass('is-invalid')
+        //     $('.answer-field').each(function() {
+        //         $(this).removeClass('error-input')
+        //         $(this).removeClass('is-invalid')
 
-                if ($(this).val() == "" ) {
+        //         if ($(this).val() == "" ) {
                     
-                    if ($(this).prop("disabled")) {
-                        $(this).prop('disabled', false);
-                        $(this).focus();
-                        $(this).prop('disabled', true);
-                    } else {
-                        $(this).focus();
-                    }
+        //             if ($(this).prop("disabled")) {
+        //                 $(this).prop('disabled', false);
+        //                 $(this).focus();
+        //                 $(this).prop('disabled', true);
+        //             } else {
+        //                 $(this).focus();
+        //             }
                     
                     
-                    $(this).addClass('error-input')
-                    isvalid = false
-                }
+        //             $(this).addClass('error-input')
+        //             isvalid = false
+        //         }
 
-                if ($(this).is(":radio")) {
+        //         if ($(this).is(":radio")) {
                     
-                    if (!$("input[name='" + $(this).attr("name") + "']:checked").length) {
+        //             if (!$("input[name='" + $(this).attr("name") + "']:checked").length) {
 
-                        $(this).focus();
-                        $(this).addClass('is-invalid')
+        //                 $(this).focus();
+        //                 $(this).addClass('is-invalid')
 
-                        isValid = false;
-                    }
-                }
+        //                 isValid = false;
+        //             }
+        //         }
 
-            })
+        //     })
 
-            if (isvalid) {
-                Toast.fire({
-                    icon: 'success',
-                    title: 'Quiz submitted successfully.'
-                })
+        //     if (isvalid) {
+        //         Toast.fire({
+        //             icon: 'success',
+        //             title: 'Quiz submitted successfully.'
+        //         })
 
 
-                console.log($(this).val());
-                // set quiz status as finished
-                // disable retake of quiz
-                // show quiz complete form
-            } else {
-                // Swal.fire({
-                //     // template: '#my-template'
-                //     titleText: 'Unanswered items detected!',
-                //     html: '<p class="text-center" style="font-size:1rem;">Are you sure you want to continue and submit the quiz?</p>',
-                //     icon: 'error',
-                //     showCancelButton: true,
-                //     confirmButtonColor: '#3085d6',
-                //     cancelButtonColor: '#d33',
-                //     confirmButtonText: 'Save'
-                // })
-                // .then((result) => {
-                //     if (result.value) {
-                //         event.preventDefault();
-                //         Toast.fire({
-                //             icon: 'success',
-                //             title: 'Quiz w/ unanswered items submitted successfully.'
-                //         })
-                //     }
-                // })
-            }
-        })
+        //         console.log($(this).val());
+        //         // set quiz status as finished
+        //         // disable retake of quiz
+        //         // show quiz complete form
+        //     } else {
+        //         // Swal.fire({
+        //         //     // template: '#my-template'
+        //         //     titleText: 'Unanswered items detected!',
+        //         //     html: '<p class="text-center" style="font-size:1rem;">Are you sure you want to continue and submit the quiz?</p>',
+        //         //     icon: 'error',
+        //         //     showCancelButton: true,
+        //         //     confirmButtonColor: '#3085d6',
+        //         //     cancelButtonColor: '#d33',
+        //         //     confirmButtonText: 'Save'
+        //         // })
+        //         // .then((result) => {
+        //         //     if (result.value) {
+        //         //         event.preventDefault();
+        //         //         Toast.fire({
+        //         //             icon: 'success',
+        //         //             title: 'Quiz w/ unanswered items submitted successfully.'
+        //         //         })
+        //         //     }
+        //         // })
+        //     }
+        // })
 
         // show the button when the user scrolls past a certain point
         $(window).scroll(function() {

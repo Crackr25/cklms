@@ -512,6 +512,66 @@
                     e.preventDefault();
                 });
 
+                $(document).on('click', '#save-quiz', function() {
+
+                var isvalid = true;
+
+                $('.answer-field').each(function() {
+                    $(this).removeClass('error-input')
+                    $(this).removeClass('is-invalid')
+
+                    if ($(this).val() == "" ) {
+                        
+                        if ($(this).prop("disabled")) {
+                            $(this).prop('disabled', false);
+                            $(this).focus();
+                            $(this).prop('disabled', true);
+                        } else {
+                            $(this).focus();
+                        }
+                        
+                        
+                        $(this).addClass('error-input')
+                        isvalid = false
+                    }
+
+                    if ($(this).is(":radio")) {
+                        
+                        if (!$("input[name='" + $(this).attr("name") + "']:checked").length) {
+
+                            $(this).focus();
+                            $(this).addClass('is-invalid')
+
+                            isValid = false;
+                        }
+                    }
+
+            })
+
+            console.log(isvalid)
+
+            if (isvalid == true) {
+
+                var dataId = $('#save-quiz').data('id');
+                    console.log(dataId);
+
+                    $.ajax({
+                    url: '/chaptertestsubmitanswers',
+                    type:"GET",
+                    data: {dataId: dataId},
+                    success: function(data){
+                        $('#lesson_content_holder').empty()
+                        UIkit.notification("<span uk-icon='icon: check'></span> Submitted successfully", {status:'success'})
+                        loadQuizContent()
+                
+                    }
+                })
+
+            }
+
+                    
+                });
+
 
                 function loadQuizContent(){
 
