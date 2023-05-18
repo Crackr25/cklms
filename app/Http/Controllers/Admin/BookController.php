@@ -544,14 +544,29 @@ class BookController extends Controller
     public function createquestion(Request $request)
     {
 
-        DB::table('lessonquizquestions')
+        $checkifexist = DB::table('lessonquizquestions')
             ->where('id', $request->get('id'))
-            ->update([
-                'question'         => $request->get('question'),
-                'typeofquiz'   => $request->get('typeofquiz')
-            ]);
+            ->where('question', $request->get('question'))
+            ->count();
 
-        return 1;
+
+
+
+        
+        if($checkifexist == 0){
+            DB::table('lessonquizquestions')
+                ->where('id', $request->get('id'))
+                ->update([
+                    'question'         => $request->get('question'),
+                    'typeofquiz'   => $request->get('typeofquiz')
+                ]);
+
+            return 1;
+
+        }else{
+            return 0;
+        }
+
     }
 
     public function delcoverage(Request $request)
@@ -1093,24 +1108,105 @@ class BookController extends Controller
 
 
 
+    public function getFillQuestion(Request $request)
+    {
+        
+        $question = DB::table('lessonquizquestions')
+            ->where('id', $request->get('id'))
+            ->select('id','question')
+            ->where('deleted', 0)
+            ->first();
+
+        $question->fill = DB::table('lesson_fill_question')
+        ->where('questionid', $question->id)
+        ->select('id', 'questionid' , 'question', 'sortid')
+        ->orderBy('sortid')
+        ->get();
+
+        $key= 0;
+
+        $counter = 0;
+
+        $inputCounter = 0;
+        foreach ($question->fill as $index => $item) {
+            // Replace all occurrences of ~input with input fields that have unique IDs
+            $key = 0;
+            $questionWithInputs = preg_replace_callback('/~input/', function($matches) use ($item, &$inputCounter, &$key) {
+            $inputField = '<input class="d-inline form-control q-input answer-field" data-type="7" data-sortid="'.++$inputCounter.'" data-question-id="'.$item->id.'" style="width: 200px; margin: 10px; border-color:black" type="text" id="input-'.$item->id.'">';
+            return $inputField;
+            }, $item->question);
+            $inputCounter = 0;
+
+            $item->question = $questionWithInputs;
+        }
+
+
+
+
+        return response()->json($question);
+        
+    }
+
+
+
     public function setAnswerKey(Request $request)
     {
-        DB::table('lessonquizchoices')
-                ->where('questionid', $request->get('question_id'))
-                ->where('answer', 1)
-                ->update([
-                    'answer'   => '0'
-                ]);
 
+        if($request->get('questiontype') == 1){
+                DB::table('lessonquizchoices')
+                        ->where('questionid', $request->get('question_id'))
+                        ->where('answer', 1)
+                        ->update([
+                            'answer'   => '0'
+                        ]);
+
+                
+                DB::table('lessonquizchoices')
+                        ->where('id', $request->get('answer'))
+                        ->where('questionid', $request->get('question_id'))
+                        ->update([
+                            'answer'   => '1'
+                        ]);
+
+                return 1;
+                    }
+            else{
+
+                        $checkifexist =  DB::table('lesson_quiz_fill_answer')
+                        ->where('headerid', $request->get('question_id'))
+                        ->where('sortid', $request->get('sortid'))
+                        ->count();
+
+                        if($checkifexist > 0){
+
+                            DB::table('lesson_quiz_fill_answer')
+                            ->where('headerid', $request->get('question_id'))
+                            ->where('sortid', $request->get('sortid'))
+                            ->update([
+                                'answer'   => $request->get('answer')
+                            ]);
+
+                                return 0;
+
+
+                        }else{
+
+                            DB::table('lesson_quiz_fill_answer')
+                            ->insert([
+                                'answer'   => $request->get('answer'),
+                                'headerid'   => $request->get('question_id'),
+                                'sortid'   => $request->get('sortid')
+                            ]);
+
+                                return 5;
+
+                        }             
+
+
+
+
+            }
         
-        DB::table('lessonquizchoices')
-                ->where('id', $request->get('answer'))
-                ->where('questionid', $request->get('question_id'))
-                ->update([
-                    'answer'   => '1'
-                ]);
-
-    return 1;
         
     }
 
@@ -1210,6 +1306,40 @@ class BookController extends Controller
 
         $answerString = implode(',', $answer->toArray());
         $item->answer = $answerString;
+
+        }
+
+
+    return response()->json($question);
+    
+        
+    }
+
+    public function returnEditfill(Request $request)
+
+    {
+        $question = DB::table('lessonquizquestions')
+            ->where('id', $request->get('id'))
+            ->select('id','question')
+            ->where('deleted', 0)
+            ->first();
+
+
+        $question->fill = DB::table('lesson_fill_question')
+            ->where('questionid', $question->id)
+            ->orderBy('sortid')
+            ->get();
+
+        foreach($question->fill as $item){
+
+            $answer = DB::table('lesson_quiz_fill_answer')
+                ->where('headerid', $item->id)
+                ->orderBy('sortid')
+                ->pluck('answer');
+
+            $answerString = implode(',', $answer->toArray());
+
+            $item->answer = $answerString;
 
         }
 

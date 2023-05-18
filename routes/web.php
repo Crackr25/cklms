@@ -160,6 +160,8 @@ Route::middleware(['auth', 'isAdministrator','isDefaultPass'])->group(function (
     Route::get('/adminviewbook/returneditquiz', 'Admin\BookController@returneditquiz');
     Route::get('/adminviewbook/getdropquestion', 'Admin\BookController@getDropQuestion');
     Route::get('/adminviewbook/returneditquizdrag', 'Admin\BookController@returnEditdrag');
+    Route::get('/adminviewbook/getfillquestion', 'Admin\BookController@getFillQuestion');
+    Route::get('/adminviewbook/returneditquizfill', 'Admin\BookController@returnEditfill');
     
 
     

@@ -155,6 +155,22 @@ class StudentBookController extends Controller
 
 
                 }
+                
+                if($item->typeofquiz == 6 ){
+
+                    $protocol = $request->getScheme();
+                    $host = $request->getHost();
+
+                    $rootDomain = $protocol . '://' . $host;
+
+                    $answer = DB::table('chapterquizrecordsdetail')
+                        ->where('questionid',$item->id)
+                        ->where('headerid', $recordid)
+                        ->where('deleted',0)
+                        ->value('picurl');
+
+                    $item->picurl = $rootDomain.'/'.$answer;
+                }
 
 
                 if($item->typeofquiz == 5){

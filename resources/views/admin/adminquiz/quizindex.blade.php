@@ -209,11 +209,14 @@
                                                                     <div class="col-6 mr-1 quizarea">
                                                                         <select class="form-control quiztype" id="quiztype{{$question->id}}">
                                                                         <option value="multiple_choice">Multiple Choice</option>
-                                                                        <option value="instruction">Instruction</option>
                                                                         <option value="short_answer">Short Answer</option>
                                                                         <option value="paragraph_answer">Paragraph</option>
-                                                                        <option value="enumeration">Enumeration</option>
+                                                                        <option value="instruction">Instruction</option>
                                                                         <option value="drag_drop">Drag & drop</option>
+                                                                        <option value="drag_drop">Image Answer</option>
+                                                                        <option value="fill_n_blanks">Fill in the blanks</option>
+                                                                        <option value="enumeration">Enumeration</option>
+                                                                        
                                                                         </select>
                                                                     </div>
                                                                 <div class="col-12 m-2" id="quiztioncontent{{$question->id}}">
@@ -263,12 +266,13 @@
                                                                     <div class="col-6 mr-1 quizarea">
                                                                         <select class="form-control quiztype" id="quiztype{{$question->id}}">
                                                                         <option value="short_answer">Short Answer</option>
+                                                                        <option value="multiple_choice">Multiple Choice</option>
                                                                         <option value="paragraph_answer">Paragraph</option>
-                                                                        <option value="short_answer">Short Answer</option>
-                                                                        {{-- <option value="multiple_choice">Multiple Choice</option> --}}
                                                                         <option value="instruction">Instruction</option>
-                                                                        <option value="enumeration">Enumeration</option>
                                                                         <option value="drag_drop">Drag & drop</option>
+                                                                        <option value="drag_drop">Image Answer</option>
+                                                                        <option value="fill_n_blanks">Fill in the blanks</option>
+                                                                        <option value="enumeration">Enumeration</option>
                                                                         </select>
                                                                     </div>
                                                                     <div class="col-12 m-2" id="quiztioncontent{{$question->id}}">
@@ -296,11 +300,13 @@
                                                                     <div class="col-6 mr-1 quizarea">
                                                                         <select class="form-control quiztype" id="quiztype{{$question->id}}">
                                                                         <option value="paragraph_answer">Paragraph</option>
+                                                                        <option value="multiple_choice">Multiple Choice</option>
                                                                         <option value="short_answer">Short Answer</option>
-                                                                        {{-- <option value="multiple_choice">Multiple Choice</option> --}}
                                                                         <option value="instruction">Instruction</option>
-                                                                        <option value="enumeration">Enumeration</option>
                                                                         <option value="drag_drop">Drag & drop</option>
+                                                                        <option value="drag_drop">Image Answer</option>
+                                                                        <option value="fill_n_blanks">Fill in the blanks</option>
+                                                                        <option value="enumeration">Enumeration</option>
                                                                         </select>
                                                                     </div>
                                                                 <div class="col-12 m-2" id="quiztioncontent{{$question->id}}">
@@ -328,12 +334,13 @@
                                                                     <div class="col-6 mr-1 quizarea">
                                                                         <select class="form-control quiztype" id="quiztype{{$question->id}}">
                                                                         <option value="instruction">Instruction</option>
-                                                                        <option value="paragraph_answer">Paragraph</option>
+                                                                        <option value="multiple_choice">Multiple Choice</option>
                                                                         <option value="short_answer">Short Answer</option>
-                                                                        {{-- <option value="multiple_choice">Multiple Choice</option> --}}
-                                                                        <option value="instruction">Instruction</option>
-                                                                        <option value="enumeration">Enumeration</option>
+                                                                        <option value="paragraph_answer">Paragraph</option>
                                                                         <option value="drag_drop">Drag & drop</option>
+                                                                        <option value="drag_drop">Image Answer</option>
+                                                                        <option value="fill_n_blanks">Fill in the blanks</option>
+                                                                        <option value="enumeration">Enumeration</option>
                                                                         </select>
                                                                     </div>
                                                                 <div class="col-12 m-2" id="quiztioncontent{{$question->id}}">
@@ -356,13 +363,13 @@
                                                                     <div class="col-6 mr-1 quizarea">
                                                                         <select class="form-control quiztype" id="quiztype{{$question->id}}">
                                                                         <option value="drag_drop">Drag & drop</option>
-                                                                        <option value="instruction">Instruction</option>
-                                                                        <option value="paragraph_answer">Paragraph</option>
+                                                                        <option value="multiple_choice">Multiple Choice</option>
                                                                         <option value="short_answer">Short Answer</option>
-                                                                        {{-- <option value="multiple_choice">Multiple Choice</option> --}}
+                                                                        <option value="paragraph_answer">Paragraph</option>
                                                                         <option value="instruction">Instruction</option>
+                                                                        <option value="drag_drop">Image Answer</option>
+                                                                        <option value="fill_n_blanks">Fill in the blanks</option>
                                                                         <option value="enumeration">Enumeration</option>
-                                                                        <option value="drag_drop">Drag & drop</option>
                                                                         </select>
                                                                     </div>
                                                                 <div class="col-12 m-2" id="quiztioncontent{{$question->id}}">
@@ -441,19 +448,19 @@
                                                                     <div class="col-6 mr-1 quizarea">
                                                                         <select class="form-control quiztype" id="quiztype{{$question->id}}">
                                                                         <option value="drag_drop">Image Answer</option>
-                                                                        <option value="instruction">Instruction</option>
-                                                                        <option value="paragraph_answer">Paragraph</option>
+                                                                        <option value="multiple_choice">Multiple Choice</option>
                                                                         <option value="short_answer">Short Answer</option>
-                                                                        {{-- <option value="multiple_choice">Multiple Choice</option> --}}
+                                                                        <option value="paragraph_answer">Paragraph</option>
                                                                         <option value="instruction">Instruction</option>
-                                                                        <option value="enumeration">Enumeration</option>
                                                                         <option value="drag_drop">Drag & drop</option>
+                                                                        <option value="fill_n_blanks">Fill in the blanks</option>
+                                                                        <option value="enumeration">Enumeration</option>
                                                                         </select>
                                                                     </div>
                                                                 <div class="col-12 m-2" id="quiztioncontent{{$question->id}}">
                                                                     <div class="row">
                                                                         <div class="col-12 m-2">
-                                                                            <textarea class="form-control" placeholder="Untitled instruction" style="height: 20px !important;" id="image_item{{$question->id}}">{{$question->question}}</textarea>
+                                                                            <textarea class="form-control imageanswer" placeholder="Untitled instruction" style="height: 20px !important;" id="image_item{{$question->id}}">{{$question->question}}</textarea>
                                                                             <input type="file" class="mt-2" disabled>
                                                                         </div>
                                                                     </div>
@@ -469,15 +476,14 @@
                                                                 <div class="row justify-content-end">
                                                                     <div class="col-6 mr-1 quizarea">
                                                                         <select class="form-control quiztype" id="quiztype{{$question->id}}">
-                                                                        <option value="drag_drop">Fill in the Blanks</option>
-                                                                        <option value="drag_drop">Image Answer</option>
-                                                                        <option value="instruction">Instruction</option>
-                                                                        <option value="paragraph_answer">Paragraph</option>
+                                                                        <option value="fill_n_blanks">Fill in the blanks</option>
+                                                                        <option value="multiple_choice">Multiple Choice</option>
                                                                         <option value="short_answer">Short Answer</option>
-                                                                        {{-- <option value="multiple_choice">Multiple Choice</option> --}}
+                                                                        <option value="paragraph_answer">Paragraph</option>
                                                                         <option value="instruction">Instruction</option>
-                                                                        <option value="enumeration">Enumeration</option>
                                                                         <option value="drag_drop">Drag & drop</option>
+                                                                        <option value="drag_drop">Image Answer</option>
+                                                                        <option value="enumeration">Enumeration</option>
                                                                         </select>
                                                                     </div>
                                                                 <div class="col-12 m-2" id="quiztioncontent{{$question->id}}">
@@ -489,13 +495,36 @@
                                                                                     ->where('questionid', $question->id)
                                                                                     ->orderBy('sortid')
                                                                                     ->get();
+
+
+                                                                                foreach($fillquestions as $item){
+
+                                                                                $answer = DB::table('lesson_quiz_fill_answer')
+                                                                                    ->where('headerid', $item->id)
+                                                                                    ->orderBy('sortid')
+                                                                                    ->pluck('answer');
+
+                                                                                $answerString = implode(',', $answer->toArray());
+
+                                                                                $item->answer = $answerString;
+                                                                                }
+                                                                            
                                                                         @endphp
                                                                     @foreach($fillquestions as $item)
                                                                         <input type="text" class="form-control fill{{$question->id}}" style="margin-top: 10px; border: 2px solid dodgerblue; color: black;" placeholder="Item text" value="{{$item->question}}">
+                                                                    
+                                                                        <span>Answer is 
+                                                                                    @if(empty($item->answer))
+                                                                                        <em>undefined</em>
+                                                                                    @else
+                                                                                        <em>{{$item->answer}}</em>.
+                                                                                    @endif
+                                                                                    
+                                                                        </span>
                                                                     @endforeach
                                                                     </div>
                                                                     <div class="row justify-content-end p-3 mt-2">
-                                                                        <button class="btn btn-success add_fill_question"  id="${parentId}">Add fill question</button>
+                                                                        <button class="btn btn-success add_fill_question"  id="{{$question->id}}">Add fill question</button>
                                                                     </div>
                                                                 <div class="col-12">
                                                                     <button class="btn btn-link btn-sm answer-key-fill" id="{{$question->id}}">Answer key</button>
@@ -589,10 +618,24 @@
                                                 ]
                                 });
 
+                $('.imageanswer').summernote({
+                                height: 200,
+                                toolbar: [
+                                        // [groupName, [list of button]]
+                                        ['style', ['bold', 'italic', 'underline', 'clear']],
+                                        // ['font', ['strikethrough', 'superscript', 'subscript']],
+                                        ['fontsize', ['fontsize']],
+                                        ['color', ['color']],
+                                        ['para', ['ul', 'ol', 'paragraph']],
+                                        // ['height', ['height']]
+                                                ]
+                                });
+
 
                 $(document).on('click', function(event) {
                     last_quiz_type = $('#quiztype' + last_id).val();
-                    if (!$(event.target).closest('.dragrow' + last_id).length) {
+
+                    if (!$(event.target).closest('.dragrow' + last_id).length || $(event.target).hasClass('delrow')) {
                         
                             console.log("Last ID: ", last_id);
                             if(last_quiz_type == 'multiple_choice'){
@@ -614,13 +657,16 @@
                                             id: last_id
                                                 },
                                         success: function(response) {
+
+                                            if (response == 1){
                                         
                                             Toast.fire({
                                                 icon: 'success',
                                                 title: 'All the changes have been saved'
                                             })
 
-                                            console.log("Question Succesfully save!");
+                                            }
+
                                             
                                         },
                                         error: function(xhr) {
@@ -685,10 +731,14 @@
                                                 },
                                         success: function(response) {
 
+                                            if (response == 1){
+                                        
                                             Toast.fire({
                                                 icon: 'success',
                                                 title: 'All the changes have been saved'
                                             })
+
+                                            }
                                             
                                         },
                                         error: function(xhr) {
@@ -717,10 +767,14 @@
                                                 },
                                         success: function(response) {
 
+                                            if (response == 1){
+                                        
                                             Toast.fire({
                                                 icon: 'success',
                                                 title: 'All the changes have been saved'
                                             })
+
+                                            }
                                             
                                         },
                                         error: function(xhr) {
@@ -753,10 +807,14 @@
                                                 },
                                         success: function(response) {
 
+                                            if (response == 1){
+                                        
                                             Toast.fire({
                                                 icon: 'success',
                                                 title: 'All the changes have been saved'
                                             })
+
+                                            }
                                             
                                         },
                                         error: function(xhr) {
@@ -779,10 +837,14 @@
                                             },
                                     success: function(response) {
 
-                                        Toast.fire({
-                                            icon: 'success',
-                                            title: 'All the changes have been saved'
-                                        })
+                                        if (response == 1){
+                                        
+                                            Toast.fire({
+                                                icon: 'success',
+                                                title: 'All the changes have been saved'
+                                            })
+
+                                            }
                                         
                                     },
                                     error: function(xhr) {
@@ -875,10 +937,14 @@
                                                 },
                                         success: function(response) {
 
+                                            if (response == 1){
+                                        
                                             Toast.fire({
                                                 icon: 'success',
                                                 title: 'All the changes have been saved'
                                             })
+
+                                            }
                                             
                                         },
                                         error: function(xhr) {
@@ -900,10 +966,14 @@
                                                 },
                                         success: function(response) {
 
+                                            if (response == 1){
+                                        
                                             Toast.fire({
                                                 icon: 'success',
                                                 title: 'All the changes have been saved'
                                             })
+
+                                            }
                                             
                                         },
                                         error: function(xhr) {
@@ -1457,7 +1527,7 @@
 
                         
                     // Add click event listener to answer key button
-                    $('.answer-key').click(function() {
+                    $(document).on('click', '.answer-key', function(){
 
                         var parentId = $(this).attr('id');
 
@@ -1484,7 +1554,7 @@
 
                                             response.choices.forEach(function(item) {
                                                 html += `<div class="form-check mt-2">
-                                                            <input data-question-type="${item.typeofquiz}" data-question-id="${response.id}" id="${item.id}" class="answer-field form-check-input" type="radio" name="${response.id}" value="${item.id}">
+                                                            <input data-question-type="${item.typeofquiz}" data-question-id="${response.id}" id="${item.id}" class="answer-field form-check-input" type="radio" data-type="1" name="${response.id}" value="${item.id}">
                                                             <label for="${item.id}" class="form-check-label itemchoices">
                                                                 ${item.description}
                                                             </label>
@@ -1593,6 +1663,51 @@
 
                         });
 
+
+                        $(document).on('click', '.answer-key-fill', function(){
+                            var parentId = $(this).attr('id');
+
+
+
+                            $.ajax({
+                                    type: "get",
+                                    dataType: 'json',
+                                    url: "/adminviewbook/getfillquestion",
+                                    data: { 
+                                        id: parentId
+                                
+                                            },
+                                    success: function(response) {
+                                            console.log(response);
+
+                                            $('#quiztype' + parentId).prop('disabled', true);
+                                            var html ='';
+
+                                            response.fill.forEach(function(item) {
+                                                html += `<p class="ml-2">${item.sortid}. ${item.question} </p>`;
+                                            
+                                            });
+
+
+                                            html += `</div><div class="col-12 p-3 text-end">
+                                                                        <button class="btn btn-dark btn-sm answerdonefill" id="${response.id}">Done</button>
+                                                                    </div></div>`;
+
+                                            $('#quiztioncontent' + parentId).empty().append(html);
+                                        },
+                                    error: function(xhr) {
+                                        console.log("Error");
+                                        // Handle error here
+                                    }
+                                    })
+
+
+                            console.log(parentId);
+
+
+
+                        });
+
                         $(document).on('click', '.answerdone', function(){
 
                             var id = $(this).attr("id");
@@ -1636,6 +1751,9 @@
                                             
 
                                             html += `<button class="form-control addoption" style="margin: 20px; " id="${response.id}">Add option</button>`;
+                                            html += `<div class="col-12">
+                                                    <button class="btn btn-link btn-sm answer-key" id="${response.id}">Answer key</button>
+                                                    </div>`;
 
                                             $('#quiztioncontent' + id).empty().append(html);
                                         },
@@ -1727,6 +1845,62 @@
                         });
 
 
+                        $(document).on('click', '.answerdonefill', function(){
+
+                            var id = $(this).attr("id");
+                            console.log(id);
+
+
+                            $.ajax({
+                                    type: "get",
+                                    dataType: 'json',
+                                    url: "/adminviewbook/returneditquizfill",
+                                    data: { 
+                                        id: id
+                                
+                                            },
+                                    success: function(response) {
+                                            console.log(response);
+
+
+                                            $('#quiztype' + id).prop('disabled', false);
+                                            var html = ` <p><b>Note: </b>To set up the blanks, please input [~input] where you want the blank to appear. Ex. The planet ~input is the biggest planet in the solar system</p>
+                                            <div id="item_question${response.id}">`
+                                
+                                            response.fill.forEach(function(item){
+                                            html += ` <input type="text" class="form-control fill${response.id}" style="margin-top: 10px; border: 2px solid dodgerblue; color: black;" placeholder="Item text" value="${item.question}">
+                                            <span>Answer is `
+                                                if (!item.answer || item.answer.length === 0) {
+                                                    html += `<em>undefined</em>`;
+                                                    } else {
+                                                    html += `<em>${item.answer}</em>.</span>`;
+                                                    }
+
+                                            });
+
+                                            html += `</div>
+                                                    <div class="row justify-content-end p-3 mt-2">
+                                                    <button class="btn btn-success add_fill_question"  id="${response.id}">Add fill question</button>
+                                                    </div>
+                                                    <div class="col-12">
+                                                    <button class="btn btn-link btn-sm answer-key-fill" id="${response.id}">Answer key</button>
+                                                    </div>`
+
+                                        $('#quiztioncontent' + id).empty().append(html);
+                                        },
+                                    error: function(xhr) {
+                                        console.log("Error");
+                                        // Handle error here
+                                    }
+                            });
+
+                        
+
+
+
+                        });
+
+
 
                         $(document).on('click', '.itemchoices', function(){
                             var radioBtnId = $(this).attr("for");
@@ -1761,6 +1935,10 @@
                         function autoSaveAnswer(thisElement) {
                             var answer = $(thisElement).val();
                             var questionId = $(thisElement).data('question-id');
+                            var questiontype = $(thisElement).data('type');
+                            var sortid = $(thisElement).data('sortid');
+                            
+                            console.log(sortid)
 
                             console.log(`student answer: ${answer}, question-id: ${questionId}`)
 
@@ -1769,7 +1947,9 @@
                                 method: 'GET',
                                 data: {
                                 answer: answer,
-                                question_id: questionId
+                                question_id: questionId,
+                                sortid : sortid,
+                                questiontype: questiontype
 
                                 },
                                 success: function(response) {
