@@ -148,6 +148,68 @@
                                 </div>
                             @endif
 
+                            @if($item->typeofquiz == 7)
+                                <div class="card mt-5 editcontent">
+                                    <div class="card-body">
+                                        <span style="font-weight:600;font-size:1.0pc">
+                                            Fill in the blanks
+                                        </span>
+
+                                        
+
+                                        @foreach($item->fill as $items)
+                                        
+                                                <p>
+                                                    {{$items->sortid}}. {!! $items->question !!}
+
+                                                </p>
+                                            @endforeach
+
+                                    </div>
+                                </div>
+                        @endif
+
+
+                        @if($item->typeofquiz == 8)
+                                <div class="card mt-5 editcontent">
+                                    <div class="card-body">
+                                        <span style="font-weight:600;font-size:1.0pc">
+                                            Enumeration
+                                        </span>
+
+                                        <ol class="list-group list-group-numbered p-3" type="A">
+                                        <li>
+                                            <p>{{$item->question}}</p>
+                                        <ol>
+
+                                        @php
+
+                                            $numberOfTimes = $item->item
+
+                                        @endphp
+                                        
+                                        @for ($i = 0; $i < $numberOfTimes; $i++)
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <li>
+                                                    <p><input data-question-id="{{ $item->id }}" data-sortid={{ $i+1 }} data-question-type="8" class="answer-field d-inline form-control q-input" value="{{$item->answer[$i]}}" type="text"></p>
+                                                </li>
+                                            </div>
+                                        </div>
+                                        
+                                        @endfor
+                                        
+                                        </ol>
+                                        
+                                        </li>
+                                    </ol>
+                                        
+
+                                    </div>
+                                </div>
+                        @endif
+
 
                         @endforeach
 
@@ -174,11 +236,7 @@
 <script>
 
     $(document).ready(function(){
-
-                console.log("hello world")
-
-                var data = {!! json_encode($quizQuestions) !!};
-                console.log(data);
+                
 
                 var STUDENT_ID = 2;
 
@@ -217,7 +275,7 @@
 
                     
 
-                    console.log(`student answer: ${answer}, question-id: ${questionId}, question-type: ${questionType}`)
+                    console.log(`student answer: ${answer}, sortid: ${sortId}, question-id: ${questionId}, question-type: ${questionType}`)
 
                     //Send an AJAX request to save the answer data
 
@@ -232,6 +290,7 @@
                             answer: answer,
                             headerId: headerId,
                             questionType: questionType,
+                            sortId: sortId,
                             question_id: questionId
                             },
                             success: function(response) {

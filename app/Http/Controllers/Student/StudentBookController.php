@@ -86,9 +86,12 @@ class StudentBookController extends Controller
                     ->select(
                         'lessonquizquestions.id',
                         'lessonquizquestions.question',
-                        'lessonquizquestions.typeofquiz'
+                        'lessonquizquestions.typeofquiz',
+                        'lessonquizquestions.item'
                     )
                     ->get();
+
+        
 
         $isAnswered = false;
 
@@ -155,6 +158,73 @@ class StudentBookController extends Controller
 
 
                 }
+
+                if($item->typeofquiz == 7 ){
+
+
+                    $fillquestions = DB::table('lesson_fill_question')
+                                                ->where('questionid', $item->id)
+                                                ->orderBy('sortid')
+                                                ->get();
+
+                    $item->fill = $fillquestions;
+
+
+                    foreach ($item->fill as $index => $fillItem) {
+                        $key = 0;
+                        $answercount = DB::table('chapterquizrecordsdetail')
+                            ->where('questionid', $fillItem->id)
+                            ->where('headerid', $recordid)
+                            ->where('deleted', 0)
+                            ->count();
+
+                        if ($answercount == 1) {
+                            $fillItem->answer  = DB::table('chapterquizrecordsdetail')
+                                ->where('questionid', $fillItem->id)
+                                ->where('headerid', $recordid)
+                                ->where('deleted', 0)
+                                ->value('stringanswer');
+
+                            $questionWithInputs = preg_replace_callback('/~input/', function ($matches) use ($fillItem, &$inputCounter, &$key) {
+                                $inputField = '<input class="answer-field d-inline form-control q-input" data-question-type="7" data-sortid="' . ++$inputCounter . '" data-question-id="' . $fillItem->id . '" style="width: 200px; margin: 10px; border-color:black" type="text" id="input-' . $fillItem->id . '" value="' . $fillItem->answer . '">';
+                                return $inputField;
+                            }, $fillItem->question);
+                            $inputCounter = 0;
+
+                            $fillItem->question = $questionWithInputs;
+                        } else if ($answercount > 1) {
+                            $answer = DB::table('chapterquizrecordsdetail')
+                                ->where('questionid', $fillItem->id)
+                                ->where('headerid', $recordid)
+                                ->select('stringanswer')
+                                ->orderBy('sortid', 'asc')
+                                ->get();
+
+                            $sort = -1;
+                            $questionWithInputs = preg_replace_callback('/~input/', function ($matches) use ($fillItem, &$inputCounter, &$key, &$sort, &$answer) {
+                                $inputField = '<input class="answer-field d-inline form-control q-input" data-question-type="7" data-sortid="' . ++$inputCounter . '" data-question-id="' . $fillItem->id . '" value="' . $answer[++$sort]->stringanswer . '" style="width: 200px; margin: 10px; border-color:black" type="text" id="input-' . $fillItem->id . '">';
+                                return $inputField;
+                            }, $fillItem->question);
+                            $inputCounter = 0;
+
+                            $fillItem->answer = $answer;
+                            $fillItem->question = $questionWithInputs;
+                        } else {
+                            $questionWithInputs = preg_replace_callback('/~input/', function ($matches) use ($fillItem, &$inputCounter, &$key) {
+                                $inputField = '<input class="answer-field d-inline form-control q-input" data-question-type="7" data-sortid="' . ++$inputCounter . '" data-question-id="' . $fillItem->id . '" style="width: 200px; margin: 10px; border-color:black" type="text" id="input-' . $fillItem->id . '">';
+                                return $inputField;
+                            }, $fillItem->question);
+                            $inputCounter = 0;
+
+                            $fillItem->question = $questionWithInputs;
+                        }
+                    }
+
+                                            
+
+                }
+
+                
                 
                 if($item->typeofquiz == 6 ){
 
@@ -170,6 +240,32 @@ class StudentBookController extends Controller
                         ->value('picurl');
 
                     $item->picurl = $rootDomain.'/'.$answer;
+                }
+
+
+
+                if($item->typeofquiz == 8){
+                
+
+                    $numberOfTimes = $item->item;
+
+
+                    $newArray = []; // Declare an empty array
+
+                    for ($i = 0; $i < $numberOfTimes; $i++) {
+
+                        $answer  = DB::table('chapterquizrecordsdetail')
+                                        ->where('questionid',$item->id)
+                                        ->where('headerid', $recordid)
+                                        ->where('sortid', $i+1)
+                                        ->where('deleted',0)
+                                        ->value('stringanswer');
+                        $newArray[] = $answer;
+                    }
+
+                    $item->answer = $newArray;
+
+
                 }
 
 
@@ -191,8 +287,7 @@ class StudentBookController extends Controller
                     $item->drop = $dropquestions;
 
 
-                    foreach ($item->drop as $index => $item) {
-                    }
+                
 
 
                     
@@ -265,6 +360,19 @@ class StudentBookController extends Controller
 
 
                 }
+
+
+                
+
+
+                
+
+
+
+                
+
+
+                
 
 
 
@@ -360,6 +468,7 @@ class StudentBookController extends Controller
 
 
             // $isAnswered = false;
+            $numberOfAttempts = 0;
 
             $numberOfAttempts =  DB::table('chapterquizrecords')
                                     ->where('submittedby',auth()->user()->id)
@@ -369,9 +478,17 @@ class StudentBookController extends Controller
             
 
             if($numberOfAttempts == 0){
-                $chapterquizsched->btn = "Attempt Quiz";
+                if(isset($chapterquizsched)){
+                    $chapterquizsched->btn = "Attempt Quiz";
+
+                }
             }else{
-                $chapterquizsched->btn = "Retake Quiz";
+
+                if(isset($chapterquizsched)){
+                    $chapterquizsched->btn = "Retake Quiz";
+
+                }
+                
             }
 
             $attemptsLeft = 0;
@@ -532,7 +649,20 @@ class StudentBookController extends Controller
                 if ($request->get('questionType') != 1) {
                     $data['stringanswer'] = $request->get('answer');
 
+
                     if($request->get('sortId') != null && $request->get('questionType') == 5 ){
+
+                        $data['sortid'] = $request->get('sortId');
+
+                    }
+
+                    if($request->get('questionType') == 8 ){
+
+                        $data['sortid'] = $request->get('sortId');
+
+                    }
+
+                    if($request->get('sortId') != null && $request->get('questionType') == 7 ){
 
                         $data['sortid'] = $request->get('sortId');
 
@@ -554,6 +684,19 @@ class StudentBookController extends Controller
                         $data['sortid'] = $request->get('sortId');
 
                     }
+
+                    if($request->get('sortId') != null && $request->get('questionType') == 8 ){
+
+                        $data['sortid'] = $request->get('sortId');
+
+                    }
+
+                    if($request->get('sortId') != null && $request->get('questionType') == 7 ){
+
+                        $data['sortid'] = $request->get('sortId');
+
+                    }
+
                 } else {
                     $data['choiceid'] = $request->get('answer');
                 }

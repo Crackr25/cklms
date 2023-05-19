@@ -196,14 +196,21 @@
         #lesson_content_holder{
 
             height: 100%;
-
+            perspective: 1000px;
             background-image: url('{{asset($bookinfo->picurl)}}');
             background-repeat: repeat-y;
             background-size:contain;
             background-position: center;
-        
+            transition: opacity 0.6s ease;
 
         }
+
+        .hidden {
+        
+            opacity: 0; /* Hide the content */
+        
+        }
+
 
 
     </style>
@@ -271,7 +278,7 @@
                                         </div>
                                         <div class="simplebar-mask">
                                             <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
-                                                <div class="simplebar-content  p-2" style="padding: 0px; height: auto; overflow: hidden;" id="book_part_holder">
+                                                <div class="simplebar-content  p-2" style="padding: 0px; height: auto; overflow-y: auto;" id="book_part_holder">
                                                     {{-- <img src="{{asset($bookinfo->picurl)}}" alt=""> --}}
                                                 </div>
                                             </div>
@@ -388,14 +395,25 @@
             function loadlessonContent(){
 
                 $.ajax({
-                    url: '/lessonContent/'+selectedLesson,
-                    type:"GET",
-                    success: function(data){
-
-                        $('#lesson_content_holder').append(data)
-                
+                    url: '/lessonContent/' + selectedLesson,
+                    type: 'GET',
+                    success: async function(data) {
+                        var contentDiv = $('#lesson_content_holder');
+                        
+                        // Add 'hidden' class to hide the content
+                        contentDiv.addClass('hidden');
+                        
+                        // After a short delay, change the content and remove 'hidden' class to show the updated content with transition
+                        await new Promise(resolve => setTimeout(resolve, 500)); // Delay in milliseconds, adjust as needed
+                        
+                        // Change the content here
+                        $('#lesson_content_holder').append(data);
+                        
+                        // Remove 'hidden' class to show the content with transition
+                        contentDiv.removeClass('hidden');
                     }
-                })
+                    });
+
 
             }
 

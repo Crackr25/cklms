@@ -281,7 +281,7 @@
                                                                                 <textarea class="form-control m-2" placeholder="Untitled question" id="shortz_answer_question{{$question->id}}" >{{$question->question}}</textarea>
                                                                             </div>
                                                                             <div class="col-12">    
-                                                                                <input type="text" class="form-control mt-2" placeholder="Short answer text" disabled>
+                                                                                <input type="text" class="form-control mt-2 ml-2" placeholder="Short answer text" disabled>
                                                                             </div>
                                                             
                                                                         </div>
@@ -315,7 +315,7 @@
                                                                             <textarea class="form-control m-2" placeholder="Untitled question" id="long_answer_question{{$question->id}}" >{{$question->question}}</textarea>
                                                                         </div>
                                                                         <div class="col-12">    
-                                                                            <input type="text" class="form-control mt-2" placeholder="Long answer text" disabled>
+                                                                            <input type="text" class="form-control mt-2 ml-2" placeholder="Long answer text" disabled>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -529,6 +529,49 @@
                                                                 <div class="col-12">
                                                                     <button class="btn btn-link btn-sm answer-key-fill" id="{{$question->id}}">Answer key</button>
                                                                 </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    @endif
+
+                                                    {{-- Enumerations --}}
+
+                                                    @if($question->typeofquiz == 8)
+                                                    <div id={{$question->id}} class="col-lg-11 col-10 editcontent col-content identifier{{$question->id}}">
+                                                        <div class="card mt-5 shadow-none border-0">
+                                                            <div class="card-header">
+                                                                <div class="row justify-content-end">
+                                                                    <div class="col-6 mr-1 quizarea">
+                                                                        <select class="form-control quiztype" id="quiztype{{$question->id}}">
+                                                                        <option value="enumeration">Enumeration</option>
+                                                                        <option value="multiple_choice">Multiple Choice</option>
+                                                                        <option value="short_answer">Short Answer</option>
+                                                                        <option value="paragraph_answer">Paragraph</option>
+                                                                        <option value="instruction">Instruction</option>
+                                                                        <option value="drag_drop">Drag & drop</option>
+                                                                        <option value="drag_drop">Image Answer</option>
+                                                                        <option value="fill_n_blanks">Fill in the blanks</option>
+                                                                        </select>
+                                                                    </div>
+                                                                <div class="col-12 m-2" id="quiztioncontent{{$question->id}}">
+                                                                    <div class="row">
+                                                                        <div class="col-12">
+                                                                            <textarea class="form-control enumeration mt-2 ml-2" placeholder="Untitled question" id="enumerationquestion{{$question->id}}" >{{$question->question}}</textarea>
+                                                                            <div id="item_option{{$question->id}}">
+                                                                                @php
+
+                                                                                $numberOfTimes = $question->item
+
+                                                                                @endphp
+
+                                                                                @for ($i = 0; $i < $numberOfTimes; $i++)
+                                                                                    <input type="text" class="form-control mt-2 ml-2" placeholder="Item text &nbsp;{{$i+1}}" disabled>
+                                                                                @endfor
+                                                                            </div>
+                                                                            <button class="form-control additem" style="margin: 8px; " data-id="{{$question->id}}" id="add_item{{$question->id}}">Add Item</button>
+                                                                        </div>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -786,6 +829,47 @@
                                 }
                             
                             else if(last_quiz_type == 'enumeration'){
+
+                                var textareaValue = $('#enumerationquestion' + last_id).val();
+                                console.log("Question: ", textareaValue);
+                                console.log("Quiztype: ", last_quiz_type);
+                                console.log("Enumeration ITEM: ", enumerationitem);
+
+                                if (textareaValue.length != 0) {
+                                    $.ajax({
+                                        type: "get",
+                                        dataType: 'json',
+                                        url: "/adminviewbook/createquestionitem",
+                                        data: { 
+                                            question : textareaValue,
+                                            typeofquiz : 8,
+                                            item : enumerationitem,
+                                            id: last_id
+                                                },
+                                        success: function(response) {
+
+                                            if (response == 1){
+
+                                            enumerationitem = 1;
+                                        
+                                            Toast.fire({
+                                                icon: 'success',
+                                                title: 'All the changes have been saved'
+                                                
+                                            })
+
+                                            }
+                                            
+                                        },
+                                        error: function(xhr) {
+                                            // Handle error here
+                                        }
+                                    });
+
+                                    enumerationitem = 1;
+                                }
+
+
                         
                                 }
 
@@ -1254,6 +1338,7 @@
 
                     
                     var option = 0;
+                    var enumerationitem = 1;
                     $(document).on('change', '.quiztype', function(){
                         var parentId = $(this).attr('data-id');
                         var addrowid = $(this).attr('id');
@@ -1275,7 +1360,7 @@
 
 
                         if(select_quiz_type == 'multiple_choice'){
-                            var option = 0;
+                            option = 0;
                             $('#quiztioncontent' + parentId).empty();
                             $('#quiztioncontent' + parentId).append('<div class="col-12 m-2">'+
                                                     '<textarea class="form-control" placeholder="Untitled question" style="height: 20px !important;" id="exampleTextarea" ></textarea>'+
@@ -1297,13 +1382,13 @@
                         }
                         
                         if(select_quiz_type == 'enumeration'){
-                            var option = 0;
+                            enumerationitem = 1;
                             $('#quiztioncontent' + parentId).empty();
-                            $('#quiztioncontent' + parentId).append('<textarea class="form-control m-2" placeholder="Untitled question" id="exampleTextarea" ></textarea>');
+                            $('#quiztioncontent' + parentId).append('<textarea class="form-control m-2" placeholder="Untitled question" id="enumerationquestion'+parentId+'" ></textarea>');
                             $('#quiztioncontent' + parentId).append('<div id="item_option'+parentId+'">' + 
-                                '<input type="text" class="form-control m-2" placeholder="Item text" disabled>'+
+                                '<input type="text" class="form-control mt-2 ml-2" placeholder="Item text" disabled>'+
                                 '</div>');
-                            $('#quiztioncontent' + parentId).append('<button class="form-control additem" style="margin: 8px; " id="add_item'+parentId+'">Add Item</button>')
+                            $('#quiztioncontent' + parentId).append('<button class="form-control additem" style="margin: 8px; " data-id="'+parentId+'" id="add_item'+parentId+'">Add Item</button>')
 
                     
                         }
@@ -1442,14 +1527,19 @@
                     })
 
                     $(document).on('click', '.additem', function(){
-                        option+=1;
-                        var parentId = $(this).parent().parent().parent().parent().parent().attr("id");
+                        enumerationitem+= 1;
+
+                        console.log("Item Count:", enumerationitem);
+                        var quizId = $(this).data('id');
+
+                        console.log("Add question ID: ", quizId)
+                        var parentId = $(this).data('id');
                         var addrowid = $(this).attr('id');
+                        
                         console.log("Add row ID: ", addrowid)
                         console.log("ID: ", parentId)
                         
-                        // $(this).closest('quizarea2').find('.list_option').empty()
-                        $('#item_option' + parentId).append('<input type="text" class="form-control m-2" placeholder="Item text" disabled>')
+                        $('#item_option' + parentId).append('<input type="text" class="form-control mt-2 ml-2" placeholder="Item text'+enumerationitem+'" disabled>')
 
                     })
 

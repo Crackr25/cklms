@@ -569,6 +569,50 @@ class BookController extends Controller
 
     }
 
+    public function createquestionitem(Request $request)
+    {
+
+
+        $item = DB::table('lessonquizquestions')
+                    ->where('id', $request->get('id'))
+                    ->value('item');
+
+        if($item != 0 ){
+
+            $item-=1;
+
+            }
+
+
+        
+
+
+        $checkifexist = DB::table('lessonquizquestions')
+            ->where('id', $request->get('id'))
+            ->where('question', $request->get('question'))
+            ->count();
+        
+        if($checkifexist == 0 || $item != $request->get('item')){
+            
+            $item+=$request->get('item');
+            
+
+            DB::table('lessonquizquestions')
+                ->where('id', $request->get('id'))
+                ->update([
+                    'question'         => $request->get('question'),
+                    'typeofquiz'   => $request->get('typeofquiz'),
+                    'item'   => $item
+                ]);
+
+            return 1;
+
+        }else{
+            return 0;
+        }
+
+    }
+
     public function delcoverage(Request $request)
     {
 
