@@ -207,13 +207,13 @@
                                                             <div class="card-header">
                                                                 <div class="row justify-content-end">
                                                                     <div class="col-6 mr-1 quizarea">
-                                                                        <select class="form-control quiztype" id="quiztype{{$question->id}}">
+                                                                        <select class="form-control quiztype" data-id="{{$question->id}}" id="quiztype{{$question->id}}">
                                                                         <option value="multiple_choice">Multiple Choice</option>
                                                                         <option value="short_answer">Short Answer</option>
                                                                         <option value="paragraph_answer">Paragraph</option>
                                                                         <option value="instruction">Instruction</option>
                                                                         <option value="drag_drop">Drag & drop</option>
-                                                                        <option value="drag_drop">Image Answer</option>
+                                                                        <option value="image">Image Answer</option>
                                                                         <option value="fill_n_blanks">Fill in the blanks</option>
                                                                         <option value="enumeration">Enumeration</option>
                                                                         
@@ -264,13 +264,13 @@
                                                             <div class="card-header">
                                                                 <div class="row justify-content-end">
                                                                     <div class="col-6 mr-1 quizarea">
-                                                                        <select class="form-control quiztype" id="quiztype{{$question->id}}">
+                                                                        <select class="form-control quiztype" data-id="{{$question->id}}" id="quiztype{{$question->id}}">
                                                                         <option value="short_answer">Short Answer</option>
                                                                         <option value="multiple_choice">Multiple Choice</option>
                                                                         <option value="paragraph_answer">Paragraph</option>
                                                                         <option value="instruction">Instruction</option>
                                                                         <option value="drag_drop">Drag & drop</option>
-                                                                        <option value="drag_drop">Image Answer</option>
+                                                                        <option value="image">Image Answer</option>
                                                                         <option value="fill_n_blanks">Fill in the blanks</option>
                                                                         <option value="enumeration">Enumeration</option>
                                                                         </select>
@@ -298,13 +298,13 @@
                                                             <div class="card-header">
                                                                 <div class="row justify-content-end">
                                                                     <div class="col-6 mr-1 quizarea">
-                                                                        <select class="form-control quiztype" id="quiztype{{$question->id}}">
+                                                                        <select class="form-control quiztype" data-id="{{$question->id}}" id="quiztype{{$question->id}}">
                                                                         <option value="paragraph_answer">Paragraph</option>
                                                                         <option value="multiple_choice">Multiple Choice</option>
                                                                         <option value="short_answer">Short Answer</option>
                                                                         <option value="instruction">Instruction</option>
                                                                         <option value="drag_drop">Drag & drop</option>
-                                                                        <option value="drag_drop">Image Answer</option>
+                                                                        <option value="image">Image Answer</option>
                                                                         <option value="fill_n_blanks">Fill in the blanks</option>
                                                                         <option value="enumeration">Enumeration</option>
                                                                         </select>
@@ -332,13 +332,13 @@
                                                             <div class="card-header">
                                                                 <div class="row justify-content-end">
                                                                     <div class="col-6 mr-1 quizarea">
-                                                                        <select class="form-control quiztype" id="quiztype{{$question->id}}">
+                                                                        <select class="form-control quiztype" data-id="{{$question->id}}" id="quiztype{{$question->id}}">
                                                                         <option value="instruction">Instruction</option>
                                                                         <option value="multiple_choice">Multiple Choice</option>
                                                                         <option value="short_answer">Short Answer</option>
                                                                         <option value="paragraph_answer">Paragraph</option>
                                                                         <option value="drag_drop">Drag & drop</option>
-                                                                        <option value="drag_drop">Image Answer</option>
+                                                                        <option value="image">Image Answer</option>
                                                                         <option value="fill_n_blanks">Fill in the blanks</option>
                                                                         <option value="enumeration">Enumeration</option>
                                                                         </select>
@@ -361,13 +361,13 @@
                                                             <div class="card-header"> 
                                                                 <div class="row justify-content-end">
                                                                     <div class="col-6 mr-1 quizarea">
-                                                                        <select class="form-control quiztype" id="quiztype{{$question->id}}">
+                                                                        <select class="form-control quiztype" data-id="{{$question->id}}" id="quiztype{{$question->id}}">
                                                                         <option value="drag_drop">Drag & drop</option>
                                                                         <option value="multiple_choice">Multiple Choice</option>
                                                                         <option value="short_answer">Short Answer</option>
                                                                         <option value="paragraph_answer">Paragraph</option>
                                                                         <option value="instruction">Instruction</option>
-                                                                        <option value="drag_drop">Image Answer</option>
+                                                                        <option value="image">Image Answer</option>
                                                                         <option value="fill_n_blanks">Fill in the blanks</option>
                                                                         <option value="enumeration">Enumeration</option>
                                                                         </select>
@@ -446,13 +446,13 @@
                                                             <div class="card-header">
                                                                 <div class="row justify-content-end">
                                                                     <div class="col-6 mr-1 quizarea">
-                                                                        <select class="form-control quiztype" id="quiztype{{$question->id}}">
+                                                                        <select class="form-control quiztype" data-id="{{$question->id}}" id="quiztype{{$question->id}}">
                                                                         <option value="drag_drop">Image Answer</option>
                                                                         <option value="multiple_choice">Multiple Choice</option>
                                                                         <option value="short_answer">Short Answer</option>
                                                                         <option value="paragraph_answer">Paragraph</option>
                                                                         <option value="instruction">Instruction</option>
-                                                                        <option value="drag_drop">Drag & drop</option>
+                                                                        <option value="image">Drag & drop</option>
                                                                         <option value="fill_n_blanks">Fill in the blanks</option>
                                                                         <option value="enumeration">Enumeration</option>
                                                                         </select>
@@ -475,14 +475,14 @@
                                                             <div class="card-header">
                                                                 <div class="row justify-content-end">
                                                                     <div class="col-6 mr-1 quizarea">
-                                                                        <select class="form-control quiztype" id="quiztype{{$question->id}}">
+                                                                        <select class="form-control quiztype" data-id="{{$question->id}}" id="quiztype{{$question->id}}">
                                                                         <option value="fill_n_blanks">Fill in the blanks</option>
                                                                         <option value="multiple_choice">Multiple Choice</option>
                                                                         <option value="short_answer">Short Answer</option>
                                                                         <option value="paragraph_answer">Paragraph</option>
                                                                         <option value="instruction">Instruction</option>
                                                                         <option value="drag_drop">Drag & drop</option>
-                                                                        <option value="drag_drop">Image Answer</option>
+                                                                        <option value="image">Image Answer</option>
                                                                         <option value="enumeration">Enumeration</option>
                                                                         </select>
                                                                     </div>
@@ -543,14 +543,14 @@
                                                             <div class="card-header">
                                                                 <div class="row justify-content-end">
                                                                     <div class="col-6 mr-1 quizarea">
-                                                                        <select class="form-control quiztype" id="quiztype{{$question->id}}">
+                                                                        <select class="form-control quiztype" data-id="{{$question->id}}" id="quiztype{{$question->id}}">
                                                                         <option value="enumeration">Enumeration</option>
                                                                         <option value="multiple_choice">Multiple Choice</option>
                                                                         <option value="short_answer">Short Answer</option>
                                                                         <option value="paragraph_answer">Paragraph</option>
                                                                         <option value="instruction">Instruction</option>
                                                                         <option value="drag_drop">Drag & drop</option>
-                                                                        <option value="drag_drop">Image Answer</option>
+                                                                        <option value="image">Image Answer</option>
                                                                         <option value="fill_n_blanks">Fill in the blanks</option>
                                                                         </select>
                                                                     </div>
@@ -673,6 +673,12 @@
                                         // ['height', ['height']]
                                                 ]
                                 });
+
+                $('.dragrow' + last_id).on('mouseleave', function(event) {
+                // Code to execute when mouse leaves the div
+
+                console.log(last_id)
+                });
 
 
                 $(document).on('click', function(event) {
