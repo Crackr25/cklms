@@ -14,59 +14,11 @@ class StudentBookController extends Controller
         DB::table('chapterquizrecords')
             ->where('id', $request->get('dataId'))
             ->update([
-                'quizstatus'=>1
+                'quizstatus'=>1,
+                'submitteddatetime'=> \Carbon\Carbon::now('Asia/Manila'),
             ]);
 
-        // if(count($request->except('studentuserid', 'chapterquizid','recordid'))>0)
-        // {
-        //     foreach($request->except('studentuserid', 'chapterquizid','recordid','roomid','_token') as $answersetkey => $answersetvalue)
-        //     {
-        //         $getquestioninfo = explode('_', $answersetkey);
-        //         $questionid = trim(str_replace('questionid','',$getquestioninfo[1]));
-        //         // return $questionid;
-        //         if($questionid != 'token'){
-
-        //             $questiontype=$getquestioninfo[2];
-        //             // return $questiontype;
-        //             if(count($answersetvalue)>0)
-        //             {
-        //                 foreach($answersetvalue as $ansval)
-        //                 {
-        //                     if(strtolower($questiontype) == 'multiple')
-        //                     {
-        //                         DB::table('chapterquizrecordsdetail')
-        //                             ->insert([
-        //                                 'headerid'      => $headerid,
-        //                                 'questionid'    => $questionid,
-        //                                 'choiceid'      => $ansval
-        //                             ]);
-        //                     }else{
-        //                         DB::table('chapterquizrecordsdetail')
-        //                             ->insert([
-        //                                 'headerid'      => $headerid,
-        //                                 'questionid'    => $questionid,
-        //                                 'description'   => $ansval
-        //                             ]);
-        //                     }
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
-
-        // $quizinfo = Db::table('chapterquiz')
-        //     ->where('id',$request->get('chapterquizid'))
-        //     ->first();
-
-        // $checkifschedexists = DB::table('chapterquizsched')
-        //     ->where('classroomid',$request->get('classroomid'))
-        //     ->where('chapterquizid',$request->get('chapterquizid'))
-        //     ->where('deleted','0')
-        //     ->get();
-
         return '1';
-        // return view('global.viewbook.studentview.testtaken')
-        //     ->with('quizinfo', $quizinfo);
     }
     public function studentQuizContentattempt(Request $request , $quizid, $classroomid){
 
@@ -90,8 +42,6 @@ class StudentBookController extends Controller
                         'lessonquizquestions.item'
                     )
                     ->get();
-
-        
 
         $isAnswered = false;
 
@@ -155,8 +105,6 @@ class StudentBookController extends Controller
                         $item->answer = "";
 
                     }
-
-
                 }
 
                 if($item->typeofquiz == 7 ){
@@ -224,8 +172,7 @@ class StudentBookController extends Controller
 
                 }
 
-                
-                
+
                 if($item->typeofquiz == 6 ){
 
                     $protocol = $request->getScheme();
@@ -239,9 +186,12 @@ class StudentBookController extends Controller
                         ->where('deleted',0)
                         ->value('picurl');
 
-                    $item->picurl = $rootDomain.'/'.$answer;
+                    if(isset($answer)){
+                        $item->picurl = $rootDomain.'/'.$answer;
+                    }else{
+                        $item->picurl = "";
+                    }
                 }
-
 
 
                 if($item->typeofquiz == 8){
@@ -285,10 +235,6 @@ class StudentBookController extends Controller
                                                 ->get();
 
                     $item->drop = $dropquestions;
-
-
-                
-
 
                     
                     foreach($dropquestions as $index => $item){
@@ -352,87 +298,15 @@ class StudentBookController extends Controller
                             $item->question = $questionWithInputs;
 
                         }
-                                    
+
                     }
-
-
-
 
 
                 }
 
-
-                
-
-
-                
-
-
-
-                
-
-
-                
-
-
-
-                // $quizAnswersInfo = DB::table('chapterquizrecords')
-                //                 ->where('submittedby',auth()->user()->id)
-                //                 ->where('chapterquizid',$quizid)
-                //                 ->where('chapterquizrecords.deleted',0)
-                //                 ->join('chapterquizrecordsdetail',function($join){
-                //                     $join->on('chapterquizrecords.id','=','chapterquizrecordsdetail.headerid');
-                //                     $join->where('chapterquizrecordsdetail.deleted',0);
-                //                 })
-                //                 ->join('chapterquizquestions',function($join){
-                //                     $join->on('chapterquizrecordsdetail.questionid','=','chapterquizquestions.id');
-                //                 })
-                //                 ->select(
-                //                     'choiceid',
-                //                     'questionid',
-                //                     'question',
-                //                     'type',
-                //                     'description',
-                //                     'chapterquizrecordsdetail.points as studPoints',
-                //                     'chapterquizquestions.points'
-                //                     )
-                //                 ->get();
-
             }
-
-
             
-
-            
-
-   
-            
-            // foreach($quizAnswersInfo as $item){
-
-            //     if($item->type == 1){
-
-            //         $choices = DB::table('chapterquizchoices')
-            //                         ->where('id',$item->choiceid)
-            //                         ->where('deleted',0)
-            //                         ->select('description','id','answer')
-            //                         ->first();
-
-            //         if(isset($choices->id)){
-
-            //             $item->description = $choices->description;
-
-            //         }
-
-            //     }
-
-            // }
-            
-
-
-
-            // $quizAnswersInfo = collect( $quizAnswersInfo)->groupBy('questionid');
-
-            // return $quizAnswersInfo;
+            // dd($quizQuestions);
 
             return view('global.viewbook.quizcontent.studentquizcontent')
                         ->with('quizInfo',$quizInfo)
@@ -468,6 +342,7 @@ class StudentBookController extends Controller
 
 
             // $isAnswered = false;
+
             $numberOfAttempts = 0;
 
             $numberOfAttempts =  DB::table('chapterquizrecords')
@@ -480,15 +355,11 @@ class StudentBookController extends Controller
             if($numberOfAttempts == 0){
                 if(isset($chapterquizsched)){
                     $chapterquizsched->btn = "Attempt Quiz";
-
                 }
             }else{
-
                 if(isset($chapterquizsched)){
                     $chapterquizsched->btn = "Retake Quiz";
-
                 }
-                
             }
 
             $attemptsLeft = 0;
@@ -617,8 +488,9 @@ class StudentBookController extends Controller
             $headerid = Db::table('chapterquizrecords')
                 ->insertGetId([
                     'chapterquizid'         =>  $request->get('quizid'),
-                    'submittedby'           =>  auth()->user()->id,
-                    'submitteddatetime'     =>  date('Y-m-d H:i:s'),
+                    'submittedby'           =>    auth()->user()->id,
+                    'studname'           =>  auth()->user()->name,
+                    // 'submitteddatetime'     =>  date('Y-m-d H:i:s'),
                     'classroomid'           =>  $request->get('classroomid')
                 ]);
 
@@ -649,29 +521,38 @@ class StudentBookController extends Controller
                 if ($request->get('questionType') != 1) {
                     $data['stringanswer'] = $request->get('answer');
 
-
                     if($request->get('sortId') != null && $request->get('questionType') == 5 ){
-
                         $data['sortid'] = $request->get('sortId');
-
                     }
 
                     if($request->get('questionType') == 8 ){
-
                         $data['sortid'] = $request->get('sortId');
-
                     }
 
                     if($request->get('sortId') != null && $request->get('questionType') == 7 ){
-
                         $data['sortid'] = $request->get('sortId');
-
                     }
+
                 } else {
                     $data['choiceid'] = $request->get('answer');
                 }
 
+                if($request->get('questionType') == 8 ){
+                    $data['sortid'] = $request->get('sortId');
+                }
+
+                if($request->get('sortId') != null && $request->get('questionType') == 7 ){
+                    $data['sortid'] = $request->get('sortId');
+                }
+
                 DB::table('chapterquizrecordsdetail')->insert($data);
+
+                DB::table('chapterquizrecords')
+                    ->where('id', $request->get('headerId'))
+                    ->update([
+                        'updateddatetime'=> \Carbon\Carbon::now('Asia/Manila'),
+                        'updatedby'=> auth()->user()->id
+                    ]);
 
                 return 1;
         }else{
@@ -680,32 +561,37 @@ class StudentBookController extends Controller
                     $data['stringanswer'] = $request->get('answer');
 
                     if($request->get('sortId') != null && $request->get('questionType') == 5 ){
-
                         $data['sortid'] = $request->get('sortId');
-
                     }
 
-                    if($request->get('sortId') != null && $request->get('questionType') == 8 ){
-
+                    if($request->get('questionType') == 8 ){
                         $data['sortid'] = $request->get('sortId');
-
                     }
 
                     if($request->get('sortId') != null && $request->get('questionType') == 7 ){
-
                         $data['sortid'] = $request->get('sortId');
-
                     }
+
 
                 } else {
                     $data['choiceid'] = $request->get('answer');
                 }
+
+                $data['updateddatetime'] = \Carbon\Carbon::now('Asia/Manila');
+                $data['updatedby'] = auth()->user()->id;
 
                 DB::table('chapterquizrecordsdetail')
                 ->where('headerid', $request->get('headerId'))
                 ->where('questionid',$request->get('question_id'))
                 ->where('sortid', $request->get('sortId'))
                 ->update($data);
+
+                DB::table('chapterquizrecords')
+                    ->where('id', $request->get('headerId'))
+                    ->update([
+                        'updateddatetime'=> \Carbon\Carbon::now('Asia/Manila'),
+                        'updatedby'=> auth()->user()->id
+                    ]);
 
                 return 0;
 
@@ -740,23 +626,32 @@ class StudentBookController extends Controller
         // Store the image URL path
         $data['picurl'] = 'quizzes/' . $imageName;
 
+        // Make the complete path of image
+        $protocol = $request->getScheme();
+        $host = $request->getHost();
+
+        $rootDomain = $protocol . '://' . $host;
+
         // insert data
         if ($checkIfexist == 0) {
 
             DB::table('chapterquizrecordsdetail')->insert($data);
 
-            return 1;
-
         // update data
         } else {
 
-                DB::table('chapterquizrecordsdetail')
-                ->where('headerid', $request->get('headerId'))
-                ->where('questionid',$request->get('question_id'))
-                ->update($data);
+            $data['updateddatetime'] = \Carbon\Carbon::now('Asia/Manila');
+            $data['updatedby'] = auth()->user()->id;
 
-                return 0;
+            DB::table('chapterquizrecordsdetail')
+            ->where('headerid', $request->get('headerId'))
+            ->where('questionid',$request->get('question_id'))
+            ->update($data);
         }
+
+        $data['picurl'] = $rootDomain . '/' . $data['picurl'];
+
+        return $data;
 
     }
 

@@ -463,6 +463,21 @@ class BookController extends Controller
         return 1;
     }
 
+    public function delChoices(Request $request)
+    {
+
+
+        date_default_timezone_set('Asia/Manila');
+        DB::table('lessonquizchoices')
+            ->where('id', $request->get('id'))
+            ->update([
+                'deleted'         => 1,
+                'deleteddatetime' => date('Y-m-d H:i:s')
+                    ]);
+
+        return 1;
+    }
+
     public function getquiz(Request $request)
     {
 
@@ -471,6 +486,7 @@ class BookController extends Controller
         $quizlist = DB::table('lesssonquiz')
             ->where('bookid', $request->get('bookid'))
             ->where('chapterid', $request->get('chapterid'))
+            ->where('deleted', 0)
             ->get();
 
         return $quizlist;
@@ -735,6 +751,7 @@ class BookController extends Controller
         $choice = DB::table('lessonquizchoices')
             ->where('questionid', $request->get('questionid'))
             ->where('sortid', $request->get('sortid'))
+            ->where('deleted', 0)
             ->count();
 
         if($choice == 0){
@@ -1098,6 +1115,7 @@ class BookController extends Controller
 
         $question->choices = DB::table('lessonquizchoices')
         ->where('questionid', $question->id)
+        ->where('deleted', 0)
         ->select('id', 'questionid' , 'description')
         ->orderBy('sortid')
         ->get();
@@ -1191,6 +1209,18 @@ class BookController extends Controller
         
     }
 
+    public function getEnum(Request $request)
+    {
+        $question = DB::table('lessonquizquestions')
+            ->where('id', $request->get('id'))
+            ->select('id','question', 'item')
+            ->where('deleted', 0)
+            ->first();
+
+        return response()->json($question);
+        
+    }
+
 
 
     public function setAnswerKey(Request $request)
@@ -1214,7 +1244,7 @@ class BookController extends Controller
 
                 return 1;
                     }
-            else{
+            else if($request->get('questiontype') == 7){
 
                         $checkifexist =  DB::table('lesson_quiz_fill_answer')
                         ->where('headerid', $request->get('question_id'))
@@ -1244,10 +1274,61 @@ class BookController extends Controller
 
                                 return 5;
 
-                        }             
+                        }  
+
+            }else if($request->get('questiontype') == 8){
+
+                        $checkifexist =  DB::table('lesson_quiz_enum_answer')
+                        ->where('headerid', $request->get('question_id'))
+                        ->where('sortid', $request->get('sortid'))
+                        ->count();
+
+                        if($checkifexist > 0){
+
+                            DB::table('lesson_quiz_enum_answer')
+                            ->where('headerid', $request->get('question_id'))
+                            ->where('sortid', $request->get('sortid'))
+                            ->update([
+                                'answer'   => $request->get('answer')
+                            ]);
+
+                                return 0;
 
 
+                        }else{
 
+                            DB::table('lesson_quiz_enum_answer')
+                            ->insert([
+                                'answer'   => $request->get('answer'),
+                                'headerid'   => $request->get('question_id'),
+                                'sortid'   => $request->get('sortid')
+                            ]);
+
+                                return 5;
+
+                        }  
+
+            }else if($request->get('questiontype') == 16){
+
+
+                if($request->get('answer') == 1){
+                    DB::table('lessonquizquestions')
+                    ->where('id', $request->get('question_id'))
+                    ->update([
+                        'ordered'   => 1
+                    ]);
+
+                    return 1;
+                }else{
+                    DB::table('lessonquizquestions')
+                    ->where('id', $request->get('question_id'))
+                    ->update([
+                        'ordered'   => 0
+                    ]);
+
+                    return 0;
+
+                }
 
             }
         
@@ -1386,6 +1467,31 @@ class BookController extends Controller
             $item->answer = $answerString;
 
         }
+
+
+    return response()->json($question);
+    
+        
+    }
+
+    public function returnEditenum(Request $request)
+
+    {
+        $question = DB::table('lessonquizquestions')
+            ->where('id', $request->get('id'))
+            ->select('id','question' , 'ordered' , 'item')
+            ->where('deleted', 0)
+            ->first();
+
+
+            $answer = DB::table('lesson_quiz_enum_answer')
+                ->where('headerid', $question->id)
+                ->orderBy('sortid')
+                ->pluck('answer');
+
+            $answerString = implode(',', $answer->toArray());
+
+            $question->answer = $answerString;
 
 
     return response()->json($question);

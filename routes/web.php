@@ -153,6 +153,8 @@ Route::middleware(['auth', 'isAdministrator','isDefaultPass'])->group(function (
     Route::get('/adminviewbook/createdragoption', 'Admin\BookController@createdragoption');
     Route::get('/adminviewbook/createdropquestion', 'Admin\BookController@createdropquestion');
     Route::get('/adminviewbook/createfillquestion', 'Admin\BookController@createFillquestion');
+    Route::get('/adminviewbook/del-choices', 'Admin\BookController@delChoices');
+    Route::get('/adminviewbook/del-choices', 'Admin\BookController@delChoices');
     
     //Answer Key
     Route::get('/adminviewbook/getquestion', 'Admin\BookController@getquestion');
@@ -163,6 +165,8 @@ Route::middleware(['auth', 'isAdministrator','isDefaultPass'])->group(function (
     Route::get('/adminviewbook/returneditquizdrag', 'Admin\BookController@returnEditdrag');
     Route::get('/adminviewbook/getfillquestion', 'Admin\BookController@getFillQuestion');
     Route::get('/adminviewbook/returneditquizfill', 'Admin\BookController@returnEditfill');
+    Route::get('/adminviewbook/getenumquestion', 'Admin\BookController@getEnum');
+    Route::get('/adminviewbook/returneditquizenum', 'Admin\BookController@returnEditenum');
     
 
     
@@ -348,7 +352,10 @@ Route::group(['middleware' => ['auth', 'web']], function() {
         return view('jitsimeet');
     });
     //View quiz
-    Route::get('/quiz/{ids}', 'GlobalController\ViewBookController@viewquiz');  
+    Route::get('/quiz/{ids}', 'GlobalController\ViewBookController@viewquiz');
+    Route::get('/quizresponses', 'GlobalController\ViewBookController@quizresponses');
+    Route::get('/viewquizresponse/{classroomId}/{quizId}/{recordId}', 'GlobalController\ViewBookController@viewquizresponse');
+    Route::get('/updatescore', 'GlobalController\ViewBookController@updatescore');
 
     //View Book    
     Route::get('/viewbook/{ids}', 'GlobalController\ViewBookController@viewbook');     

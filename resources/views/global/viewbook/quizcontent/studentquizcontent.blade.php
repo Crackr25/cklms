@@ -19,10 +19,6 @@
                                 <div class="btn bg-primary text-white m-1">{{$lesson}}</div>
                                 @endforeach
                                 @endif
-                                {{-- <div class="btn bg-success text-white m-1">Lesson 2: VLAN</div>
-                                <div class="btn bg-success text-white m-1">Lesson 3: Inter VLAN</div>
-                                <div class="btn bg-success text-white m-1">Lesson 4: OSI Model</div>
-                                <div class="btn bg-success text-white m-1">Lesson 5: TCP/IP</div> --}}
                             </div>
 
                             <p class="card-text">{{$quizInfo->description}}</p>
@@ -133,12 +129,12 @@
                                         <div class="form-group">
                                             <input class="answer-field form-control-file imageInput" data-question-type="{{$item->typeofquiz}}" data-question-id="{{$item->id}}" id="{{$questioninfo->id}}" type="file" accept="image/*">
                                             
-                                            @if(isset($item->picurl))
+                                            @if($item->picurl != '')
                                                 <a id="preview-link" href="{{$item->picurl}}" target="_blank">
                                                     <img id="preview" src="{{$item->picurl}}" alt="Preview" style="max-width: 250px; max-height: 250px;">
                                                 </a>
                                             @else
-                                                <a id="preview-link" href="{{$item->picurl}}" target="_blank">
+                                                <a id="preview-link" href="#" target="_blank">
                                                     <img id="preview" src="#" alt="Preview" style="max-width: 250px; max-height: 250px;display:none;">
                                                 </a>
                                             @endif
@@ -154,42 +150,41 @@
                                         <span style="font-weight:600;font-size:1.0pc">
                                             Fill in the blanks
                                         </span>
-
+                
                                         
-
+                
                                         @foreach($item->fill as $items)
                                         
                                                 <p>
                                                     {{$items->sortid}}. {!! $items->question !!}
-
+                
                                                 </p>
                                             @endforeach
-
+                
                                     </div>
                                 </div>
-                        @endif
+                            @endif
 
-
-                        @if($item->typeofquiz == 8)
+                            @if($item->typeofquiz == 8)
                                 <div class="card mt-5 editcontent">
                                     <div class="card-body">
                                         <span style="font-weight:600;font-size:1.0pc">
                                             Enumeration
                                         </span>
-
+                
                                         <ol class="list-group list-group-numbered p-3" type="A">
                                         <li>
                                             <p>{{$item->question}}</p>
                                         <ol>
-
+                
                                         @php
-
+                
                                             $numberOfTimes = $item->item
-
+                
                                         @endphp
                                         
                                         @for ($i = 0; $i < $numberOfTimes; $i++)
-
+                
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <li>
@@ -205,10 +200,10 @@
                                         </li>
                                     </ol>
                                         
-
+                
                                     </div>
                                 </div>
-                        @endif
+                            @endif
 
 
                         @endforeach
@@ -221,13 +216,7 @@
                         </div>
                         </div>
                     
-                    <button id="scroll-to-bottom" class="btn btn-dark btn-lg mb-3 mr-3" style= "
-
-                        position: fixed;
-                        bottom: 0px;
-                        left: 10px;
-                        padding: 9px 15px 9px 15px !important;
-                    }"><i class="fas fa-arrow-circle-down"></i></button>
+                    <button id="scroll-to-bottom" class="btn btn-dark btn-lg mb-3 mr-3" style= "position: fixed;bottom: 0px;left: 10px;padding: 9px 15px 9px 15px !important;"><i class="fas fa-arrow-circle-down"></i></button>
         </div> 
         </div> 
         
@@ -236,7 +225,11 @@
 <script>
 
     $(document).ready(function(){
-                
+
+                console.log("hello world")
+
+                var data = {!! json_encode($quizQuestions) !!};
+                console.log(data);
 
                 var STUDENT_ID = 2;
 
@@ -301,6 +294,9 @@
                                 }
 
                                 //Handle the response from the server if needed
+                                // Update the href attribute of the <a> tag with the uploaded image URL
+                                var uploadedImageUrl = response['picurl']; // Replace this with the actual uploaded image URL from the server
+                                $('#preview-link').attr('href', uploadedImageUrl);
                             }
                         });
                     }
@@ -395,6 +391,9 @@
                         console.log("Answer updated successfully");
                     }
                     // Handle the response from the server if needed
+                    // Update the href attribute of the <a> tag with the uploaded image URL
+                    var uploadedImageUrl = response['picurl']; // Replace this with the actual uploaded image URL from the server
+                    $('#preview-link').attr('href', uploadedImageUrl);
                 }
             });
 

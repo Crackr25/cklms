@@ -22,13 +22,16 @@
     <link rel="stylesheet" href="{{asset('templatefiles/bootstrap.css')}}">
 
     <link rel="stylesheet" href="{{asset('plugins/fontawesome-free/css/all.min.css')}}">
-<!-- SweetAlert2 -->
+    <!-- SweetAlert2 -->
     <link rel="stylesheet" href="{{asset('plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css')}}">
     <link rel="stylesheet" href="{{asset('plugins/datatables-bs4/css/dataTables.bootstrap4.css')}}">
-<!-- summernote -->
-    <!-- icons
-    ================================================== -->
+    <!-- summernote -->
+
+    <!-- icons -->
     <link rel="stylesheet" href="{{asset('templatefiles/icons.css')}}">
+
+    <!-- font-awesome -->
+    {{-- <link rel="stylesheet" href="{{asset('plugins/font-awesome/css/font-awesome.min.css')}}"> --}}
 
 
 
@@ -51,7 +54,7 @@
         <script src="{{asset('templatefiles/simplebar.js')}}"></script>
         <script src="{{asset('templatefiles/main.js')}}"></script>
         <script src="{{asset('plugins/sweetalert2/sweetalert2.min.js')}}"></script> --}}
-       
+
         <script src="{{asset('plugins/jquery/jquery.min.js')}}"></script>
         <script src="{{asset('templatefiles/framework.js')}}"></script>
         <script src="{{asset('templatefiles/jquery-3.3.1.min.js')}}"></script>

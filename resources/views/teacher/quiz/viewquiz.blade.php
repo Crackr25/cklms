@@ -15,12 +15,38 @@
 
 @section('content')
 
-
-{{-- <div uk-grid="" class="uk-grid uk-grid-stack">
-    <div class="uk-width-2-3@m uk-first-column">
-
+<!-- Modal -->
+<div class="modal fade" id="responseModal" tabindex="-1" aria-labelledby="responseModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Responses</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        <div class="modal-body">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Date &amp; Time Submitted</th>
+                <th>No. of Attempts</th>
+                <th>Score</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody id="quizResponseDetails">
+            </tbody>
+        </table>
+        </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
     </div>
-</div> --}}
+    </div>
+</div>
+
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-md-10">
@@ -109,8 +135,7 @@
     </div>
 </div>
 
-
-    <div class="modal fade" id="activateQuizModal" tabindex="-1" aria-labelledby="activateQuizModalLabel" aria-hidden="true">
+<div class="modal fade" id="activateQuizModal" tabindex="-1" aria-labelledby="activateQuizModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
         <div class="modal-header " style="background-color: #673AB7 ">
@@ -149,48 +174,40 @@
         </div>
         </div>
     </div>
-    </div>
-
-
+</div>
 
 @endsection
 
-        <script src="{{asset('plugins/jquery/jquery.min.js')}}"></script>
-        <script src="{{asset('templatefiles/framework.js')}}"></script>
-        <script src="{{asset('templatefiles/jquery-3.3.1.min.js')}}"></script>
+<script src="{{asset('plugins/jquery/jquery.min.js')}}"></script>
+<script src="{{asset('templatefiles/framework.js')}}"></script>
+<script src="{{asset('templatefiles/jquery-3.3.1.min.js')}}"></script>
 
-        <script src="{{asset('templatefiles/chart.min.js')}}"></script>
-        {{-- <script type="text/javascript" src="{{asset('plugins/jquery-ui/jquery-ui.min.js')}}"></script> --}}
-        <script src="{{asset('templatefiles/chart-custom.js')}}"></script>
-        <script src="{{asset('plugins/jquery-ui/jquery-ui.min.js')}}"></script>
-        <!-- Select2 -->
-        <!-- SweetAlert2 -->
-        <script src="{{asset('plugins/sweetalert2/sweetalert2.min.js')}}"></script>
-        <script src="{{asset('plugins/sweetalert2/sweetalert2.all.min.js')}}"></script>
-        <script src="{{asset('plugins/datatables/jquery.dataTables.js')}}"></script>
-        <script src="{{asset('plugins/datatables-bs4/js/dataTables.bootstrap4.js')}}"></script>
-
-{{-- 
-@push('scripts')
-
-@endpush --}}
+<script src="{{asset('templatefiles/chart.min.js')}}"></script>
+{{-- <script type="text/javascript" src="{{asset('plugins/jquery-ui/jquery-ui.min.js')}}"></script> --}}
+<script src="{{asset('templatefiles/chart-custom.js')}}"></script>
+<script src="{{asset('plugins/jquery-ui/jquery-ui.min.js')}}"></script>
+<!-- Select2 -->
+<!-- SweetAlert2 -->
+<script src="{{asset('plugins/sweetalert2/sweetalert2.min.js')}}"></script>
+<script src="{{asset('plugins/sweetalert2/sweetalert2.all.min.js')}}"></script>
+<script src="{{asset('plugins/datatables/jquery.dataTables.js')}}"></script>
+<script src="{{asset('plugins/datatables-bs4/js/dataTables.bootstrap4.js')}}"></script>
 
 <script>
+    $(document).ready(function() {
 
-    const Toast = Swal.mixin({
+        const Toast = Swal.mixin({
             toast: true,
             position: 'top-end',
             showConfirmButton: false,
             timer: 3000
         });
 
+        // globals
+        var CLASSROOM_ID;
+        var QUIZ_RESPONSES;
 
         var activequiz;
-
-
-
-    $(document).ready(function() {
-
 
         getactivequiz()
 
@@ -199,12 +216,12 @@
 
         // listen for the modal's hidden.bs.modal event
         myModal.on('hidden.bs.modal', function (event) {
-        // clear the form fields
-        $('#date-from').val('');
-        $('#time-from').val('');
-        $('#date-to').val('');
-        $('#time-to').val('');
-        $('#attempts').val('');
+            // clear the form fields
+            $('#date-from').val('');
+            $('#time-from').val('');
+            $('#date-to').val('');
+            $('#time-to').val('');
+            $('#attempts').val('');
         });
 
 
@@ -215,6 +232,7 @@
             var quizid = $(this).attr('data-id');
 
             var classroomId = $('.container-fluid.classroom').data('id');
+            CLASSROOM_ID = classroomId
 
             var dateFrom = $('#date-from').val();
             var timeFrom = $('#time-from').val();
@@ -276,152 +294,240 @@
             $('.activate').attr('data-id', quizid)
 
         })
-
-
         
         $(document).on('click','.refresh_table',function(){
                 console.log("Refreshed")
                 getactivequiz()
         })
 
+        $(document).on('click', '.response', function() {
+
+            var chapterquizid = $(this).data('id')
+            var studentEntryHtml;
+
+            $('#quizResponseDetails').empty()
+
+            getQuizResponses(chapterquizid).then(function(data) {
+
+                // Create an object to store the latest entries for each submittedby
+                const latestEntries = {};
+
+                // Iterate through the data and update the latest entry for each submittedby
+                data.forEach(entry => {
+
+                    const submittedby = entry.submittedby;
+                    const datetime = new Date(entry.submitteddatetime);
+                    
+                    if (!latestEntries[submittedby] || datetime > latestEntries[submittedby].datetime) {
+                        latestEntries[submittedby] = { entry, datetime };
+                    }
+                });
+
+                // Create the HTML for the latest entries
+                const latestEntriesHtml = Object.values(latestEntries).map(({ entry, datetime }) => {
+                    let options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+                    let formattedDate = datetime.toLocaleDateString('en-US', options);
+
+
+                    // Calculate no. of attempts
+                    var filteredQuiz = activequiz.filter(function(quiz) {
+                        if (quiz.id == chapterquizid) {
+                            return quiz
+                        }
+                    });
+
+                    console.log('filtered-quiz', filteredQuiz)
+                    console.log('entry', entry)
+                
+
+                    return `
+                        <tr>
+                        <td>${entry.name}</td>
+                        <td>${formattedDate}</td>
+                        <td>${data.length} / ${filteredQuiz[0].noofattempts}</td>
+                        <td>${entry.totalscore ? entry.totalscore : 'Not yet scored.'}</td>
+                        <td><button class="btn btn-primary view-response" data-quiz-id="${filteredQuiz[0].id}" data-record-id="${entry.id}">View Response</button></td>
+                        </tr>
+                    `;
+                }).join('');
+
+                $(latestEntriesHtml).appendTo('#quizResponseDetails');
+
+            })
+
+            $('#responseModal').modal()
+
+        })
+
+        $(document).on('click', '.view-response', function() {
+
+            var recordId = $(this).data('record-id')
+            var selectedQuizId = $(this).data('quiz-id')
+            var url = `/viewquizresponse/${CLASSROOM_ID}/${selectedQuizId}/${recordId}`;
+
+            window.open(url, '_blank');
+        })
+
         function getactivequiz(){
 
-            var classroomid = $('.container-fluid.classroom').data('id');     
+            var classroomid = $('.container-fluid.classroom').data('id');
+            CLASSROOM_ID = classroomid
             
             $.ajax({
-                    type:'GET',
-                    url: '/getactivequiz',
-                            data:{
-                                classroomid: classroomid
-                            },
+                type:'GET',
+                url: '/getactivequiz',
+                data:{
+                    classroomid: classroomid
+                },
 
-                    success:function(data) {
-                        activequiz = data
-                        console.log(activequiz);
-                        loaddatatable()
-                    }
-                })
-
-
-
-
+                success:function(data) {
+                    activequiz = data
+                    loaddatatable()
+                }
+            })
         }
 
-
+        function getQuizResponses(chapterquizid) {
+            return $.ajax({
+                type:'GET',
+                url: '/quizresponses',
+                data:{
+                    classroomid: CLASSROOM_ID,
+                    chapterquizid: chapterquizid
+                }
+            })
+        }
 
         function loaddatatable(){
+            $("#quizDataTable2").DataTable({
+                        destroy: true,
+                        data:activequiz,
+                        order: [[0, 'asc']],
+                        lengthChange: false,
+                        responsive: true,
+                        ordering: false,
+                        columns: [
+                            { "data": null},
+                            { "data": null},
+                            { "data": null},
+                            { "data": null},
+                            { "data": null},
+                            { "data": null},
+                            { "data": null},
+                            { "data": "search"}
+                        ],
 
-
-                            $("#quizDataTable2").DataTable({
-                                        destroy: true,
-                                        data:activequiz,
-                                        order: [[0, 'asc']],
-                                        lengthChange: false,
-                                        responsive: true,
-                                        ordering: false,
-                                        columns: [
-                                            { "data": null},
-                                            { "data": null},
-                                            { "data": null},
-                                            { "data": null},
-                                            { "data": null},
-                                            { "data": null},
-                                            { "data": null},
-                                            { "data": "search"}
-                                        ],
-
-                                        columnDefs: [
-                                                        {
-                                            'targets': 0,
-                                            'orderable': false, 
-                                            'createdCell':  function (td, cellData, rowData, row, col) {
-                                                                    var text = '<a class="mb-0">'+rowData.title+'</a>'
-                                                                    $(td)[0].innerHTML =  text
-                                                                    
-                                            }
-                                                    },
-                                                        {
-                                            'targets': 1,
-                                            'orderable': false, 
-                                            'createdCell':  function (td, cellData, rowData, row, col) {
-
-                                                                    var date2 =  new Date(Date.parse(rowData.datefrom));
-                                                                    var markdate = date2.toLocaleDateString("en-US", {month: "long", year: "numeric", day: "numeric"});
-                                                                    var text = '<a class="mb-0">'+markdate+'</a>'
-                                                                    $(td)[0].innerHTML =  text
-                                                                    
-                                            }
-                                                    },
-                                                        {
-                                            'targets': 2,
-                                            'orderable': false, 
-                                            'createdCell':  function (td, cellData, rowData, row, col) {
-                                                                    
-                                                                    var date2 =  new Date(Date.parse( '1970-01-01T' + rowData.timefrom));
-                                                                    const timeString = date2.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit"});
-                                                                    var text = '<a class="mb-0">'+timeString+'</a>';
-                                                                    $(td)[0].innerHTML = text;
-                                            }
-                                                    },
-                                                        {
-                                            'targets': 3,
-                                            'orderable': false, 
-                                            'createdCell':  function (td, cellData, rowData, row, col) {
-
-                                                                    var date2 =  new Date(Date.parse(rowData.dateto));
-                                                                    var markdate = date2.toLocaleDateString("en-US", {month: "long", year: "numeric", day: "numeric"});
-                                                                    var text = '<a class="mb-0">'+markdate+'</a>'
-                                                                    $(td)[0].innerHTML =  text
-                                            }
-                                                    },
-                                                        {
-                                            'targets': 4,
-                                            'orderable': false, 
-                                            'createdCell':  function (td, cellData, rowData, row, col) {
-
-                                                                    var date2 =  new Date(Date.parse( '1970-01-01T' + rowData.timeto));
-                                                                    const timeString = date2.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit"});
-                                                                    var text = '<a class="mb-0">'+timeString+'</a>'
-                                                                    $(td)[0].innerHTML =  text
-                                            }
-                                                    },
-                                                        {
-                                            'targets': 5,
-                                            'orderable': false, 
-                                            'createdCell':  function (td, cellData, rowData, row, col) {
-                                                                    var text = '<a class="mb-0">'+rowData.noofattempts+'</a>'
-                                                                    $(td)[0].innerHTML =  text
-                                            }
-                                                    },
+                        columnDefs: [
                                         {
-                                            'targets': 6,
-                                            'orderable': false, 
-                                            'createdCell':  function (td, cellData, rowData, row, col) {
+                            'targets': 0,
+                            'orderable': false, 
+                            'createdCell':  function (td, cellData, rowData, row, col) {
+                                                    var text = '<a class="mb-0">'+rowData.title+'</a>'
+                                                    $(td)[0].innerHTML =  text
+                                                    
+                            }
+                                    },
+                                        {
+                            'targets': 1,
+                            'orderable': false, 
+                            'createdCell':  function (td, cellData, rowData, row, col) {
 
-                                                                    var date2 = new Date(Date.parse(rowData.createddatetime));
-                                                                    const dateString = date2.toLocaleDateString("en-US", { year: "numeric", month: "2-digit", day: "2-digit" });
-                                                                    const timeString = date2.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit", second: "2-digit" });
-                                                                    var text = '<a class="mb-0">'+ dateString + ' ' + timeString +'</a>'
-                                                                    $(td)[0].innerHTML =  text
-                                            }
-                                                    },
-                                                        {
-                                            'targets': 7,
-                                            'orderable': false, 
-                                            'createdCell':  function (td, cellData, rowData, row, col) {
-                                                var buttons = '<a href="#" class="response ml-4 text-blue-500" data-id="'+rowData.id+'">View response('+rowData.id+')</a>';
-                                                $(td)[0].innerHTML =  buttons
-                                                $(td).addClass('text-center')
-                                                                    $(td).addClass('align-middle')
-                                            }
-                                                    },
+                                                    var date2 =  new Date(Date.parse(rowData.datefrom));
+                                                    var markdate = date2.toLocaleDateString("en-US", {month: "long", year: "numeric", day: "numeric"});
+                                                    var text = '<a class="mb-0">'+markdate+'</a>'
+                                                    $(td)[0].innerHTML =  text
+                                                    
+                            }
+                                    },
+                                        {
+                            'targets': 2,
+                            'orderable': false, 
+                            'createdCell':  function (td, cellData, rowData, row, col) {
+                                                    
+                                                    var date2 =  new Date(Date.parse( '1970-01-01T' + rowData.timefrom));
+                                                    const timeString = date2.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit"});
+                                                    var text = '<a class="mb-0">'+timeString+'</a>';
+                                                    $(td)[0].innerHTML = text;
+                            }
+                                    },
+                                        {
+                            'targets': 3,
+                            'orderable': false, 
+                            'createdCell':  function (td, cellData, rowData, row, col) {
 
-                                    ]                                                      
-                            });
+                                                    var date2 =  new Date(Date.parse(rowData.dateto));
+                                                    var markdate = date2.toLocaleDateString("en-US", {month: "long", year: "numeric", day: "numeric"});
+                                                    var text = '<a class="mb-0">'+markdate+'</a>'
+                                                    $(td)[0].innerHTML =  text
+                            }
+                                    },
+                                        {
+                            'targets': 4,
+                            'orderable': false, 
+                            'createdCell':  function (td, cellData, rowData, row, col) {
 
-                    
-                    }
+                                                    var date2 =  new Date(Date.parse( '1970-01-01T' + rowData.timeto));
+                                                    const timeString = date2.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit"});
+                                                    var text = '<a class="mb-0">'+timeString+'</a>'
+                                                    $(td)[0].innerHTML =  text
+                            }
+                                    },
+                                        {
+                            'targets': 5,
+                            'orderable': false, 
+                            'createdCell':  function (td, cellData, rowData, row, col) {
+                                                    var text = '<a class="mb-0">'+rowData.noofattempts+'</a>'
+                                                    $(td)[0].innerHTML =  text
+                            }
+                                    },
+                        {
+                            'targets': 6,
+                            'orderable': false, 
+                            'createdCell':  function (td, cellData, rowData, row, col) {
 
+                                                    var date2 = new Date(Date.parse(rowData.createddatetime));
+                                                    const dateString = date2.toLocaleDateString("en-US", { year: "numeric", month: "2-digit", day: "2-digit" });
+                                                    const timeString = date2.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit", second: "2-digit" });
+                                                    var text = '<a class="mb-0">'+ dateString + ' ' + timeString +'</a>'
+                                                    $(td)[0].innerHTML =  text
+                            }
+                                    },
+                                        {
+                            'targets': 7,
+                            'orderable': false, 
+                            'createdCell':  function (td, cellData, rowData, row, col) {
+
+
+                                getQuizResponses(rowData.id).then(function(data) {
+
+                                    var latestEntries = {}
+
+                                    // Iterate through the data and update the latest entry for each submittedby
+                                    data.forEach(entry => {
+                                        const submittedby = entry.submittedby;
+                                        const datetime = new Date(entry.submitteddatetime);
+                                        
+                                        if (!latestEntries[submittedby] || datetime > latestEntries[submittedby].datetime) {
+                                            latestEntries[submittedby] = { entry, datetime };
+                                        }
+                                    });
+
+
+                                    var buttons = '<a href="#" class="response ml-4 text-blue-500" data-id="'+rowData.id+'">Responses ('+Object.keys(latestEntries).length+')</a>';
+
+                                    $(td)[0].innerHTML =  buttons
+                                })
+
+                                $(td).addClass('text-center')
+                                $(td).addClass('align-middle')
+
+                            }
+                        },
+
+                    ]                                                      
+            });        
+        }
 
     });
 </script>
+
