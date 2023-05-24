@@ -113,6 +113,10 @@
                 background-color: green;
             }
 
+            .border-red {
+                border-color: red;
+            }
+
 
 
 
@@ -283,6 +287,8 @@
                                                                 <div class="col-12 m-2" id="quiztioncontent{{$question->id}}">
                                                                     <div class="row">
                                                                         <div class="col-12">
+                                                                            <h6><label class= "ml-2" for="number_question' + parentId + '">Points:</label></h6>
+                                                                            <input type="number" class="form-control m-2 addpoints" placeholder="Required" data-id= "{{$question->id}}" id="Required{{$question->id}}" value="{{$question->points}}">
                                                                             <textarea class="form-control m-2" placeholder="Untitled question" id="shortz_answer_question{{$question->id}}" >{{$question->question}}</textarea>
                                                                         </div>
                                                                         <div class="col-12">    
@@ -325,6 +331,8 @@
                                                                 <div class="col-12 mt-2" id="quiztioncontent{{$question->id}}">
                                                                     <div class="row">
                                                                         <div class="col-12">
+                                                                            <h6><label class= "ml-2" for="number_question' + parentId + '">Points:</label></h6>
+                                                                            <input type="number" class="form-control m-2 addpoints" placeholder="Required" data-id= "{{$question->id}}" id="Required{{$question->id}}" value="{{$question->points}}">
                                                                             <textarea class="form-control m-2" placeholder="Untitled question" id="long_answer_question{{$question->id}}" >{{$question->question}}</textarea>
                                                                         </div>
                                                                         <div class="col-12">    
@@ -490,6 +498,8 @@
                                                                 <div class="col-12 m-2" id="quiztioncontent{{$question->id}}">
                                                                     <div class="row">
                                                                         <div class="col-12 m-2">
+                                                                            <h6><label class= "ml-2" for="number_question{{$question->id}}">Points:</label></h6>
+                                                                            <input type="number" class="form-control m-2 addpoints" placeholder="Required" data-id= "{{$question->id}}" id="Required{{$question->id}}" value="{{$question->points}}">
                                                                             <textarea class="form-control imageanswer" placeholder="Untitled instruction" style="height: 20px !important;" id="image_item{{$question->id}}">{{$question->question}}</textarea>
                                                                             <input type="file" class="mt-2" disabled>
                                                                         </div>
@@ -611,6 +621,8 @@
                                                                     <div class="row">
                                                                         <div class="col-12">
                                                                             <textarea class="form-control enumeration mt-2 ml-2" placeholder="Untitled question" id="enumerationquestion{{$question->id}}" >{{$question->question}}</textarea>
+                                                                            <h5><label class= "ml-2 mt-2" for="itemcount">Item:</label></h5>
+                                                                            <input type="number" class="form-control mt-2 ml-2 itemcount" placeholder="Item count" data-id= "{{$question->id}}" id="enumerationitem{{$question->id}}" value= "{{$question->item}}">
                                                                             <div id="item_option{{$question->id}}">
                                                                                 @php
 
@@ -649,17 +661,11 @@
                                                                                 @for ($i = 0; $i < $numberOfTimes; $i++)
                                                                                     <div class="input-group mt-2">
                                                                                         <input type="text" class="form-control mt-2 ml-2" placeholder="Item text &nbsp;{{$i+1}}" disabled>
-                                                                                        <div class="input-group-append">
-                                                                                                <span class="input-group-text">
-                                                                                                    <span id= "deleteenum" data-id= "{{$question->id}}" class = "pl-1"><i class="fa fa-trash" aria-hidden="true"></i></span>
-                                                                                                </span>
-                                                                                        </div>
                                                                                     </div>
                                                                                 @endfor
                                                                             </div>
-                                                                            <button class="form-control additem" style="margin: 8px; " data-id="{{$question->id}}" id="add_item{{$question->id}}">Add Item</button>
                                                                         </div>
-                                                                        <div class="col-12">
+                                                                        <div class="col-12 mt-2">
                                                                             <button class="btn btn-link btn-sm ml-2 answer-key-enum" id="{{$question->id}}">Answer key</button>
                                                                         </div>
                                                                     </div>
@@ -921,11 +927,15 @@
                             else if(last_quiz_type == 'enumeration'){
 
                                 var textareaValue = $('#enumerationquestion' + last_id).val();
+                                var itemval = $('#enumerationitem' + last_id).val();
                                 console.log("Question: ", textareaValue);
                                 console.log("Quiztype: ", last_quiz_type);
-                                console.log("Enumeration ITEM: ", enumerationitem);
+                                console.log("Enumeration ITEM: ", itemval);
 
-                                if (textareaValue.length != 0) {
+
+                                if (itemval !== '' && itemval !== undefined && itemval > 0) {
+                                    console.log("Has value");
+                                    $('#enumerationitem' + last_id).css('border-color', 'black');
                                     $.ajax({
                                         type: "get",
                                         dataType: 'json',
@@ -933,14 +943,13 @@
                                         data: { 
                                             question : textareaValue,
                                             typeofquiz : 8,
-                                            item : enumerationitem,
+                                            item : itemval,
                                             id: last_id
                                                 },
                                         success: function(response) {
 
                                             if (response == 1){
 
-                                            enumerationitem = 1;
                                         
                                             Toast.fire({
                                                 icon: 'success',
@@ -956,7 +965,15 @@
                                         }
                                     });
 
-                                    enumerationitem = 1;
+                                }else{
+                                            Toast.fire({
+                                                icon: 'error',
+                                                title: 'Item is required'
+                                            })
+                                $('#enumerationitem' + last_id).css('border-color', 'red');
+
+
+
                                 }
 
 
@@ -1449,6 +1466,8 @@
                         
                         if(select_quiz_type == 'short_answer'){
                             $('#quiztioncontent' + parentId).empty();
+                            $('#quiztioncontent' + parentId).append('<h6><label class= "ml-2" for="number_question' + parentId + '">Points:</label></h6>');
+                            $('#quiztioncontent' + parentId).append('<input type="number" class="form-control m-2 addpoints" placeholder="Required" data-id= "' + parentId + '" id="Required' + parentId + '">');
                             $('#quiztioncontent' + parentId).append('<textarea class="form-control m-2 shortz_answer_question"'+parentId+'" placeholder="Untitled question" style="height: 20px !important;" id="shortz_answer_question'+parentId+'" ></textarea>');
                             $('#quiztioncontent' + parentId).append('<input type="text" class="form-control mt-2 ml-2" placeholder="Short answer text" disabled>');
                         
@@ -1475,6 +1494,8 @@
 
                         if(select_quiz_type == 'paragraph_answer'){
                             $('#quiztioncontent' + parentId).empty();
+                            $('#quiztioncontent' + parentId).append('<h6><label class= "ml-2" for="number_question' + parentId + '">Points:</label></h6>');
+                            $('#quiztioncontent' + parentId).append('<input type="number" class="form-control m-2 addpoints" placeholder="Required" data-id= "' + parentId + '" id="Required' + parentId + '">');
                             $('#quiztioncontent' + parentId).append('<textarea class="form-control m-2" placeholder="Untitled question" style="height: 20px !important;" id="long_answer_question'+parentId+'" ></textarea>');
                             $('#quiztioncontent' + parentId).append('<input type="text" class="form-control mt-2 ml-2" placeholder="Long answer text" disabled>');
 
@@ -1484,11 +1505,15 @@
                         if(select_quiz_type == 'enumeration'){
                             enumerationitem = 1;
                             $('#quiztioncontent' + parentId).empty();
+                            $('#quiztioncontent' + parentId).append('<div class="row">'+
+                                                                    '<div class="col-12 m-2">')
                             $('#quiztioncontent' + parentId).append('<textarea class="form-control m-2" placeholder="Untitled question" id="enumerationquestion'+parentId+'" ></textarea>');
-                            $('#quiztioncontent' + parentId).append('<div id="item_option'+parentId+'">' + 
-                                '<input type="text" class="form-control mt-2 ml-2" placeholder="Item text" disabled>'+
-                                '</div>');
-                            $('#quiztioncontent' + parentId).append('<button class="form-control additem" style="margin: 8px; " data-id="'+parentId+'" id="add_item'+parentId+'">Add Item</button>')
+                            $('#quiztioncontent' + parentId).append('<input type="number" class="form-control mt-2 ml-2" placeholder="Item count" data-id= "' + parentId + '" id="enumerationitem' + parentId + '">');
+                            $('#quiztioncontent' + parentId).append('</div>' +
+                                                                    '</div>');
+                            $('#quiztioncontent' + parentId).append('<div class="col-12">'+
+                                '<button class="btn btn-link btn-sm ml-2 answer-key-enum" id="'+parentId+'">Answer key</button>'+
+                            '</div>')
 
                     
                         }
@@ -1530,6 +1555,9 @@
                                                                         <div class="row justify-content-end p-3 mt-2">
                                                                         <button class="btn btn-success add_fill_question"  id="${parentId}">Add fill question</button>
                                                                         </div>
+                                                                        <div class="col-12">
+                                                                            <button class="btn btn-link btn-sm answer-key-fill" id="${parentId}">Answer key</button>
+                                                                        </div>
                                                                         </div>
                                                                         </div>`);
                             
@@ -1559,6 +1587,9 @@
                                                 '<div class="row justify-content-end p-3 mt-2">' +
                                                     '<button class="btn btn-success add_drag_question"  id="'+parentId+'">Add drop question</button>' +
                                                 '</div>'+
+                                                '<div class="col-12">'+
+                                                    '<button class="btn btn-link btn-sm answer-key-drag" id="'+parentId+'"">Answer key</button>'+
+                                                '</div>'+
                                                 '</div>'+ 
                                                 '</div>'+
                                                 '</div>')
@@ -1566,9 +1597,13 @@
 
                             if(select_quiz_type == 'image'){
                                 $('#quiztioncontent' + parentId).empty();
+                                
                                 $('#quiztioncontent' + parentId).append(`<div class="row">
-                                                                            <div class="col-12 m-2">
-                                                                                <textarea class="form-control" placeholder="Untitled instruction" style="height: 20px !important;" id="image_item${parentId}" ></textarea>
+                                                                            <div class="col-12 m-2">`);
+                                $('#quiztioncontent' + parentId).append('<h6><label class= "ml-2" for="number_question' + parentId + '">Points:</label></h6>');
+                                $('#quiztioncontent' + parentId).append('<input type="number" class="form-control m-2 addpoints" placeholder="Required" data-id= "' + parentId + '" id="Required' + parentId + '">');
+                                                                                
+                                $('#quiztioncontent' + parentId).append(`<textarea class="form-control" placeholder="Untitled instruction" style="height: 20px !important;" id="image_item${parentId}" ></textarea>
                                                                                 <input type="file" class="mt-2" disabled>
                                                                             </div>
                                                                         </div>`);
@@ -1604,7 +1639,7 @@
                     $(document).on('click', '.add_fill_question', function(){
                         option+=1;
                         var parentId = $(this).attr('id');
-                        console.log("ID: ", parentId)
+                        console.log("IDs: ", parentId)
                         $('#item_fill' + parentId).append(`<input type="text" class="form-control fill${parentId}" style="margin-top: 10px; border: 2px solid dodgerblue; color: black;" placeholder="Item text &nbsp;${option}">`)
                         
                     })
@@ -1843,10 +1878,104 @@
                         
 
                         $(document).on('click', '.answer-key-drag', function(){
-                            var parentId = $(this).attr('id');
+                                var parentId = $(this).attr('id');
+
+                                var i = 1;
+                                console.log("Drag and Drop");
+                                $('.drag' + parentId).each(function() {
+                                        // Get the value of the current label element using its id attribute
+                                        const value = $(this).text();
+                                        console.log(value)
+
+                                        // console.log(i);
+                                        
+                                        $.ajax({
+                                            type: "get",
+                                            dataType: 'json',
+                                            url: "/adminviewbook/createdragoption",
+                                            data: { 
+                                                questionid : parentId,
+                                                sortid: i,
+                                                description : value
+                                                    },
+                                            success: function(response) {
+
+                                                console.log("Options Succesfully save!");
+                                                
+                                            },
+                                            error: function(xhr) {
+                                                // Handle error here
+                                            }
+                                        });
+
+                                        i+=1;
+
+                                        });
+
+                                        var i = 1;
+                                        $('.drop' + parentId).each(function() {
+                                        // Get the value of the current label element using its id attribute
+                                        const value = $(this).val();
+                                        console.log(value);
+
+                                                $.ajax({
+                                                    type: "get",
+                                                    dataType: 'json',
+                                                    url: "/adminviewbook/createdropquestion",
+                                                    data: { 
+                                                        questionid : parentId,
+                                                        sortid: i,
+                                                        description : value
+                                                            },
+                                                    success: function(response) {
+
+                                                        console.log("Drop question Succesfully save!");
+                                                        
+                                                    },
+                                                    error: function(xhr) {
+                                                        // Handle error here
+                                                    }
+                                                    });
+                                                i+=1;
 
 
-                            //save drop question
+                                        });
+
+                                        Toast.fire({
+                                            icon: 'success',
+                                            title: 'All the changes have been saved'
+                                        })
+
+                            $.ajax({
+                                    type: "get",
+                                    dataType: 'json',
+                                    url: "/adminviewbook/createquestion",
+                                    data: { 
+                                        question : "Drag and drop",
+                                        typeofquiz : 5,
+                                        id: parentId
+                                            },
+                                    success: function(response) {
+
+                                        if (response == 1){
+                                        
+                                            Toast.fire({
+                                                icon: 'success',
+                                                title: 'All the changes have been saved'
+                                            })
+
+                                            }
+                                        
+                                    },
+                                    error: function(xhr) {
+                                        // Handle error here
+                                    }
+                                });
+
+                                
+
+
+                            //get drop question
                             $.ajax({
                                     type: "get",
                                     dataType: 'json',
@@ -1906,7 +2035,7 @@
                                     });
 
                                     var i = 1;
-                                    $('.drop' + last_id).each(function() {
+                                    $('.drop' + parentId).each(function() {
                                     // Get the value of the current label element using its id attribute
                                     const value = $(this).val();
                                     console.log(value);
@@ -1939,9 +2068,24 @@
                                         title: 'All the changes have been saved'
                                     })
 
+                            getDropQuestion(parentId);
 
                             
                             //get drop question question
+                            
+
+
+                            
+
+
+                        console.log(parentId)
+
+                        
+
+                        });
+
+                        function getDropQuestion(parentId){
+
                             $.ajax({
                                     type: "get",
                                     dataType: 'json',
@@ -2015,22 +2159,96 @@
                                         // Handle error here
                                     }
                             })
-
-
-                            
-
-
-                        console.log(parentId)
-
-                        
-
-                        });
+                        }
 
 
                         $(document).on('click', '.answer-key-fill', function(){
                             var parentId = $(this).attr('id');
 
+                            var i = 1;
+                            var validation = true;
+                            
 
+                            $('.fill' + parentId).each(function() {
+                                    // Get the value of the current label element using its id attribute
+                                    const value = $(this).val();
+
+                                    console.log(i);
+                                    console.log(value);
+
+
+                                    if (value.length != 0) {
+
+                                        if(i==1){
+
+                                            $.ajax({
+                                                type: "get",
+                                                url: "/adminviewbook/createquestion",
+                                                data: { 
+                                                    question : "Fill in the blanks",
+                                                    typeofquiz : 7,
+                                                    id: parentId
+                                                        },
+                                                success: function(response) {
+
+                                                    if (response == 1){
+                                                
+                                                    Toast.fire({
+                                                        icon: 'success',
+                                                        title: 'All the changes have been saved'
+                                                    })
+
+                                                    }
+                                                    
+                                                },
+                                                error: function(xhr) {
+                                                    // Handle error here
+                                                }
+                                            });
+                                        }
+
+                                        $.ajax({
+                                                type: "get",
+                                                url: "/adminviewbook/createfillquestion",
+                                                data: { 
+                                                    questionid : parentId,
+                                                    sortid: i,
+                                                    description : value
+                                                        },
+                                                success: function(response) {
+
+                                                    console.log("Drop question Succesfully save!");
+                                                    
+                                                    
+                                                },
+                                                error: function(xhr) {
+                                                    // Handle error here
+                                                }
+                                                });
+
+                                        i+=1;
+
+                                    }
+                                
+
+                                    
+
+                                    });
+
+                            getfillquestion(parentId)
+
+
+
+                            
+
+
+                            console.log(parentId);
+
+
+
+                        });
+
+                        function getfillquestion(parentId){
 
                             $.ajax({
                                     type: "get",
@@ -2064,17 +2282,66 @@
                                     }
                                     })
 
-
-                            console.log(parentId);
-
-
-
-                        });
+                        }
 
 
                         $(document).on('click', '.answer-key-enum', function(){
                             var parentId = $(this).attr('id');
                             console.log(parentId)
+
+                            var itemval = $('#enumerationitem' + parentId).val();
+
+
+                            var textareaValue = $('#enumerationquestion' + parentId).val();
+                            console.log("Question: ", parentId);
+                            console.log("Quiztype: ", parentId);
+                            console.log("Enumeration ITEM: ", itemval);
+
+                                if (textareaValue.length != 0) {
+                                    $.ajax({
+                                        type: "get",
+                                        dataType: 'json',
+                                        url: "/adminviewbook/createquestionitem",
+                                        data: { 
+                                            question : textareaValue,
+                                            typeofquiz : 8,
+                                            item : itemval,
+                                            id: parentId
+                                                },
+                                        success: function(response) {
+
+                                            if (response == 1){
+
+                
+                                        
+                                            Toast.fire({
+                                                icon: 'success',
+                                                title: 'All the changes have been saved'
+                                                
+                                            })
+
+                                            getenum(parentId)
+
+                                            }
+                                            
+                                        },
+                                        error: function(xhr) {
+                                            // Handle error here
+                                        }
+                                    });
+
+                                }
+
+
+
+                            
+
+
+
+
+                        });
+
+                        function getenum(parentId){
 
                             $.ajax({
                                     type: "get",
@@ -2142,10 +2409,7 @@
                                     }
                                     })
 
-
-
-
-                        });
+                        }
 
                         $(document).on('click', '.answerdone', function(){
 
@@ -2363,7 +2627,9 @@
 
                                             var html = `<div class="row">
                                                             <div class="col-12 m-2">
-                                                                <textarea class="form-control enumeration mt-2 ml-2" placeholder="Untitled question" id="enumerationquestion${response.id}" > ${response.question}</textarea>`;
+                                                                <textarea class="form-control enumeration mt-2 ml-2" placeholder="Untitled question" id="enumerationquestion${response.id}" > ${response.question}</textarea>
+                                                                <h5><label class= "ml-2 mt-2" for="itemcount">Item:</label></h5>
+                                                                <input type="number" class="form-control mt-2 ml-2 itemcount" placeholder="Item count" data-id= "${response.id}" id="enumerationitem${response.id}" value= "${response.item}">`;
                                             html += `<div id="item_option${response.id}}">
                                             <span class ="ml-2 mt-2"><b>Answer is  </b>`;
 
@@ -2393,21 +2659,15 @@
                                                 html += `<div id="item_option${response.id}}">
                                                             <div class="input-group mt-2">
                                                                 <input type="text" class="form-control mt-2 ml-2" placeholder="Item text &nbsp;${i+1}" disabled>
-                                                                <div class="input-group-append">
-                                                                        <span class="input-group-text">
-                                                                            <span id= "deleteenum" data-id= "${response.id}" class = "pl-1"><i class="fa fa-trash" aria-hidden="true"></i></span>
-                                                                        </span>
-                                                                </div>
                                                             </div>`;
 
 
                                             }
 
                                             html+=       `</div>
-                                                                <button class="form-control additem" style="margin: 8px; " data-id="${response.id}" id="add_item${response.id}">Add Item</button>
                                                             </div>
-                                                            <div class="col-12">
-                                                                <button class="btn btn-link btn-sm ml-3 answer-key-enum" id="${response.id}">Answer key</button>
+                                                            <div class="col-12  mt-2">
+                                                                <button class="btn btn-link btn-sm answer-key-enum" id="${response.id}">Answer key</button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -2533,6 +2793,32 @@
                         //auto save answer when switching to 
                         $(document).on('change', '.answer-field', function(){
                             autoSaveAnswer(this);
+                            
+
+                        });
+                        $(document).on('change', '.addpoints', function(){
+
+                            var dataid = $(this).data('id');
+                            var points = $(this).val();
+                            console.log("ID: ", dataid,"Points:", points);
+
+                            $.ajax({
+                                url: '/adminviewbook/setpoints',
+                                method: 'GET',
+                                data: {
+                                dataid : dataid,
+                                points : points
+
+                                },
+                                success: function(response) {
+
+                                    console.log("Done")
+                                    
+                                
+                                    //Handle the response from the server if needed
+                                }
+                            });
+
                             
 
                         });

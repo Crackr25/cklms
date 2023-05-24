@@ -310,15 +310,6 @@ class ViewBookController extends Controller
 
         foreach ($quiz as $item) {
             
-            // DB::table('lesson_quiz_record')
-            //             ->insert([
-            //                 'postid'            => $postid,
-            //                 'filename'          => $filename,
-            //                 'filepath'          => 'Classrooms/classroom'.$request->get('classroomid').'/'.'Attachments'.'/'.$file->getClientOriginalName(),
-            //                 'extension'         => $extension
-            //             ]);
-            
-            
             $item->chapter = DB::table('chapters')->where('id',$item->chapterid)->value('title');
 
 
@@ -351,6 +342,7 @@ class ViewBookController extends Controller
                                 'noofattempts',
                                 'chapterquizsched.createddatetime'
                     )
+            ->orderBy('createddatetime', 'desc')
             ->get();
 
 

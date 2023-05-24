@@ -560,16 +560,8 @@ class BookController extends Controller
     public function createquestion(Request $request)
     {
 
-        $checkifexist = DB::table('lessonquizquestions')
-            ->where('id', $request->get('id'))
-            ->where('question', $request->get('question'))
-            ->count();
 
 
-
-
-        
-        if($checkifexist == 0){
             DB::table('lessonquizquestions')
                 ->where('id', $request->get('id'))
                 ->update([
@@ -579,53 +571,22 @@ class BookController extends Controller
 
             return 1;
 
-        }else{
-            return 0;
-        }
-
     }
 
     public function createquestionitem(Request $request)
     {
 
-
-        $item = DB::table('lessonquizquestions')
-                    ->where('id', $request->get('id'))
-                    ->value('item');
-
-        if($item != 0 ){
-
-            $item-=1;
-
-            }
-
-
         
-
-
-        $checkifexist = DB::table('lessonquizquestions')
-            ->where('id', $request->get('id'))
-            ->where('question', $request->get('question'))
-            ->count();
-        
-        if($checkifexist == 0 || $item != $request->get('item')){
-            
-            $item+=$request->get('item');
-            
 
             DB::table('lessonquizquestions')
                 ->where('id', $request->get('id'))
                 ->update([
                     'question'         => $request->get('question'),
                     'typeofquiz'   => $request->get('typeofquiz'),
-                    'item'   => $item
+                    'item'   => $request->get('item')
                 ]);
 
             return 1;
-
-        }else{
-            return 0;
-        }
 
     }
 
@@ -1385,6 +1346,7 @@ class BookController extends Controller
 
     $question->choices = DB::table('lessonquizchoices')
     ->where('questionid', $question->id)
+    ->where('deleted', 0)
     ->select('id', 'questionid' , 'description' , 'answer')
     ->orderBy('sortid')
     ->get();
@@ -1495,6 +1457,20 @@ class BookController extends Controller
 
 
     return response()->json($question);
+    
+        
+    }
+
+
+    public function setPoints(Request $request)
+
+    {
+        DB::table('lessonquizquestions')
+            ->where('id', $request->get('dataid'))
+            ->update([
+                'points'   => $request->get('points')
+            ]);
+
     
         
     }

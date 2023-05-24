@@ -1,5 +1,9 @@
 @extends('teacher.layouts.app')
 
+<link rel="stylesheet" href="{{asset('plugins/select2/css/select2.min.css')}}">
+
+<link rel="stylesheet" href="{{asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css')}}">
+
 @section('breadcrumbs')
 
     <nav id="breadcrumbs">
@@ -49,28 +53,27 @@
 
 <div class="container-fluid">
     <div class="row justify-content-center">
-        <div class="col-md-10">
+        <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
                         <span>Active Quiz</span>
                         <div>
-                            {{-- <button class="btn btn-sm btn-default mr-2" type="button" data-toggle="collapse" data-target="#quizTable2" aria-expanded="false" aria-controls="quizTable2"><i class="fa fa-plus text-white"></i></button> --}}
+                
                             <button class="btn btn-sm btn-default refresh_table">Refresh</button>
                         </div>
                     </div>
                 </div>
 
                 <div class="card-body">
-                    <div id="quizTable2">
+                    <div class="table-responsive" id="quizTable2">
                         <table id="quizDataTable2" class="table table-bordered" style="width:100%">
                             <thead>
                                 <tr>
+                                    <th>#</th>
                                     <th>Quiz Title</th>
-                                    <th>Date start</th>
-                                    <th>Time start</th>
-                                    <th>Date end</th>
-                                    <th>Time end</th>
+                                    <th>Quiz start</th>
+                                    <th>Quiz end</th>
                                     <th>Attempts</th>
                                     <th>Activated on</th>
                                     <th>Response</th>
@@ -88,20 +91,18 @@
 
 <div class="container-fluid classroom" data-id="{{$classroomid}}">
     <div class="row justify-content-center">
-        <div class="col-md-10">
+        <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
                         <span>Quiz Table</span>
-                        <div>
-                            <button class="btn btn-sm btn-default mr-2" type="button" data-toggle="collapse" data-target="#quizTable" aria-expanded="false" aria-controls="quizTable"><i class="fa fa-plus"></i></button>
-                        </div>
+                        
                     </div>
                 </div>
 
                 <div class="card-body">
-                    <div class="collapse" id="quizTable">
-                        <table id="quizDataTable" class="table table-bordered">
+                    <div id="quizTable">
+                        <table id="quizDataTable" class="table table-bordered" style="max-width: 100%;">
                             <thead>
                                 <tr>
                                     <th>Chapter</th>
@@ -146,26 +147,34 @@
         </div>
         <div class="modal-body">
             <form class="was-validated">
-            <div class="form-group">
-                <label for="dateFrom">Date From</label>
-                <input type="date" class="form-control" id="date-from" name="dateFrom" required>
-            </div>
-            <div class="form-group">
-                <label for="timeFrom">Time From</label>
-                <input type="time" class="form-control" id="time-from" name="timeFrom" required>
-            </div>
-            <div class="form-group">
-                <label for="dateTo">Date To</label>
-                <input type="date" class="form-control" id="date-to" name="dateTo" required>
-            </div>
-            <div class="form-group">
-                <label for="timeTo">Time To</label>
-                <input type="time" class="form-control" id="time-to" name="timeTo" required>
-            </div>
-            <div class="form-group">
-                <label for="attempts">Number of Attempts</label>
-                <input type="number" class="form-control" id="attempts" name="attempts" required>
-            </div>
+                <div class="form-group">
+                    <label for="attempts">Activate for</label>
+                    <select id="mySelect" class="select2" multiple>
+                        <option value="0">All</option>
+                        <option value="0">2</option>
+                        <option value="0">3</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="dateFrom">Date From</label>
+                    <input type="date" class="form-control" id="date-from" name="dateFrom" required>
+                </div>
+                <div class="form-group">
+                    <label for="timeFrom">Time From</label>
+                    <input type="time" class="form-control" id="time-from" name="timeFrom" required>
+                </div>
+                <div class="form-group">
+                    <label for="dateTo">Date To</label>
+                    <input type="date" class="form-control" id="date-to" name="dateTo" required>
+                </div>
+                <div class="form-group">
+                    <label for="timeTo">Time To</label>
+                    <input type="time" class="form-control" id="time-to" name="timeTo" required>
+                </div>
+                <div class="form-group">
+                    <label for="attempts">Number of Attempts</label>
+                    <input type="number" class="form-control" id="attempts" name="attempts" required>
+                </div>
             </form>
         </div>
         <div class="modal-footer">
@@ -195,6 +204,7 @@
 
 <script>
     $(document).ready(function() {
+        $('#mySelect').select2();
 
         const Toast = Swal.mixin({
             toast: true,
@@ -404,10 +414,9 @@
                         data:activequiz,
                         order: [[0, 'asc']],
                         lengthChange: false,
-                        responsive: true,
+                        responsive: false,
                         ordering: false,
                         columns: [
-                            { "data": null},
                             { "data": null},
                             { "data": null},
                             { "data": null},
@@ -418,11 +427,11 @@
                         ],
 
                         columnDefs: [
-                                        {
+                                {
                             'targets': 0,
                             'orderable': false, 
                             'createdCell':  function (td, cellData, rowData, row, col) {
-                                                    var text = '<a class="mb-0">'+rowData.title+'</a>'
+                                                    var text = '<a class="mb-0">'+(row + 1)+'</a>'
                                                     $(td)[0].innerHTML =  text
                                                     
                             }
@@ -431,10 +440,7 @@
                             'targets': 1,
                             'orderable': false, 
                             'createdCell':  function (td, cellData, rowData, row, col) {
-
-                                                    var date2 =  new Date(Date.parse(rowData.datefrom));
-                                                    var markdate = date2.toLocaleDateString("en-US", {month: "long", year: "numeric", day: "numeric"});
-                                                    var text = '<a class="mb-0">'+markdate+'</a>'
+                                                    var text = '<a class="mb-0">'+rowData.title+'</a>'
                                                     $(td)[0].innerHTML =  text
                                                     
                             }
@@ -443,37 +449,40 @@
                             'targets': 2,
                             'orderable': false, 
                             'createdCell':  function (td, cellData, rowData, row, col) {
+
+                                                    var date2 =  new Date(Date.parse(rowData.datefrom));
+                                                    var markdate = date2.toLocaleDateString("en-US", {month: "long", year: "numeric", day: "numeric"});
+                                                    var date3 =  new Date(Date.parse( '1970-01-01T' + rowData.timefrom));
+                                                    const timeString1 = date3.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit"});
+                                                    var date4 =  new Date(Date.parse(rowData.dateto));
+                                                    var markdate2 = date4.toLocaleDateString("en-US", {month: "long", year: "numeric", day: "numeric"});
+                                                    var date5 =  new Date(Date.parse( '1970-01-01T' + rowData.timeto));
+                                                    const timeString2 = date5.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit"});
+                                                    var text = '<a class="mb-3"><span class="badge badge-info mt-2"> <b> Start: </b>  '+markdate+' at '+timeString1+'</span></a>'
+                                                    $(td)[0].innerHTML =  text
                                                     
-                                                    var date2 =  new Date(Date.parse( '1970-01-01T' + rowData.timefrom));
-                                                    const timeString = date2.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit"});
-                                                    var text = '<a class="mb-0">'+timeString+'</a>';
-                                                    $(td)[0].innerHTML = text;
                             }
                                     },
-                                        {
+                                    {
                             'targets': 3,
                             'orderable': false, 
                             'createdCell':  function (td, cellData, rowData, row, col) {
 
-                                                    var date2 =  new Date(Date.parse(rowData.dateto));
+                                                    var date2 =  new Date(Date.parse(rowData.datefrom));
                                                     var markdate = date2.toLocaleDateString("en-US", {month: "long", year: "numeric", day: "numeric"});
-                                                    var text = '<a class="mb-0">'+markdate+'</a>'
+                                                    var date3 =  new Date(Date.parse( '1970-01-01T' + rowData.timefrom));
+                                                    const timeString1 = date3.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit"});
+                                                    var date4 =  new Date(Date.parse(rowData.dateto));
+                                                    var markdate2 = date4.toLocaleDateString("en-US", {month: "long", year: "numeric", day: "numeric"});
+                                                    var date5 =  new Date(Date.parse( '1970-01-01T' + rowData.timeto));
+                                                    const timeString2 = date5.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit"});
+                                                    var text = '<a class="mb-3"><span class="badge badge-danger m-2"> <b> End: </b> '+markdate2+' at '+timeString2+' </span></a>'
                                                     $(td)[0].innerHTML =  text
+                                                    
                             }
                                     },
                                         {
                             'targets': 4,
-                            'orderable': false, 
-                            'createdCell':  function (td, cellData, rowData, row, col) {
-
-                                                    var date2 =  new Date(Date.parse( '1970-01-01T' + rowData.timeto));
-                                                    const timeString = date2.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit"});
-                                                    var text = '<a class="mb-0">'+timeString+'</a>'
-                                                    $(td)[0].innerHTML =  text
-                            }
-                                    },
-                                        {
-                            'targets': 5,
                             'orderable': false, 
                             'createdCell':  function (td, cellData, rowData, row, col) {
                                                     var text = '<a class="mb-0">'+rowData.noofattempts+'</a>'
@@ -481,7 +490,7 @@
                             }
                                     },
                         {
-                            'targets': 6,
+                            'targets': 5,
                             'orderable': false, 
                             'createdCell':  function (td, cellData, rowData, row, col) {
 
@@ -493,7 +502,7 @@
                             }
                                     },
                                         {
-                            'targets': 7,
+                            'targets': 6,
                             'orderable': false, 
                             'createdCell':  function (td, cellData, rowData, row, col) {
 
