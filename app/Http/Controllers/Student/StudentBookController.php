@@ -380,6 +380,22 @@ class StudentBookController extends Controller
                                 ->latest('submitteddatetime')
                                 ->value('submitteddatetime');
 
+            $score = DB::table('chapterquizrecords')
+                                ->where('submittedby',auth()->user()->id)
+                                ->where('chapterquizid',$quizid)
+                                ->select('totalscore', 'checked')
+                                ->where('deleted',0)
+                                ->latest('submitteddatetime')
+                                ->first();
+
+            $maxpoints = DB::table('lessonquizquestions')
+                ->where('quizid', $quizid)
+                ->where('deleted', 0)
+                ->where('typeofquiz', '!=', 4)
+                ->sum('points');
+
+            $score->maxpoints = $maxpoints;
+
 
 
             $continuequiz = DB::table('chapterquizrecords')
@@ -391,74 +407,15 @@ class StudentBookController extends Controller
                                 ->value('id');
             
 
-            // if(isset($checkIfAnswered->id)){
-            //     $isAnswered = true;
-            // }
-
-            // $quizAnswersInfo = DB::table('chapterquizrecords')
-            //                     ->where('submittedby',auth()->user()->id)
-            //                     ->where('chapterquizid',$quizid)
-            //                     ->where('chapterquizrecords.deleted',0)
-            //                     ->join('chapterquizrecordsdetail',function($join){
-            //                         $join->on('chapterquizrecords.id','=','chapterquizrecordsdetail.headerid');
-            //                         $join->where('chapterquizrecordsdetail.deleted',0);
-            //                     })
-            //                     ->join('chapterquizquestions',function($join){
-            //                         $join->on('chapterquizrecordsdetail.questionid','=','chapterquizquestions.id');
-            //                     })
-            //                     ->select(
-            //                         'choiceid',
-            //                         'questionid',
-            //                         'question',
-            //                         'type',
-            //                         'description',
-            //                         'chapterquizrecordsdetail.points as studPoints',
-            //                         'chapterquizquestions.points'
-            //                         )
-            //                     ->get();
-
-   
-            
-            // foreach($quizAnswersInfo as $item){
-
-            //     if($item->type == 1){
-
-            //         $choices = DB::table('chapterquizchoices')
-            //                         ->where('id',$item->choiceid)
-            //                         ->where('deleted',0)
-            //                         ->select('description','id','answer')
-            //                         ->first();
-
-            //         if(isset($choices->id)){
-
-            //             $item->description = $choices->description;
-
-            //         }
-
-            //     }
-
-            // }
-            
-
-
-
-            // $quizAnswersInfo = collect( $quizAnswersInfo)->groupBy('questionid');
-
-            // return $quizAnswersInfo;
 
             return view('global.viewbook.quizcontent.studentquiz')
             
-                        // ->with('quizInfo',$quizInfo)
                         ->with('chapterquizsched',$chapterquizsched)
                         ->with('continuequiz',$continuequiz)
-                        //  ->with('isAnswered',$isAnswered)
-                        //  ->with('quizRecord',$checkIfAnswered)
-                        //  ->with('clasroomid',$clasroomid)
                         ->with('attemptsLeft',$attemptsLeft)
-                        ->with('lastattempt',$lastattempt);
-                        //  ->with('quizAnswersInfo',$quizAnswersInfo)
-                        // ->with('quizQuestions',$quizQuestions);
-
+                        ->with('lastattempt',$lastattempt)
+                        ->with('score',$score);
+            
         }
 
     public function retakeQuiz($id){

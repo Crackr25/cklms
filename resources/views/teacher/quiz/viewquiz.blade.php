@@ -355,7 +355,7 @@
                         <td>${entry.name}</td>
                         <td>${formattedDate}</td>
                         <td>${data.length} / ${filteredQuiz[0].noofattempts}</td>
-                        <td>${entry.totalscore ? entry.totalscore : 'Not yet scored.'}</td>
+                        <td>${entry.totalscore ? entry.totalscore : 'Not yet scored.'} / ${entry.maxpoints}</td>
                         <td><button class="btn btn-primary view-response" data-quiz-id="${filteredQuiz[0].id}" data-record-id="${entry.id}">View Response</button></td>
                         </tr>
                     `;

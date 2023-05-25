@@ -354,21 +354,33 @@ class ViewBookController extends Controller
     }
 
     public function quizresponses(Request $request)
-    {
-        $classroomid = $request->get('classroomid');
-        $chapterquizid = $request->get('chapterquizid');
-    
-        $responses = DB::table('chapterquizrecords')
-            ->join('users', 'users.id', '=', 'chapterquizrecords.submittedby')
-            ->where('chapterquizrecords.classroomid', $classroomid)
-            ->where('chapterquizrecords.chapterquizid', $chapterquizid)
-            ->where('chapterquizrecords.deleted','0')
-            ->where('chapterquizrecords.quizstatus','1')
-            ->select('chapterquizrecords.id', 'chapterquizrecords.classroomid', 'chapterquizrecords.chapterquizid', 'chapterquizrecords.submittedby', 'users.name', 'chapterquizrecords.totalscore', 'chapterquizrecords.submitteddatetime', 'chapterquizrecords.deleted', 'chapterquizrecords.quizstatus', 'chapterquizrecords.deletedby', 'chapterquizrecords.updatedby', 'chapterquizrecords.updateddatetime')
-            ->get();
-    
-        return $responses;
-    }
+        {
+            $classroomid = $request->get('classroomid');
+            $chapterquizid = $request->get('chapterquizid');
+
+            $responses = DB::table('chapterquizrecords')
+                ->join('users', 'users.id', '=', 'chapterquizrecords.submittedby')
+                ->where('chapterquizrecords.classroomid', $classroomid)
+                ->where('chapterquizrecords.chapterquizid', $chapterquizid)
+                ->where('chapterquizrecords.deleted', '0')
+                ->where('chapterquizrecords.quizstatus', '1')
+                ->select('chapterquizrecords.id', 'chapterquizrecords.classroomid', 'chapterquizrecords.chapterquizid', 'chapterquizrecords.submittedby', 'users.name', 'chapterquizrecords.totalscore', 'chapterquizrecords.submitteddatetime', 'chapterquizrecords.deleted', 'chapterquizrecords.quizstatus', 'chapterquizrecords.deletedby', 'chapterquizrecords.updatedby', 'chapterquizrecords.updateddatetime')
+                ->get();
+
+            $maxpoints = DB::table('lessonquizquestions')
+                ->where('quizid', $chapterquizid)
+                ->where('deleted', 0)
+                ->where('typeofquiz', '!=', 4)
+                // ->where('typeofquiz', '!=', null)
+                ->sum('points');
+
+            foreach ($responses as $response) {
+                $response->maxpoints = $maxpoints;
+            }
+
+            return $responses;
+        }
+
 
     public function viewquizresponse($classroomId, $quizId, $recordId, Request $request)
     {

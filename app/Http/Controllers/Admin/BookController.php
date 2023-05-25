@@ -577,6 +577,12 @@ class BookController extends Controller
                     'item'   => $request->get('item')
                 ]);
             
+            DB::table('lessonquizquestions')
+                ->where('id', $request->get('questionid'))
+                ->update([
+                    'points'             =>  $request->get('item'),
+                ]);
+            
             DB::table('lesson_quiz_enum_answer')
                 ->where('headerid', $request->get('id'))
                 ->where('sortid', '>',$request->get('item'))
@@ -654,6 +660,13 @@ class BookController extends Controller
                     'createddatetime'   => date('Y-m-d H:i:s')
                 ]);
 
+        DB::table('lessonquizquestions')
+                ->where('id', $request->get('questionid'))
+                ->update([
+                    'points'             =>  $request->get('sortid'),
+                ]);
+        
+
         }else{
 
             DB::table('lesson_quiz_drop_question')
@@ -687,6 +700,12 @@ class BookController extends Controller
                     'sortid'            =>  $request->get('sortid'),
                     'questionid'        =>  $request->get('questionid'),
                     'question'       =>  $request->get('description'),
+                ]);
+        
+            DB::table('lessonquizquestions')
+                ->where('id', $request->get('questionid'))
+                ->update([
+                    'points'             =>  $request->get('sortid'),
                 ]);
 
         }else{

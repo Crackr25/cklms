@@ -68,6 +68,13 @@
                                 <div class="card-body">
                                     <h4><span> Status: </span> <b>Overdue</b> </h4>
                                     <ul class="list-unstyled">
+                                        @if($score->checked == 1)
+                                            <li ><span><b>Score:</b></span> {{$score->totalscore}} / {{$score->maxpoints}}</li>
+                                        @else
+                                        
+                                        @endif
+                                            <li ><span><b>Score:</b></span>Not yet Graded</li>
+
                                         <li class="border-bottom py-2"><span>Quiz Ended:</span> {{\Carbon\Carbon::create($chapterquizsched->dateto.' '.$chapterquizsched->timeto)->isoFormat('MMMM DD, YYYY hh:mm A')}}</li>
                                     </ul>
                                 </div>
@@ -98,6 +105,9 @@
                                     <ul class="list-unstyled">
                                         <li class=""><span>Deadline:</span> {{\Carbon\Carbon::create($chapterquizsched->dateto.' '.$chapterquizsched->timeto)->isoFormat('MMMM DD, YYYY hh:mm A')}}</li>
                                         <li class=""><span>Attempts:</span> {{$attemptsLeft}} / {{$chapterquizsched->noofattempts}} </li>
+                                        @if($score->checked == 1)
+                                            <li ><span><b>Score:</b></span> {{$score->totalscore}} / {{$score->maxpoints}}</li>
+                                        @endif
                                         @if(!empty($lastattempt))
                                             <li class=""><span>Last Attempt:</span> {{\Carbon\Carbon::create($lastattempt)->isoFormat('MMMM DD, YYYY hh:mm A')}}</li>
                                         @endif
