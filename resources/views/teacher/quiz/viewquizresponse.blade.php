@@ -182,21 +182,21 @@
 
                             <div class="circle-points" >
                                 <input type="checkbox" id="menu_opener_id_{{$item->id}}" class="menu_opener">
-                                <label for="menu_opener_id_{{$item->id}}" data-maxpoint="{{$item->points}}" data-points-edit="{{$item->id}}" class="menu_opener_label student-score">0</label>
+                                <label for="menu_opener_id_{{$item->id}}" data-detailsid = "{{ $item->detailsid }}" data-maxpoint="{{$item->points}}" data-points-edit="{{$item->id}}" class="menu_opener_label student-score">{{$item->pointsgiven}}</label>
 
-                                <div class="link_one" data-question-id="{{$item->id}}">
+                                <div class="link_one" data-detailsid = "{{ $item->detailsid }}"  data-question-id="{{$item->id}}">
                                     <div class="link_general">
-                                        1
+                                        0
                                     </div>
                                 </div>
 
-                                <div class="link_two" data-question-id="{{$item->id}}">
+                                <div class="link_two" data-detailsid = "{{ $item->detailsid }}"  data-question-id="{{$item->id}}">
                                     <div class="link_general">
-                                        3
+                                        {{$item->points /2}}
                                     </div>
                                 </div>
 
-                                <div class="link_three" data-question-id="{{$item->id}}">
+                                <div class="link_three" data-detailsid = "{{ $item->detailsid }}"  data-question-id="{{$item->id}}">
                                     <div class="link_general">
                                         {{$item->points}}
                                     </div>
@@ -223,21 +223,21 @@
 
                             <div class="circle-points" >
                                 <input type="checkbox" id="menu_opener_id_{{$item->id}}" class="menu_opener">
-                                <label for="menu_opener_id_{{$item->id}}" data-maxpoint="{{$item->points}}" data-points-edit="{{$item->id}}" class="menu_opener_label student-score">0</label>
+                                <label for="menu_opener_id_{{$item->id}}" data-maxpoint="{{$item->points}}" data-detailsid = "{{ $item->detailsid }}" data-points-edit="{{$item->id}}" class="menu_opener_label student-score">{{$item->pointsgiven}}</label>
 
-                                <div class="link_one" data-question-id="{{$item->id}}">
+                                <div class="link_one" data-detailsid = "{{ $item->detailsid }}"  data-question-id="{{$item->id}}">
                                     <div class="link_general">
-                                        1
+                                        0
                                     </div>
                                 </div>
 
-                                <div class="link_two" data-question-id="{{$item->id}}">
+                                <div class="link_two" data-detailsid = "{{ $item->detailsid }}"  data-question-id="{{$item->id}}">
                                     <div class="link_general">
-                                        3
+                                        {{$item->points /2}}
                                     </div>
                                 </div>
 
-                                <div class="link_three" data-question-id="{{$item->id}}">
+                                <div class="link_three" data-detailsid = "{{ $item->detailsid }}"  data-question-id="{{$item->id}}">
                                     <div class="link_general">
                                         {{$item->points}}
                                     </div>
@@ -253,7 +253,7 @@
                             <p class="question" data-question-type="{{$item->typeofquiz}}">
                                 {{$key+=1}}. {{$item->question}}
                             </p>
-                            <textarea data-question-type="{{$item->typeofquiz}}" data-question-id="{{$item->id}}" id="{{$questioninfo->id}}" class="answer-field form-control mt-2" type="text" value="{{$item->answer}}">{{$item->answer}}</textarea>
+                            <textarea data-question-type="{{$item->typeofquiz}}" data-question-id="{{$item->id}}" data-detailsid = "{{ $item->detailsid }}"  id="{{$questioninfo->id}}" class="answer-field form-control mt-2" type="text" value="{{$item->answer}}">{{$item->answer}}</textarea>
                         </div>
                     </div>
                 @endif
@@ -302,21 +302,21 @@
                         <div class="card-body">
                             <div class="circle-points" >
                                 <input type="checkbox" id="menu_opener_id_{{$item->id}}" class="menu_opener">
-                                <label for="menu_opener_id_{{$item->id}}" data-maxpoint="{{$item->points}}" data-points-edit="{{$item->id}}" class="menu_opener_label student-score">0</label>
+                                <label for="menu_opener_id_{{$item->id}}" data-maxpoint="{{$item->points}}" data-detailsid = "{{ $item->detailsid }}" data-points-edit="{{$item->id}}" class="menu_opener_label student-score">{{$item->pointsgiven}}</label>
 
-                                <div class="link_one" data-question-id="{{$item->id}}">
+                                <div class="link_one" data-detailsid = "{{ $item->detailsid }}"  data-question-id="{{$item->id}}">
                                     <div class="link_general">
-                                        1
+                                        0
                                     </div>
                                 </div>
 
-                                <div class="link_two" data-question-id="{{$item->id}}">
+                                <div class="link_two" data-detailsid = "{{ $item->detailsid }}"  data-question-id="{{$item->id}}">
                                     <div class="link_general">
-                                        3
+                                        {{$item->points /2}}
                                     </div>
                                 </div>
 
-                                <div class="link_three" data-question-id="{{$item->id}}">
+                                <div class="link_three" data-detailsid = "{{ $item->detailsid }}"  data-question-id="{{$item->id}}">
                                     <div class="link_general">
                                         {{$item->points}}
                                     </div>
@@ -474,34 +474,44 @@
             }
         })
 
-        // helper functions
-        function calcScore() {
-            var totalScore = 0;
-
-            $('.student-score').each(function() {
-                var score = parseInt($(this).text())
-
-                if (!isNaN(score)) {
-                    totalScore += score;
-                }
-            })
-            // console.log(totalScore)
-            $('.pscore').text(`Score: ${totalScore}`)
-
-            // ajax call to save score to chapterquizrecords
-            return $.ajax({
-                type:'GET',
-                url: '/updatescore',
-                data: {
-                    recordid: {{$headerid}},
-                    score: totalScore
-                }
-            })
-        }
 
         function setScore(element) {
             var score = element.find('.link_general').text().trim();
             questionId = element.data('question-id');
+            var detailsid = element.data('detailsid')
+            var number = parseInt(score);
+
+
+            $.ajax({
+                        type:'GET',
+                        url: '/updatescore',
+                        data: {
+                            detailsid: detailsid,
+                            score: number,
+                        }, success: function(response) {
+
+                                    if (response == 1) {
+                                        Toast.fire({
+                                            icon: 'success',
+                                            title: 'Score updated successfully',
+                                            timer: 2000,
+                                        })
+                                    } else {
+                                        Toast.fire({
+                                            icon: 'success',
+                                            title: 'Error updating score',
+                                            timer: 2000,
+                                        })
+                                    }
+                                            
+                                        }
+                    })
+
+
+            
+
+
+            
             
 
             // hide the menu
@@ -516,27 +526,9 @@
             // set the label text
             $(`label[for=menu_opener_id_${questionId}]`).text(score);
 
-            // recalculate and save score
-            calcScore().then((data) => {
-                if (data == 1) {
-                    Toast.fire({
-                        icon: 'success',
-                        title: 'Score updated successfully',
-                        timer: 2000,
-                    })
-                } else {
-                    Toast.fire({
-                        icon: 'success',
-                        title: 'Error updating score',
-                        timer: 2000,
-                    })
-                }
-            })
-
         }
 
-        // initial state
-        calcScore()
+        //initial state
         $('input').prop("disabled", true);
         $('textarea').prop("disabled", true);
         $('input.menu_opener').prop("disabled", false);
@@ -591,6 +583,9 @@
             } else {
                 var number = parseInt(updatedText);
                 var maxpoints = $(this).data('maxpoint')
+                var detailsid = $(this).data('detailsid')
+
+
                 if (number > maxpoints) {
 
                     Toast.fire({
@@ -607,29 +602,54 @@
                 } else {
                     // if everything is correct
 
-                    // change background color
-                    // $(`label[for=menu_opener_id_${questionId}]`).css('background-color', '#4d4d99');
-                    // $(`label[for=menu_opener_id_${questionId}]`).css('color', '#fff');
+                
                     $(`label[for=menu_opener_id_${questionId}]`).css('background-color', 'rgb(247 103 0)');
                     $(`label[for=menu_opener_id_${questionId}]`).css('color', '#000');
 
 
-                    // recalculate and save score
-                    calcScore().then((data) => {
-                        if (data == 1) {
-                            Toast.fire({
-                                icon: 'success',
-                                title: 'Score updated successfully',
-                                timer: 2000,
-                            })
-                        } else {
-                            Toast.fire({
-                                icon: 'success',
-                                title: 'Error updating score',
-                                timer: 2000,
-                            })
-                        }
+
+                    $.ajax({
+                        type:'GET',
+                        url: '/updatescore',
+                        data: {
+                            detailsid: detailsid,
+                            score: number,
+                        }, success: function(response) {
+
+                                    if (response == 1) {
+                                        Toast.fire({
+                                            icon: 'success',
+                                            title: 'Score updated successfully',
+                                            timer: 2000,
+                                        })
+                                    } else {
+                                        Toast.fire({
+                                            icon: 'success',
+                                            title: 'Error updating score',
+                                            timer: 2000,
+                                        })
+                                    }
+                                            
+                                        }
                     })
+
+
+                    // recalculate and save score
+                    // calcScore(detailsid,number).then((data) => {
+                    //     if (data == 1) {
+                    //         Toast.fire({
+                    //             icon: 'success',
+                    //             title: 'Score updated successfully',
+                    //             timer: 2000,
+                    //         })
+                    //     } else {
+                    //         Toast.fire({
+                    //             icon: 'success',
+                    //             title: 'Error updating score',
+                    //             timer: 2000,
+                    //         })
+                    //     }
+                    // })
                 } // end if (number > 10)
 
             } // end if (updatedText === '')
@@ -651,6 +671,9 @@
 
         // save quiz score
         $(document).on('click', '#save-quiz-score', function() {
+            
+            headerid = $(this).data('id');
+
             Swal.fire({
                 title: 'Are you done reviewing this quiz?',
                 text: $(this).attr('label'),
@@ -661,15 +684,41 @@
                 allowOutsideClick: false
             }).then((value) => {
                 if (value.value) {
-                    calcScore().then((data) => {
-                        if (data == 1) {
-                            Toast.fire({
-                                icon: 'success',
-                                title: 'Score updated successfully',
-                                timer: 2000,
-                            })
-                        }
+
+                    $.ajax({
+                        type:'GET',
+                        url: '/donecheck',
+                        data: {
+                            headerid: headerid
+                        }, success: function(response) {
+
+                                    if (response == 1) {
+                                        Toast.fire({
+                                            icon: 'success',
+                                            title: 'Score updated successfully',
+                                            timer: 2000,
+                                        })
+                                    } else {
+                                        Toast.fire({
+                                            icon: 'success',
+                                            title: 'Error updating score',
+                                            timer: 2000,
+                                        })
+                                    }
+                                            
+                                        }
                     })
+
+                    console.log(value);
+                    // calcScore().then((data) => {
+                    //     if (data == 1) {
+                    //         Toast.fire({
+                    //             icon: 'success',
+                    //             title: 'Score updated successfully',
+                    //             timer: 2000,
+                    //         })
+                    //     }
+                    // })
                 }
             })
         })

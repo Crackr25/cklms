@@ -391,6 +391,7 @@ class ViewBookController extends Controller
         $quizQuestions = DB::table('lessonquizquestions')
                     ->where('lessonquizquestions.deleted','0')
                     ->where('quizid', $quizInfo->id)
+                    ->where('typeofquiz', '!=', null)
                     ->select(
                         'lessonquizquestions.id',
                         'lessonquizquestions.question',
@@ -403,19 +404,6 @@ class ViewBookController extends Controller
 
         $isAnswered = false;
 
-            
-        // $checkIfAnswered = DB::table('chapterquizrecords')
-        //                     ->where('submittedby',auth()->user()->id)
-        //                     ->where('chapterquizid',$quizid)
-        //                     ->where('deleted',0)
-        //                     ->select('id','submitteddatetime','quizstatus','updateddatetime')
-        //                     ->first();
-
-        
-
-        // if(isset($checkIfAnswered->id)){
-        //     $isAnswered = true;
-        // }
 
 
 
@@ -447,7 +435,30 @@ class ViewBookController extends Controller
                     if(isset($answer)){
                         $item->answer = $answer;
                         if($check == 1){
+
+
                             $item->check = 1;
+
+                            $chapterdetailsid = DB::table('chapterquizrecordsdetail')
+                                    ->where('questionid',$item->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('deleted',0)
+                                    ->value('id');
+
+                            //update points value
+                            DB::table('chapterquizrecordsdetail')
+
+                            ->where('id', $chapterdetailsid)
+                            ->where('deleted', 0)
+                            ->update([
+                                'points' => 1
+
+
+                            ]);
+                            
+
+
+
                         }else{
                             $item->check = 0;
                         }
@@ -468,13 +479,35 @@ class ViewBookController extends Controller
                                     ->where('headerid', $recordid)
                                     ->where('deleted',0)
                                     ->value('stringanswer');
+
+
                     if(isset($answer)){
+
                         $item->answer = $answer;
+
+                        $item->detailsid = DB::table('chapterquizrecordsdetail')
+                                    ->where('questionid',$item->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('deleted',0)
+                                    ->value('id');
+
+                        $item->pointsgiven = DB::table('chapterquizrecordsdetail')
+                                    ->where('questionid',$item->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('deleted',0)
+                                    ->value('points');
+
+
+
+
+
                     }else{
 
                         $item->answer = "";
 
                     }
+
+                    
                 }
 
                 if($item->typeofquiz == 7 ){
@@ -515,6 +548,25 @@ class ViewBookController extends Controller
 
                             if($checkanswer == $fillItem->answer){
 
+                                $chapterdetailsid = DB::table('chapterquizrecordsdetail')
+                                    ->where('questionid',$fillItem->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('sortid', 1)
+                                    ->where('deleted',0)
+                                    ->value('id');
+
+                                //update points value
+                                DB::table('chapterquizrecordsdetail')
+
+                                ->where('id', $chapterdetailsid)
+                                ->where('deleted', 0)
+                                ->where('sortid', 1)
+                                ->update([
+                                    'points' => 1
+
+
+                                ]);
+
                                 $score+= 1;
 
                                 $check = '<span><i class="fa fa-check" style="color:rgb(7, 255, 7)" aria-hidden="true"></i></span>';
@@ -547,7 +599,26 @@ class ViewBookController extends Controller
                                     ->value('answer');
 
                                 if($checkanswer == $ans->stringanswer){
+
                                     $score+= 1;
+
+                                    $chapterdetailsid = DB::table('chapterquizrecordsdetail')
+                                    ->where('questionid',$fillItem->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('sortid', $ans->sortid)
+                                    ->where('deleted',0)
+                                    ->value('id');
+
+                                    //update points value
+                                    DB::table('chapterquizrecordsdetail')
+                                    ->where('id', $chapterdetailsid)
+                                    ->where('sortid', $ans->sortid)
+                                    ->where('deleted', 0)
+                                    ->update([
+                                        'points' => 1
+
+
+                                    ]);
 
                                     $ans->check = '<span><i class="fa fa-check" style="color:rgb(7, 255, 7)" aria-hidden="true"></i></span>';
                                 }else{
@@ -601,6 +672,18 @@ class ViewBookController extends Controller
 
                     if(isset($answer)){
                         $item->picurl = $rootDomain.'/'.$answer;
+
+                        $item->detailsid = DB::table('chapterquizrecordsdetail')
+                                    ->where('questionid',$item->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('deleted',0)
+                                    ->value('id');
+
+                        $item->pointsgiven = DB::table('chapterquizrecordsdetail')
+                                    ->where('questionid',$item->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('deleted',0)
+                                    ->value('points');
                     }else{
                         $item->picurl = "";
                     }
@@ -642,10 +725,29 @@ class ViewBookController extends Controller
                             if($countval > 0){
                                 $answerArray[] = 1;
                                 $score+=1;
+
+                                $chapterdetailsid = DB::table('chapterquizrecordsdetail')
+                                    ->where('questionid',$item->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('sortid', $key + 1)
+                                    ->where('deleted',0)
+                                    ->value('id');
+
+                                    //update points value
+                                    DB::table('chapterquizrecordsdetail')
+
+                                    ->where('id', $chapterdetailsid)
+                                    ->where('deleted', 0)
+                                    ->update([
+                                        'points' => 1
+
+
+                                    ]);
                             }else{
                                 $answerArray[] = 0;
                             }
                         }else{
+
                             $countval = DB::table('lesson_quiz_enum_answer')
                             ->where('answer', $new)
                             ->where('headerid', $item->id)
@@ -655,6 +757,24 @@ class ViewBookController extends Controller
                             if($countval > 0){
                                 $answerArray[] = 1;
                                 $score+=1;
+
+                                $chapterdetailsid = DB::table('chapterquizrecordsdetail')
+                                    ->where('questionid',$item->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('sortid', $key)
+                                    ->where('deleted',0)
+                                    ->value('id');
+
+                                //update points value
+                                DB::table('chapterquizrecordsdetail')
+                                ->where('id', $chapterdetailsid)
+                                ->where('deleted', 0)
+                                ->update([
+                                    'points' => 1
+
+
+                                ]);
+
                             }else{
                                 $answerArray[] = 0;
                             }
@@ -779,7 +899,6 @@ class ViewBookController extends Controller
 
             }
             
-            // dd($quizQuestions);
 
             return view('teacher.quiz.viewquizresponse')
                 ->with('quizInfo',$quizInfo)
@@ -794,17 +913,40 @@ class ViewBookController extends Controller
     {
 
         try {
-            $recordId = $request->get('recordid');
+            $recordId = $request->get('detailsid');
             $score = $request->get('score');
     
-            DB::table('chapterquizrecords')
+            DB::table('chapterquizrecordsdetail')
                 ->where('id', $recordId)
-                ->where('deleted', 0)
                 ->update([
-                    'totalscore'=> $score,
-                    'updatedby'=> auth()->user()->id,
-                    'updateddatetime'=> \Carbon\Carbon::now('Asia/Manila')
+                    'points'=> $score,
                 ]);
+
+            return 1;
+        } catch (\Exception $e) {
+            return 0;
+        }
+
+    }
+
+    public function doneCheck(Request $request)
+    {
+
+        try {
+            $headerid = $request->get('headerid');
+
+            $sum = DB::table('chapterquizrecordsdetail')
+                ->where('headerid', $headerid)
+                ->sum('points');
+
+            DB::table('chapterquizrecords')
+                ->where('id', $headerid)
+                ->update([
+                    'checked'=> 1,
+                    'totalscore' => $sum
+                ]);
+
+            
 
             return 1;
         } catch (\Exception $e) {
