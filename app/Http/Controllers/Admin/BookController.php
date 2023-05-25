@@ -395,17 +395,6 @@ class BookController extends Controller
 
     public function addquiz($id, Request $request)
     {
-        // date_default_timezone_set('Asia/Manila');
-        // $quizid = DB::table('chapterquiz')
-        //     ->insertGetId([
-        //         'title'     => $request->get('title'),
-        //         'description'     => $request->get('description'),
-        //         'chapterid'    => $request->get('chapterid'),
-        //         'type'    => $request->get('type'),
-        //         'createdby' => auth()->user()->id,
-        //         'createddatetime'   => date('Y-m-d H:i:s')
-        //     ]);
-
 
 
         $chapterquizinfo = DB::table('lesssonquiz')
@@ -413,9 +402,11 @@ class BookController extends Controller
             ->first();
 
         $quizquestions = DB::table('lessonquizquestions')
-                ->where('quizid', $id)
-                ->where('deleted', 0)
-                ->get();
+            ->where('quizid', $id)
+            ->where('typeofquiz', '!=', null)
+            ->where('deleted', 0)
+            ->get();
+
 
 
         if($chapterquizinfo->title == null || $chapterquizinfo->title == ""){
@@ -427,7 +418,6 @@ class BookController extends Controller
         }
 
 
-        // return collect($chapterquizinfo);
 
         return view('admin.adminquiz.quizindex')
         ->with('id',$id)
@@ -561,12 +551,13 @@ class BookController extends Controller
     {
 
 
-
+            date_default_timezone_set('Asia/Manila');
             DB::table('lessonquizquestions')
                 ->where('id', $request->get('id'))
                 ->update([
                     'question'         => $request->get('question'),
-                    'typeofquiz'   => $request->get('typeofquiz')
+                    'typeofquiz'   => $request->get('typeofquiz'),
+                    'updateddatetime'   => date('Y-m-d H:i:s')
                 ]);
 
             return 1;
@@ -584,6 +575,14 @@ class BookController extends Controller
                     'question'         => $request->get('question'),
                     'typeofquiz'   => $request->get('typeofquiz'),
                     'item'   => $request->get('item')
+                ]);
+            
+            DB::table('lesson_quiz_enum_answer')
+                ->where('headerid', $request->get('id'))
+                ->where('sortid', '>',$request->get('item'))
+                ->update([
+                    'deleted'         => 1,
+
                 ]);
 
             return 1;
@@ -1469,6 +1468,19 @@ class BookController extends Controller
             ->where('id', $request->get('dataid'))
             ->update([
                 'points'   => $request->get('points')
+            ]);
+
+    
+        
+    }
+
+    public function setGuideanswer(Request $request)
+
+    {
+        DB::table('lessonquizquestions')
+            ->where('id', $request->get('dataid'))
+            ->update([
+                'quideanswer'   => $request->get('answer')
             ]);
 
     

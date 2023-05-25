@@ -218,7 +218,7 @@
                                                                 <div class="col-12 m-2" id="quiztioncontent{{$question->id}}">
                                                                     <div class="row ml-2">
                                                                         <div class="col-12">
-                                                                            <textarea class="form-control" placeholder="Untitled question" id="multiplechoice{{$question->id}}" >{{$question->question}}</textarea>
+                                                                            <textarea class="form-control question" placeholder="Untitled question" data-id ="{{$question->id}}" data-question-type ="1" id="multiplechoice{{$question->id}}" >{{$question->question}}</textarea>
                                                                         </div>
                                                                         @php
                                                                         $quizchoices = DB::table('lessonquizchoices')
@@ -289,7 +289,9 @@
                                                                         <div class="col-12">
                                                                             <h6><label class= "ml-2" for="number_question' + parentId + '">Points:</label></h6>
                                                                             <input type="number" class="form-control m-2 addpoints" placeholder="Required" data-id= "{{$question->id}}" id="Required{{$question->id}}" value="{{$question->points}}">
-                                                                            <textarea class="form-control m-2" placeholder="Untitled question" id="shortz_answer_question{{$question->id}}" >{{$question->question}}</textarea>
+                                                                            <textarea class="form-control m-2 question" placeholder="Untitled question" data-id ="{{$question->id}}" data-question-type ="2" id="shortz_answer_question{{$question->id}}" >{{$question->question}}</textarea>
+                                                                            <h6><label class= "ml-2" for="shortz_answer_answer{{$question->id}}">Guide answer:</label></h6>
+                                                                            <textarea class="form-control m-2 setanswer" data-id="{{$question->id}}" placeholder="Set Guide Answer" style="height: 20px !important;" id="shortz_answer_answer{{$question->id}}" >{{$question->quideanswer}}</textarea>
                                                                         </div>
                                                                         <div class="col-12">    
                                                                             <input type="text" class="form-control mt-2 ml-2" placeholder="Short answer text" disabled>
@@ -333,7 +335,9 @@
                                                                         <div class="col-12">
                                                                             <h6><label class= "ml-2" for="number_question' + parentId + '">Points:</label></h6>
                                                                             <input type="number" class="form-control m-2 addpoints" placeholder="Required" data-id= "{{$question->id}}" id="Required{{$question->id}}" value="{{$question->points}}">
-                                                                            <textarea class="form-control m-2" placeholder="Untitled question" id="long_answer_question{{$question->id}}" >{{$question->question}}</textarea>
+                                                                            <textarea class="form-control m-2 question" placeholder="Untitled question" data-id ="{{$question->id}}" data-question-type ="3" id="long_answer_question{{$question->id}}" >{{$question->question}}</textarea>
+                                                                            <h6><label class= "ml-2" for="long_answer_answer{{$question->id}}">Guide answer: </label></h6>
+                                                                            <textarea class="form-control m-2 setanswer" data-id="{{$question->id}}" placeholder="Set Guide Answer" style="height: 20px !important;" id="long_answer_answer{{$question->id}}" >{{$question->quideanswer}}</textarea>
                                                                         </div>
                                                                         <div class="col-12">    
                                                                             <input type="text" class="form-control mt-2 ml-2" placeholder="Long answer text" disabled>
@@ -620,7 +624,7 @@
                                                                 <div class="col-12 m-2" id="quiztioncontent{{$question->id}}">
                                                                     <div class="row">
                                                                         <div class="col-12">
-                                                                            <textarea class="form-control enumeration mt-2 ml-2" placeholder="Untitled question" id="enumerationquestion{{$question->id}}" >{{$question->question}}</textarea>
+                                                                            <textarea class="form-control enumeration mt-2 ml-2" placeholder="Untitled question" data-id ="{{$question->id}}" data-question-type ="1" id="enumerationquestion{{$question->id}}" >{{$question->question}}</textarea>
                                                                             <h5><label class= "ml-2 mt-2" for="itemcount">Item:</label></h5>
                                                                             <input type="number" class="form-control mt-2 ml-2 itemcount" placeholder="Item count" data-id= "{{$question->id}}" id="enumerationitem{{$question->id}}" value= "{{$question->item}}">
                                                                             <div id="item_option{{$question->id}}">
@@ -630,6 +634,7 @@
 
                                                                                 $answer = DB::table('lesson_quiz_enum_answer')
                                                                                     ->where('headerid', $question->id)
+                                                                                    ->where('deleted', 0)
                                                                                     ->orderBy('sortid')
                                                                                     ->pluck('answer');
 
@@ -790,32 +795,6 @@
                                 // the textarea has some text
                                 if (textareaValue.length != 0) {
                                 
-                                    $.ajax({
-                                        type: "get",
-                                        dataType: 'json',
-                                        url: "/adminviewbook/createquestion",
-                                        data: { 
-                                            question : textareaValue,
-                                            typeofquiz : 1,
-                                            id: last_id
-                                                },
-                                        success: function(response) {
-
-                                            if (response == 1){
-                                        
-                                            Toast.fire({
-                                                icon: 'success',
-                                                title: 'All the changes have been saved'
-                                            })
-
-                                            }
-
-                                            
-                                        },
-                                        error: function(xhr) {
-                                            // Handle error here
-                                        }
-                                    });
                                     var i = 1;
                                     $('.option' + last_id).each(function() {
                                             // Get the value of the current label element using its id attribute
@@ -852,77 +831,77 @@
                                 
 
                                 }
-                            else if(last_quiz_type == 'short_answer'){
+                            // else if(last_quiz_type == 'short_answer'){
 
-                                var textareaValue = $('#shortz_answer_question' + last_id).val();
-                                console.log("Question: ", textareaValue);
-                                console.log("Quiztype: ", last_quiz_type);
+                            //     var textareaValue = $('#shortz_answer_question' + last_id).val();
+                            //     console.log("Question: ", textareaValue);
+                            //     console.log("Quiztype: ", last_quiz_type);
 
-                                if (textareaValue.length != 0) {
-                                    $.ajax({
-                                        type: "get",
-                                        dataType: 'json',
-                                        url: "/adminviewbook/createquestion",
-                                        data: { 
-                                            question : textareaValue,
-                                            typeofquiz : 2,
-                                            id: last_id
-                                                },
-                                        success: function(response) {
+                            //     if (textareaValue.length != 0) {
+                            //         $.ajax({
+                            //             type: "get",
+                            //             dataType: 'json',
+                            //             url: "/adminviewbook/createquestion",
+                            //             data: { 
+                            //                 question : textareaValue,
+                            //                 typeofquiz : 2,
+                            //                 id: last_id
+                            //                     },
+                            //             success: function(response) {
 
-                                            if (response == 1){
+                            //                 if (response == 1){
                                         
-                                            Toast.fire({
-                                                icon: 'success',
-                                                title: 'All the changes have been saved'
-                                            })
+                            //                 Toast.fire({
+                            //                     icon: 'success',
+                            //                     title: 'All the changes have been saved'
+                            //                 })
 
-                                            }
+                            //                 }
                                             
-                                        },
-                                        error: function(xhr) {
-                                            // Handle error here
-                                        }
-                                    });
+                            //             },
+                            //             error: function(xhr) {
+                            //                 // Handle error here
+                            //             }
+                            //         });
 
-                                }
+                            //     }
 
-                                }
+                            //     }
 
-                            else if(last_quiz_type == 'paragraph_answer'){
-                                var textareaValue = $('#long_answer_question' + last_id).val();
-                                console.log("Question: ", textareaValue);
-                                console.log("Quiztype: ", last_quiz_type);
+                            // else if(last_quiz_type == 'paragraph_answer'){
+                            //     var textareaValue = $('#long_answer_question' + last_id).val();
+                            //     console.log("Question: ", textareaValue);
+                            //     console.log("Quiztype: ", last_quiz_type);
 
-                                if (textareaValue.length != 0) {
-                                    $.ajax({
-                                        type: "get",
-                                        dataType: 'json',
-                                        url: "/adminviewbook/createquestion",
-                                        data: { 
-                                            question : textareaValue,
-                                            typeofquiz : 3,
-                                            id: last_id
-                                                },
-                                        success: function(response) {
+                            //     if (textareaValue.length != 0) {
+                            //         $.ajax({
+                            //             type: "get",
+                            //             dataType: 'json',
+                            //             url: "/adminviewbook/createquestion",
+                            //             data: { 
+                            //                 question : textareaValue,
+                            //                 typeofquiz : 3,
+                            //                 id: last_id
+                            //                     },
+                            //             success: function(response) {
 
-                                            if (response == 1){
+                            //                 if (response == 1){
                                         
-                                            Toast.fire({
-                                                icon: 'success',
-                                                title: 'All the changes have been saved'
-                                            })
+                            //                 Toast.fire({
+                            //                     icon: 'success',
+                            //                     title: 'All the changes have been saved'
+                            //                 })
 
-                                            }
+                            //                 }
                                             
-                                        },
-                                        error: function(xhr) {
-                                            // Handle error here
-                                        }
-                                    });
-                                }
+                            //             },
+                            //             error: function(xhr) {
+                            //                 // Handle error here
+                            //             }
+                            //         });
+                            //     }
                         
-                                }
+                            //     }
                             
                             else if(last_quiz_type == 'enumeration'){
 
@@ -1422,7 +1401,7 @@
                                                         '<div id="quiztioncontent'+addrow+'">'+
                                                             '<div class="row">' +  
                                                             '<div class="col-12 m-2">'+
-                                                                '<textarea class="form-control" placeholder="Untitled question" style="height: 20px !important;" id="multiplechoice'+addrow+'" ></textarea>'+
+                                                                '<textarea class="form-control question" placeholder="Untitled question" data-id ="'+addrow+'" data-question-type ="1" style="height: 20px !important;" id="multiplechoice'+addrow+'" ></textarea>'+
                                                             '</div>'+
                                                             '<div class="col-12 ml-4"  id="list_option'+addrow+'">' +
                                                                 '<input class="form-check-input" type="radio" name="option1" value="1">'+
@@ -1468,7 +1447,10 @@
                             $('#quiztioncontent' + parentId).empty();
                             $('#quiztioncontent' + parentId).append('<h6><label class= "ml-2" for="number_question' + parentId + '">Points:</label></h6>');
                             $('#quiztioncontent' + parentId).append('<input type="number" class="form-control m-2 addpoints" placeholder="Required" data-id= "' + parentId + '" id="Required' + parentId + '">');
-                            $('#quiztioncontent' + parentId).append('<textarea class="form-control m-2 shortz_answer_question"'+parentId+'" placeholder="Untitled question" style="height: 20px !important;" id="shortz_answer_question'+parentId+'" ></textarea>');
+                            $('#quiztioncontent' + parentId).append('<h6><label class= "ml-2" for="shortz_answer_question' + parentId + '">Question:</label></h6>');
+                            $('#quiztioncontent' + parentId).append('<textarea class="form-control m-2 question shortz_answer_question"'+parentId+'" data-id ="'+parentId+'" data-question-type ="2" placeholder="Untitled question" style="height: 20px !important;" id="shortz_answer_question'+parentId+'" ></textarea>');
+                            $('#quiztioncontent' + parentId).append('<h6><label class= "ml-2" for="shortz_answer_answer' + parentId + '">Guide answer</label></h6>');
+                            $('#quiztioncontent' + parentId).append('<textarea class="form-control m-2 setanswer" data-id="'+parentId+'" placeholder="Set Guide Answer:" style="height: 20px !important;" id="shortz_answer_answer'+parentId+'" ></textarea>');
                             $('#quiztioncontent' + parentId).append('<input type="text" class="form-control mt-2 ml-2" placeholder="Short answer text" disabled>');
                         
                         }
@@ -1479,7 +1461,7 @@
                             $('#quiztioncontent' + parentId).empty();
                             $('#quiztioncontent' + parentId).append('<div class="row">'+
                                                                         '<div class="col-12 m-2">'+
-                                                                            '<textarea class="form-control" placeholder="Untitled question" id="exampleTextarea" ></textarea>'+
+                                                                            '<textarea class="form-control question" placeholder="Untitled question" data-id ="'+parentId+'" data-question-type ="1" id="exampleTextarea" ></textarea>'+
                                                                         '</div>'+
                                                                         '<div class="col-12 ml-4"  id="list_option'+parentId+'">' +
                                                                             '<input class="form-check-input" type="radio" name="option1" value="1">'+
@@ -1496,7 +1478,10 @@
                             $('#quiztioncontent' + parentId).empty();
                             $('#quiztioncontent' + parentId).append('<h6><label class= "ml-2" for="number_question' + parentId + '">Points:</label></h6>');
                             $('#quiztioncontent' + parentId).append('<input type="number" class="form-control m-2 addpoints" placeholder="Required" data-id= "' + parentId + '" id="Required' + parentId + '">');
-                            $('#quiztioncontent' + parentId).append('<textarea class="form-control m-2" placeholder="Untitled question" style="height: 20px !important;" id="long_answer_question'+parentId+'" ></textarea>');
+                            $('#quiztioncontent' + parentId).append('<h6><label class= "ml-2" for="long_answer_question' + parentId + '">Question:</label></h6>');
+                            $('#quiztioncontent' + parentId).append('<textarea class="form-control m-2 question" placeholder="Untitled question" data-id ="'+parentId+'" data-question-type ="3" style="height: 20px !important;" id="long_answer_question'+parentId+'" ></textarea>');
+                            $('#quiztioncontent' + parentId).append('<h6><label class= "ml-2" for="Long_answer_answer' + parentId + '">Guide answer:</label></h6>');
+                            $('#quiztioncontent' + parentId).append('<textarea class="form-control m-2 setanswer"'+parentId+'" placeholder="Set Guide Answer:" style="height: 20px !important;" id="long_answer_answer'+parentId+'" ></textarea>');
                             $('#quiztioncontent' + parentId).append('<input type="text" class="form-control mt-2 ml-2" placeholder="Long answer text" disabled>');
 
                             
@@ -1507,7 +1492,7 @@
                             $('#quiztioncontent' + parentId).empty();
                             $('#quiztioncontent' + parentId).append('<div class="row">'+
                                                                     '<div class="col-12 m-2">')
-                            $('#quiztioncontent' + parentId).append('<textarea class="form-control m-2" placeholder="Untitled question" id="enumerationquestion'+parentId+'" ></textarea>');
+                            $('#quiztioncontent' + parentId).append('<textarea class="form-control m-2" placeholder="Untitled question" data-id ="'+parentId+'" data-question-type ="8" id="enumerationquestion'+parentId+'" ></textarea>');
                             $('#quiztioncontent' + parentId).append('<input type="number" class="form-control mt-2 ml-2" placeholder="Item count" data-id= "' + parentId + '" id="enumerationitem' + parentId + '">');
                             $('#quiztioncontent' + parentId).append('</div>' +
                                                                     '</div>');
@@ -1524,7 +1509,7 @@
                             $('#quiztioncontent' + parentId).empty();
                             $('#quiztioncontent' + parentId).append('<div class="row">'+
                             '                                           <div class="col-12 m-2">'+
-                                                                            '<textarea class="form-control mt-2" placeholder="Untitled instruction" style="width: 100% !important;" id="instruction_item'+parentId+'" ></textarea>'+
+                                                                            '<textarea class="form-control mt-2 question" placeholder="Untitled instruction" style="width: 100% !important;" data-id ="'+parentId+'" data-question-type ="1" id="instruction_item'+parentId+'" ></textarea>'+
                                                                         '</div>'+
                                                                     '</div>')
                             $('#instruction_item' + parentId).summernote({
@@ -1603,7 +1588,7 @@
                                 $('#quiztioncontent' + parentId).append('<h6><label class= "ml-2" for="number_question' + parentId + '">Points:</label></h6>');
                                 $('#quiztioncontent' + parentId).append('<input type="number" class="form-control m-2 addpoints" placeholder="Required" data-id= "' + parentId + '" id="Required' + parentId + '">');
                                                                                 
-                                $('#quiztioncontent' + parentId).append(`<textarea class="form-control" placeholder="Untitled instruction" style="height: 20px !important;" id="image_item${parentId}" ></textarea>
+                                $('#quiztioncontent' + parentId).append(`<textarea class="form-control question" placeholder="Untitled instruction" data-id ="${parentId}" data-question-type ="6"  style="height: 20px !important;"  id="image_item${parentId}" ></textarea>
                                                                                 <input type="file" class="mt-2" disabled>
                                                                             </div>
                                                                         </div>`);
@@ -2796,6 +2781,78 @@
                             
 
                         });
+
+                        $(document).on('change', '.question', function(){
+                            var dataid = $(this).data('id');
+                            var type = $(this).data('question-type');
+                            var question = $(this).val();
+
+                            console.log("ID: ", dataid,"Question:", question, "Type:" , type);
+
+                            //check if Question has value
+                            if (question.length != 0) {
+                            
+                                $.ajax({
+                                    type: "get",
+                                    dataType: 'json',
+                                    url: "/adminviewbook/createquestion",
+                                    data: { 
+                                        question : question,
+                                        typeofquiz : type,
+                                        id: dataid
+                                            },
+                                    success: function(response) {
+
+                                        if (response == 1){
+                                    
+                                        Toast.fire({
+                                            icon: 'success',
+                                            title: 'All the changes have been saved'
+                                        })
+
+                                        }
+
+                                        
+                                    },
+                                    error: function(xhr) {
+                                        // Handle error here
+                                    }
+                                });
+                            }
+                            
+    
+
+                        });
+
+
+                        $(document).on('change', '.setanswer', function(){
+                            var dataid = $(this).data('id');
+                            var answer = $(this).val();
+                            console.log("ID: ", dataid,"Answer:", answer);
+
+                            $.ajax({
+                                url: '/adminviewbook/setguideanswer',
+                                method: 'GET',
+                                data: {
+                                dataid : dataid,
+                                answer : answer
+
+                                },
+                                success: function(response) {
+
+                                    console.log("Done")
+                                    
+                                
+                                    //Handle the response from the server if needed
+                                }
+                            });
+                            
+
+                        });
+
+
+
+
                         $(document).on('change', '.addpoints', function(){
 
                             var dataid = $(this).data('id');

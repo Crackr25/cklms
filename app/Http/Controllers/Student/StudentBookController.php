@@ -35,12 +35,15 @@ class StudentBookController extends Controller
         $quizQuestions = DB::table('lessonquizquestions')
                     ->where('lessonquizquestions.deleted','0')
                     ->where('quizid', $quizInfo->id)
+                    ->where('typeofquiz', '!=', null)
                     ->select(
                         'lessonquizquestions.id',
                         'lessonquizquestions.question',
                         'lessonquizquestions.typeofquiz',
-                        'lessonquizquestions.item'
+                        'lessonquizquestions.item',
+                        'lessonquizquestions.points'
                     )
+                    ->inRandomOrder()
                     ->get();
 
         $isAnswered = false;

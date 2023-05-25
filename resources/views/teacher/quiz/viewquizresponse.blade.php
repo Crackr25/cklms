@@ -182,7 +182,7 @@
 
                             <div class="circle-points" >
                                 <input type="checkbox" id="menu_opener_id_{{$item->id}}" class="menu_opener">
-                                <label for="menu_opener_id_{{$item->id}}" data-points-edit="{{$item->id}}" class="menu_opener_label student-score">0</label>
+                                <label for="menu_opener_id_{{$item->id}}" data-maxpoint="{{$item->points}}" data-points-edit="{{$item->id}}" class="menu_opener_label student-score">0</label>
 
                                 <div class="link_one" data-question-id="{{$item->id}}">
                                     <div class="link_general">
@@ -198,7 +198,7 @@
 
                                 <div class="link_three" data-question-id="{{$item->id}}">
                                     <div class="link_general">
-                                        5
+                                        {{$item->points}}
                                     </div>
                                 </div>
 
@@ -223,7 +223,7 @@
 
                             <div class="circle-points" >
                                 <input type="checkbox" id="menu_opener_id_{{$item->id}}" class="menu_opener">
-                                <label for="menu_opener_id_{{$item->id}}" data-points-edit="{{$item->id}}" class="menu_opener_label student-score">0</label>
+                                <label for="menu_opener_id_{{$item->id}}" data-maxpoint="{{$item->points}}" data-points-edit="{{$item->id}}" class="menu_opener_label student-score">0</label>
 
                                 <div class="link_one" data-question-id="{{$item->id}}">
                                     <div class="link_general">
@@ -239,7 +239,7 @@
 
                                 <div class="link_three" data-question-id="{{$item->id}}">
                                     <div class="link_general">
-                                        5
+                                        {{$item->points}}
                                     </div>
                                 </div>
 
@@ -300,6 +300,35 @@
                     <!-- upload image -->
                     <div class="card mt-5 ml-3 editcontent">
                         <div class="card-body">
+                            <div class="circle-points" >
+                                <input type="checkbox" id="menu_opener_id_{{$item->id}}" class="menu_opener">
+                                <label for="menu_opener_id_{{$item->id}}" data-maxpoint="{{$item->points}}" data-points-edit="{{$item->id}}" class="menu_opener_label student-score">0</label>
+
+                                <div class="link_one" data-question-id="{{$item->id}}">
+                                    <div class="link_general">
+                                        1
+                                    </div>
+                                </div>
+
+                                <div class="link_two" data-question-id="{{$item->id}}">
+                                    <div class="link_general">
+                                        3
+                                    </div>
+                                </div>
+
+                                <div class="link_three" data-question-id="{{$item->id}}">
+                                    <div class="link_general">
+                                        {{$item->points}}
+                                    </div>
+                                </div>
+
+                                <div class="link_four" data-question-id="{{$item->id}}">
+                                    <div class="link_general">
+                                        <i class="fa fa-plus"></i>
+                                    </div>
+                                </div>
+                            </div>
+
                             <p>{!! $item->question !!}</p>
                             <div class="form-group">
                                 <input class="answer-field form-control-file imageInput" data-question-type="{{$item->typeofquiz}}" data-question-id="{{$item->id}}" id="{{$questioninfo->id}}" type="file" accept="image/*">
@@ -561,11 +590,12 @@
                 })
             } else {
                 var number = parseInt(updatedText);
-                if (number > 10) {
+                var maxpoints = $(this).data('maxpoint')
+                if (number > maxpoints) {
 
                     Toast.fire({
                         icon: 'error',
-                        title: 'Maximum allowable points is 10',
+                        title: 'Maximum allowable points is '+maxpoints+'',
                         timer: 3000,
                     })
 

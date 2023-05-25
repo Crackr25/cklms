@@ -156,6 +156,7 @@ Route::middleware(['auth', 'isAdministrator','isDefaultPass'])->group(function (
     Route::get('/adminviewbook/del-choices', 'Admin\BookController@delChoices');
     Route::get('/adminviewbook/del-choices', 'Admin\BookController@delChoices');
     Route::get('/adminviewbook/setpoints', 'Admin\BookController@setPoints');
+    Route::get('/adminviewbook/setguideanswer', 'Admin\BookController@setGuideanswer');
     
     //Answer Key
     Route::get('/adminviewbook/getquestion', 'Admin\BookController@getquestion');
