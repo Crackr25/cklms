@@ -154,7 +154,6 @@ Route::middleware(['auth', 'isAdministrator','isDefaultPass'])->group(function (
     Route::get('/adminviewbook/createdropquestion', 'Admin\BookController@createdropquestion');
     Route::get('/adminviewbook/createfillquestion', 'Admin\BookController@createFillquestion');
     Route::get('/adminviewbook/del-choices', 'Admin\BookController@delChoices');
-    Route::get('/adminviewbook/del-choices', 'Admin\BookController@delChoices');
     Route::get('/adminviewbook/setpoints', 'Admin\BookController@setPoints');
     Route::get('/adminviewbook/setguideanswer', 'Admin\BookController@setGuideanswer');
     
@@ -288,10 +287,28 @@ Route::middleware(['auth', 'isTeacher','isDefaultPass'])->group(function () {
     //teacherquiz
     Route::get('/teacherquiz/quiz/description', 'Teacher\Teacherquizcontroller@saveDescription');
     Route::get('/teacherquiz/quiz/{id}', 'Teacher\Teacherquizcontroller@createquiz');
-    
+    Route::get('/teacherquiz/addquestion', 'Teacher\Teacherquizcontroller@addQuestion');
+    Route::get('/teacherquiz/delquestion', 'Teacher\Teacherquizcontroller@delQuestion');
+    Route::get('/teacherquiz/createquestion', 'Teacher\Teacherquizcontroller@createQuestion');
+    Route::get('/teacherquiz/createchoices', 'Teacher\Teacherquizcontroller@createChoices');
+    Route::get('/teacherquiz/del-choices', 'Teacher\Teacherquizcontroller@delChoices');
+    Route::get('/teacherquiz/setpoints', 'Teacher\Teacherquizcontroller@setPoints');
+    Route::get('/teacherquiz/setguideanswer', 'Teacher\Teacherquizcontroller@setGuideanswer');
+    Route::get('/teacherquiz/createquestionitem', 'Teacher\Teacherquizcontroller@createquestionitem');
+    Route::get('/teacherquiz/createfillquestion', 'Teacher\Teacherquizcontroller@createFillquestion');
 
 
-    
+
+    //Answer key
+
+    Route::get('/teacherquiz/getquestion', 'Teacher\Teacherquizcontroller@getquestion');
+    Route::get('/teacherquiz/returneditquiz', 'Teacher\Teacherquizcontroller@returneditquiz');
+    Route::get('/teacherquiz/save-answer-key', 'Teacher\Teacherquizcontroller@setAnswerKey');
+    Route::get('/teacherquiz/getenumquestion', 'Teacher\Teacherquizcontroller@getEnum');
+    Route::get('/teacherquiz/returneditquizenum', 'Teacher\Teacherquizcontroller@returnEditenum');
+    Route::get('/teacherquiz/getfillquestion', 'Teacher\Teacherquizcontroller@getFillQuestion');
+    Route::get('/teacherquiz/returneditquizfill', 'Teacher\Teacherquizcontroller@returnEditfill');
+
     //Classroom View 
     Route::get('/teacherclassroomview', 'Teacher\ClassroomController@viewclassroom'); 
     Route::get('/teacheraddstudent', 'Teacher\ClassroomController@addstudent'); 

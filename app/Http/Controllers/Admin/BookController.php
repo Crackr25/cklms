@@ -1369,12 +1369,6 @@ class BookController extends Controller
     ->orderBy('sortid')
     ->get();
 
-    // foreach($question->choices as $item){
-    //     if($item->answer == 1){
-    //         $item->description.= '<span><i class="fa fa-check" style="color:rgb(7, 255, 7)" aria-hidden="true"></i></span>';
-    //     }
-    // }
-
 
     return response()->json($question);
     
