@@ -831,77 +831,7 @@
                                 
 
                                 }
-                            // else if(last_quiz_type == 'short_answer'){
 
-                            //     var textareaValue = $('#shortz_answer_question' + last_id).val();
-                            //     console.log("Question: ", textareaValue);
-                            //     console.log("Quiztype: ", last_quiz_type);
-
-                            //     if (textareaValue.length != 0) {
-                            //         $.ajax({
-                            //             type: "get",
-                            //             dataType: 'json',
-                            //             url: "/adminviewbook/createquestion",
-                            //             data: { 
-                            //                 question : textareaValue,
-                            //                 typeofquiz : 2,
-                            //                 id: last_id
-                            //                     },
-                            //             success: function(response) {
-
-                            //                 if (response == 1){
-                                        
-                            //                 Toast.fire({
-                            //                     icon: 'success',
-                            //                     title: 'All the changes have been saved'
-                            //                 })
-
-                            //                 }
-                                            
-                            //             },
-                            //             error: function(xhr) {
-                            //                 // Handle error here
-                            //             }
-                            //         });
-
-                            //     }
-
-                            //     }
-
-                            // else if(last_quiz_type == 'paragraph_answer'){
-                            //     var textareaValue = $('#long_answer_question' + last_id).val();
-                            //     console.log("Question: ", textareaValue);
-                            //     console.log("Quiztype: ", last_quiz_type);
-
-                            //     if (textareaValue.length != 0) {
-                            //         $.ajax({
-                            //             type: "get",
-                            //             dataType: 'json',
-                            //             url: "/adminviewbook/createquestion",
-                            //             data: { 
-                            //                 question : textareaValue,
-                            //                 typeofquiz : 3,
-                            //                 id: last_id
-                            //                     },
-                            //             success: function(response) {
-
-                            //                 if (response == 1){
-                                        
-                            //                 Toast.fire({
-                            //                     icon: 'success',
-                            //                     title: 'All the changes have been saved'
-                            //                 })
-
-                            //                 }
-                                            
-                            //             },
-                            //             error: function(xhr) {
-                            //                 // Handle error here
-                            //             }
-                            //         });
-                            //     }
-                        
-                            //     }
                             
                             else if(last_quiz_type == 'enumeration'){
 

@@ -68,7 +68,7 @@
                                 <div class="card-body">
                                     <h4><span> Status: </span> <b>Overdue</b> </h4>
                                     <ul class="list-unstyled">
-                                        @if($score->checked == 1)
+                                        @if(isset($score->checked) == 1 && $score->checked != null)
                                             <li ><span><b>Score:</b></span> {{$score->totalscore}} / {{$score->maxpoints}}</li>
                                         @else
                                         
@@ -105,7 +105,7 @@
                                     <ul class="list-unstyled">
                                         <li class=""><span>Deadline:</span> {{\Carbon\Carbon::create($chapterquizsched->dateto.' '.$chapterquizsched->timeto)->isoFormat('MMMM DD, YYYY hh:mm A')}}</li>
                                         <li class=""><span>Attempts:</span> {{$attemptsLeft}} / {{$chapterquizsched->noofattempts}} </li>
-                                        @if($score->checked == 1)
+                                        @if(isset($score->checked) == 1 && $score->checked != null)
                                             <li ><span><b>Score:</b></span> {{$score->totalscore}} / {{$score->maxpoints}}</li>
                                         @endif
                                         @if(!empty($lastattempt))

@@ -273,13 +273,24 @@ Route::middleware(['auth', 'isAdministrator','isDefaultPass'])->group(function (
 Route::middleware(['auth', 'isTeacher','isDefaultPass'])->group(function () {
 
     Route::get('/teacherclassrooms', 'Teacher\ClassroomController@index');   
+    Route::get('/teacherquizzes', 'Teacher\Teacherquizcontroller@index');   
     Route::get('/teacherclassroom/create', 'Teacher\ClassroomController@create');   
-    Route::get('/teachergetavailablecode', 'Teacher\ClassroomController@getavailablecode');    
+    Route::get('/teachergetavailablecode', 'Teacher\ClassroomController@getavailablecode');
+    Route::get('/teacherquiz/create', 'Teacher\Teacherquizcontroller@create');     
 
 
     Route::get('/teacherbooks/{id}', 'Teacher\BookController@index');      
     Route::get('/teacherviewbook/{id}', 'Teacher\BookController@viewbook');  
     Route::get('/teachermessages', 'Teacher\BookController@messages');   
+
+
+
+    //teacherquiz
+    Route::get('/teacherquiz/quiz/description', 'Teacher\Teacherquizcontroller@saveDescription');
+    Route::get('/teacherquiz/quiz/{id}', 'Teacher\Teacherquizcontroller@createquiz');
+    
+
+
     
     //Classroom View 
     Route::get('/teacherclassroomview', 'Teacher\ClassroomController@viewclassroom'); 

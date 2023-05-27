@@ -393,9 +393,10 @@ class StudentBookController extends Controller
                 ->where('deleted', 0)
                 ->where('typeofquiz', '!=', 4)
                 ->sum('points');
-
-            $score->maxpoints = $maxpoints;
-
+            
+            if(isset($score)){
+                $score->maxpoints = $maxpoints;
+            }
 
 
             $continuequiz = DB::table('chapterquizrecords')

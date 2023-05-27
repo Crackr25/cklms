@@ -23,8 +23,10 @@
 
     <link rel="stylesheet" href="{{asset('plugins/fontawesome-free/css/all.min.css')}}">
     <!-- SweetAlert2 -->
-    <link rel="stylesheet" href="{{asset('plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css')}}">
-    <link rel="stylesheet" href="{{asset('plugins/datatables-bs4/css/dataTables.bootstrap4.css')}}">
+    <script src="{{asset('plugins/sweetalert2/sweetalert2.min.js')}}"></script>
+    <script src="{{asset('plugins/sweetalert2/sweetalert2.all.min.js')}}"></script>
+    <script src="{{asset('plugins/datatables/jquery.dataTables.js')}}"></script>
+    <script src="{{asset('plugins/datatables-bs4/js/dataTables.bootstrap4.js')}}"></script>
     <!-- summernote -->
 
     <!-- icons -->

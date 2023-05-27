@@ -359,7 +359,6 @@
                     type:"GET",
                     success: function(data){
                         $('#book_part_holder').empty()
-                        console.log(data);
                         $('#book_part_holder').append(data)
                     }
                 })

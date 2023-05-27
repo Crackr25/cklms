@@ -11,7 +11,10 @@
             <a href="/home" > <i class="fa fa-home"></i> <span class="tooltips"> Home</span></a>
         </li>
         <li>
-            <a href="/teacherclassrooms?blade=blade" > <i class="fa fa-door-open"></i> <span class="tooltips"> Classrooms</span></a>
+            <a href="/teacherclassrooms?blade=blade" > <i class="fas fa-door-open"></i> <span class="tooltips"> Classrooms</span></a>
+        </li>
+        <li>
+            <a href="/teacherquizzes?blade=blade" > <i class="fas fa-pencil-alt"></i>  <span class="tooltips"> Quiz</span></a>
         </li>
         <li>
             <a href="#" uk-toggle="target: #searchbox; cls: is-active"><i class="fa fa-search"></i></a>
