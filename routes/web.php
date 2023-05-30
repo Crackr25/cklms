@@ -296,6 +296,8 @@ Route::middleware(['auth', 'isTeacher','isDefaultPass'])->group(function () {
     Route::get('/teacherquiz/setguideanswer', 'Teacher\Teacherquizcontroller@setGuideanswer');
     Route::get('/teacherquiz/createquestionitem', 'Teacher\Teacherquizcontroller@createquestionitem');
     Route::get('/teacherquiz/createfillquestion', 'Teacher\Teacherquizcontroller@createFillquestion');
+    Route::get('/teacherquiz/createdragoption', 'Teacher\Teacherquizcontroller@createdragoption');
+    Route::get('/teacherquiz/createdropquestion', 'Teacher\Teacherquizcontroller@createdropquestion');
 
 
 
@@ -308,6 +310,13 @@ Route::middleware(['auth', 'isTeacher','isDefaultPass'])->group(function () {
     Route::get('/teacherquiz/returneditquizenum', 'Teacher\Teacherquizcontroller@returnEditenum');
     Route::get('/teacherquiz/getfillquestion', 'Teacher\Teacherquizcontroller@getFillQuestion');
     Route::get('/teacherquiz/returneditquizfill', 'Teacher\Teacherquizcontroller@returnEditfill');
+    Route::get('/teacherquiz/getdropquestion', 'Teacher\Teacherquizcontroller@getDropQuestion');
+    Route::get('/teacherquiz/save-answer-drop', 'Teacher\Teacherquizcontroller@setAnswerdrop');
+    Route::get('/teacherquiz/returneditquizdrag', 'Teacher\Teacherquizcontroller@returnEditdrag');
+    Route::get('/teacherquiz/clearanswerenum', 'Teacher\Teacherquizcontroller@clearEnum');
+    
+    
+
 
     //Classroom View 
     Route::get('/teacherclassroomview', 'Teacher\ClassroomController@viewclassroom'); 

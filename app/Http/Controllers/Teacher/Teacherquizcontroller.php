@@ -19,11 +19,23 @@ class Teacherquizcontroller extends Controller
 
         }else if($request->get('table') == 'table' && $request->has('table')){
 
-            $data = [];
+            $data = Db::table('teacherquiz')
+                ->select(
+                    'teacherquiz.id',
+                    'teacherquiz.title',
+                    'teacherquiz.description',
+                    'teacherquiz.createddatetime'
+                )
+                ->orderBy('teacherquiz.id')
+                ->where('teacherquiz.deleted','0')
+                ->where('teacherquiz.createdby',auth()->user()->id)
+                ->get();
 
 
+
+            // dd($quiz);
             return view('teacher.teacherquiz.include.quiztable')
-            ->with('data',$data);;
+            ->with('data',$data);
         
 
 
@@ -299,6 +311,7 @@ class Teacherquizcontroller extends Controller
                         $checkifexist =  DB::table('teacher_quiz_enum_answer')
                         ->where('headerid', $request->get('question_id'))
                         ->where('sortid', $request->get('sortid'))
+                        ->where('deleted', 0)
                         ->count();
 
                         if($checkifexist > 0){
@@ -330,7 +343,7 @@ class Teacherquizcontroller extends Controller
 
 
                 if($request->get('answer') == 1){
-                    DB::table('lessonquizquestions')
+                    DB::table('teacherquizquestions')
                     ->where('id', $request->get('question_id'))
                     ->update([
                         'ordered'   => 1
@@ -338,7 +351,7 @@ class Teacherquizcontroller extends Controller
 
                     return 1;
                 }else{
-                    DB::table('lessonquizquestions')
+                    DB::table('teacherquizquestions')
                     ->where('id', $request->get('question_id'))
                     ->update([
                         'ordered'   => 0
@@ -406,6 +419,8 @@ class Teacherquizcontroller extends Controller
                     'deleted'         => 1,
 
                 ]);
+            
+                
 
             return 1;
 
@@ -419,6 +434,13 @@ class Teacherquizcontroller extends Controller
             ->select('id','question', 'item')
             ->where('deleted', 0)
             ->first();
+
+        $question->answer = DB::table('teacher_quiz_enum_answer')
+            ->where('headerid', $question->id)
+            ->select('answer')
+            ->where('deleted', 0)
+            ->orderBy('sortid')
+            ->get();
 
         return response()->json($question);
         
@@ -449,6 +471,24 @@ class Teacherquizcontroller extends Controller
 
 
     return response()->json($question);
+    
+        
+    }
+
+    public function clearEnum(Request $request)
+
+    {
+
+
+        DB::table('teacher_quiz_enum_answer')
+                ->where('headerid', $request->get('parentId'))
+                ->update([
+                    'deleted'         => 1,
+
+                ]);
+
+
+    return 1;
     
         
     }
@@ -558,6 +598,207 @@ class Teacherquizcontroller extends Controller
             $answerString = implode(',', $answer->toArray());
 
             $item->answer = $answerString;
+
+        }
+
+
+    return response()->json($question);
+    
+        
+    }
+
+
+    public function createdragoption(Request $request)
+    {
+
+        date_default_timezone_set('Asia/Manila');
+        $choice = DB::table('teacher_quiz_drag_option')
+            ->where('questionid', $request->get('questionid'))
+            ->where('sortid', $request->get('sortid'))
+            ->count();
+
+        if($choice == 0){
+        DB::table('teacher_quiz_drag_option')
+            ->insert([
+                    'sortid'            =>  $request->get('sortid'),
+                    'questionid'        =>  $request->get('questionid'),
+                    'description'       =>  $request->get('description'),
+                    'createddatetime'   => date('Y-m-d H:i:s')
+                ]);
+
+        }else{
+
+            DB::table('teacher_quiz_drag_option')
+                ->where('questionid', $request->get('questionid'))
+                ->where('sortid', $request->get('sortid'))
+                ->update([
+                    'questionid'             =>  $request->get('questionid'),
+                    'description'       =>  $request->get('description'),
+                    'updateddatetime'   => date('Y-m-d H:i:s')
+                ]);
+
+        }
+        
+
+        return 1;
+    }
+
+
+    public function createdropquestion(Request $request)
+    {
+
+        date_default_timezone_set('Asia/Manila');
+        $choice = DB::table('teacher_quiz_drop_question')
+            ->where('questionid', $request->get('questionid'))
+            ->where('sortid', $request->get('sortid'))
+            ->count();
+
+        if($choice == 0){
+        DB::table('teacher_quiz_drop_question')
+            ->insert([
+                    'sortid'            =>  $request->get('sortid'),
+                    'questionid'        =>  $request->get('questionid'),
+                    'question'       =>  $request->get('description'),
+                    'createddatetime'   => date('Y-m-d H:i:s')
+                ]);
+
+        DB::table('teacherquizquestions')
+                ->where('id', $request->get('questionid'))
+                ->update([
+                    'points'             =>  $request->get('sortid'),
+                ]);
+        
+
+        }else{
+
+            DB::table('teacher_quiz_drop_question')
+                ->where('questionid', $request->get('questionid'))
+                ->where('sortid', $request->get('sortid'))
+                ->update([
+                    'questionid'             =>  $request->get('questionid'),
+                    'question'       =>  $request->get('description'),
+                    'updateddatetime'   => date('Y-m-d H:i:s')
+                ]);
+
+        }
+        
+
+        return 1;
+    }
+
+
+    public function getDropQuestion(Request $request)
+
+    {
+        $question = DB::table('teacherquizquestions')
+            ->where('id', $request->get('id'))
+            ->select('id','question')
+            ->where('deleted', 0)
+            ->first();
+
+        $question->drag = DB::table('teacher_quiz_drag_option')
+        ->where('questionid', $question->id)
+        ->select('id', 'description')
+        ->orderBy('sortid')
+        ->get();
+
+        $question->drop = DB::table('teacher_quiz_drop_question')
+        ->where('questionid', $question->id)
+        ->select('id', 'questionid' , 'question', 'sortid')
+        ->orderBy('sortid')
+        ->get();
+
+        $key= 0;
+
+        $counter = 0;
+
+        $inputCounter = 0;
+        foreach ($question->drop as $index => $item) {
+            // Replace all occurrences of ~input with input fields that have unique IDs
+            $key = 0;
+            $questionWithInputs = preg_replace_callback('/~input/', function($matches) use ($item, &$inputCounter, &$key) {
+            $inputField = '<input class="d-inline form-control q-input drop-option q-input ui-droppable" data-sortid="'.++$inputCounter.'" data-question-id="'.$item->id.'" style="width: 200px; margin: 10px; border-color:black" type="text" id="input-'.$item->id.'" disabled>';
+            return $inputField;
+            }, $item->question);
+            $inputCounter = 0;
+
+            $item->question = $questionWithInputs;
+        }
+
+
+
+
+        return response()->json($question);
+        
+    }
+
+
+    public function setAnswerdrop(Request $request)
+    {
+        
+
+        $checkifexist =  DB::table('teacher_quiz_drop_answer')
+            ->where('headerid', $request->get('question_id'))
+            ->where('sortid', $request->get('sortId'))
+            ->count();
+
+        if($checkifexist == 1){
+
+            DB::table('teacher_quiz_drop_answer')
+            ->where('headerid', $request->get('question_id'))
+            ->where('sortid', $request->get('sortId'))
+            ->update([
+                'answer'   => $request->get('answer')
+            ]);
+
+                return 0;
+
+
+        }else{
+
+            DB::table('teacher_quiz_drop_answer')
+            ->insert([
+                'answer'   => $request->get('answer'),
+                'headerid'   => $request->get('question_id'),
+                'sortid'   => $request->get('sortId')
+            ]);
+
+                return 1;
+
+        }
+        
+    }
+
+
+    public function returnEditdrag(Request $request)
+
+    {
+        $question = DB::table('teacherquizquestions')
+            ->where('id', $request->get('id'))
+            ->select('id','question')
+            ->where('deleted', 0)
+            ->first();
+
+
+        $question->drag = DB::table('teacher_quiz_drag_option')
+            ->where('questionid', $question->id)
+            ->orderBy('sortid')
+            ->get();
+                                                            
+        $question->drop = DB::table('teacher_quiz_drop_question')
+            ->where('questionid', $question->id)
+            ->orderBy('sortid')
+            ->get();
+
+        foreach($question->drop as $item){
+
+        $answer = DB::table('teacher_quiz_drop_answer')
+            ->where('headerid', $item->id)
+            ->orderBy('sortid')
+            ->pluck('answer');
+
+        $answerString = implode(',', $answer->toArray());
+        $item->answer = $answerString;
 
         }
 

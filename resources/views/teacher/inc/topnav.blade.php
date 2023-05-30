@@ -11,13 +11,9 @@
 
 
 
-                <!-- logo -->
-                <a href="#" class="logo">
-                    <img src="./Courseplus Learning HTML Template Light_files/logo-dark.svg" alt="">
-                    <span> Courseplus</span>
-                </a>
+        
 
-               @yield('breadcrumbs')
+            @yield('breadcrumbs')
 
 
             </div>
@@ -52,161 +48,8 @@
 
                             <!-- notiviation list -->
                             <ul>
-                                <li class="notifications-not-read">
-                                    <a href="#">
-                                        <span class="notification-image">
-                                            <img src="./Courseplus Learning HTML Template Light_files/1.png" alt=""> </span>
-                                        <span class="notification-text">
-                                            <span class="course-title">Ultimate Web Designer &amp; Web Developer
-                                            </span>
-                                            <span class="course-number">6/35 </span>
-                                            <span class="course-progressbar">
-                                                <span class="course-progressbar-filler" style="width:95%"></span>
-                                            </span>
-                                        </span>
-
-                                        <!-- option menu -->
-                                        <span class="btn-option" aria-expanded="false">
-                                            <i class="icon-feather-more-vertical"></i>
-                                        </span>
-                                        <div class="dropdown-option-nav uk-dropdown" uk-dropdown="pos: bottom-right ;mode : hover">
-                                            <ul>
-                                                <li>
-                                                    <span>
-                                                        <i class="icon-material-outline-dashboard"></i>
-                                                        Course Dashboard</span>
-                                                </li>
-                                                <li>
-                                                    <span>
-                                                        <i class="icon-feather-video"></i>
-                                                        Resume Course</span>
-                                                </li>
-                                                <li>
-                                                    <span>
-                                                        <i class="icon-feather-x"></i>
-                                                        Remove Course</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </a>
-
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <span class="notification-image">
-                                            <img src="./Courseplus Learning HTML Template Light_files/3.png" alt=""> </span>
-                                        <span class="notification-text">
-                                            <span class="course-title">The Complete JavaScript Course Build Real
-                                                Projects !</span>
-                                            <span class="course-number">6/35 </span>
-                                            <span class="course-progressbar">
-                                                <span class="course-progressbar-filler" style="width:95%"></span>
-                                            </span>
-                                        </span>
-
-                                        <!-- option menu -->
-                                        <span class="btn-option" aria-expanded="false">
-                                            <i class="icon-feather-more-vertical"></i>
-                                        </span>
-                                        <div class="dropdown-option-nav uk-dropdown" uk-dropdown="pos: bottom-right ;mode : hover">
-                                            <ul>
-                                                <li>
-                                                    <span>
-                                                        <i class="icon-material-outline-dashboard"></i>
-                                                        Course Dashboard</span>
-                                                </li>
-                                                <li>
-                                                    <span>
-                                                        <i class="icon-feather-video"></i>
-                                                        Resume Course</span>
-                                                </li>
-                                                <li>
-                                                    <span>
-                                                        <i class="icon-feather-x"></i>
-                                                        Remove Course</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <span class="notification-image">
-                                            <img src="./Courseplus Learning HTML Template Light_files/2.png" alt=""> </span>
-                                        <span class="notification-text">
-                                            <span class="course-title">Learn Angular Fundamentals From The
-                                                Beginning</span>
-                                            <span class="course-number">6/35 </span>
-                                            <span class="course-progressbar">
-                                                <span class="course-progressbar-filler" style="width:95%"></span>
-                                            </span>
-                                        </span>
-
-                                        <!-- option menu -->
-                                        <span class="btn-option" aria-expanded="false">
-                                            <i class="icon-feather-more-vertical"></i>
-                                        </span>
-                                        <div class="dropdown-option-nav uk-dropdown" uk-dropdown="pos: bottom-right ;mode : hover">
-                                            <ul>
-                                                <li>
-                                                    <span>
-                                                        <i class="icon-material-outline-dashboard"></i>
-                                                        Course Dashboard</span>
-                                                </li>
-                                                <li>
-                                                    <span>
-                                                        <i class="icon-feather-video"></i>
-                                                        Resume Course</span>
-                                                </li>
-                                                <li>
-                                                    <span>
-                                                        <i class="icon-feather-x"></i>
-                                                        Remove Course</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <span class="notification-image">
-                                            <img src="./Courseplus Learning HTML Template Light_files/1.png" alt=""> </span>
-                                        <span class="notification-text">
-                                            <span class="course-title">Ultimate Web Designer &amp; Web Developer
-                                            </span>
-                                            <span class="course-number">6/35 </span>
-                                            <span class="course-progressbar">
-                                                <span class="course-progressbar-filler" style="width:95%"></span>
-                                            </span>
-                                        </span>
-
-                                        <!-- option menu -->
-                                        <span class="btn-option" aria-expanded="false">
-                                            <i class="icon-feather-more-vertical"></i>
-                                        </span>
-                                        <div class="dropdown-option-nav uk-dropdown" uk-dropdown="pos: top-right ;mode : hover">
-                                            <ul>
-                                                <li>
-                                                    <span>
-                                                        <i class="icon-material-outline-dashboard"></i>
-                                                        Course Dashboard</span>
-                                                </li>
-                                                <li>
-                                                    <span>
-                                                        <i class="icon-feather-video"></i>
-                                                        Resume Course</span>
-                                                </li>
-                                                <li>
-                                                    <span>
-                                                        <i class="icon-feather-x"></i>
-                                                        Remove Course</span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </a>
-                                </li>
-                            </ul>
+                                
+                    
 
                         </div></div></div><div class="simplebar-placeholder" style="width: 338px; height: 808px;"></div></div><div class="simplebar-track simplebar-horizontal" style="visibility: hidden;"><div class="simplebar-scrollbar" style="transform: translate3d(0px, 0px, 0px); visibility: hidden;"></div></div><div class="simplebar-track simplebar-vertical" style="visibility: visible;"><div class="simplebar-scrollbar" style="height: 122px; transform: translate3d(0px, 0px, 0px); visibility: visible;"></div></div></div>
                         <div class="dropdown-notifications-footer">
@@ -214,12 +57,7 @@
                         </div>
                     </div>
 
-                    <!-- notificiation icon  -->
-
-                    {{-- <a href="http://demo.foxthemes.net/courseplusv3.3/default/courses.html#" class="header-widget-icon" uk-tooltip="title: Notificiation ; pos: bottom ;offset:21" title="" aria-expanded="false">
-                        <i class="uil-bell"></i>
-                        <span>4</span>
-                    </a> --}}
+    
 
                     <!-- notificiation dropdown -->
                     <div uk-dropdown="pos: top-right;mode:click ; animation: uk-animation-slide-bottom-small" class="dropdown-notifications uk-dropdown">
@@ -312,58 +150,8 @@
 
                             <!-- notiviation list -->
                             <ul>
-                                <li class="notifications-not-read">
-                                    <a href="#">
-                                        <span class="notification-avatar">
-                                            <img src="./Courseplus Learning HTML Template Light_files/avatar-2.jpg" alt="">
-                                        </span>
-                                        <div class="notification-text notification-msg-text">
-                                            <strong>Jonathan Madano</strong>
-                                            <p>Okay.. Thanks for The Answer I will be waiting for your...
-                                            </p>
-                                            <span class="time-ago"> 2 hours ago </span>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <span class="notification-avatar">
-                                            <img src="./Courseplus Learning HTML Template Light_files/avatar-3.jpg" alt="">
-                                        </span>
-                                        <div class="notification-text notification-msg-text">
-                                            <strong>Stella Johnson</strong>
-                                            <p> Alex will explain you how to keep the HTML structure and all
-                                                that...</p>
-                                            <span class="time-ago"> 7 hours ago </span>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <span class="notification-avatar">
-                                            <img src="./Courseplus Learning HTML Template Light_files/avatar-1.jpg" alt="">
-                                        </span>
-                                        <div class="notification-text notification-msg-text">
-                                            <strong>Alex Dolgove</strong>
-                                            <p> Alia Joseph just joined Messenger! Be the first to send a
-                                                welcome message..</p>
-                                            <span class="time-ago"> 19 hours ago </span>
-                                        </div>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="#">
-                                        <span class="notification-avatar">
-                                            <img src="./Courseplus Learning HTML Template Light_files/avatar-4.jpg" alt="">
-                                        </span>
-                                        <div class="notification-text notification-msg-text">
-                                            <strong>Adrian Mohani</strong>
-                                            <p> Okay.. Thanks for The Answer I will be waiting for your...
-                                            </p>
-                                            <span class="time-ago"> Yesterday </span>
-                                        </div>
-                                    </a>
-                                </li>
+                                
+                        
                             </ul>
 
                         </div></div></div><div class="simplebar-placeholder" style="width: 338px; height: 463px;"></div></div><div class="simplebar-track simplebar-horizontal" style="visibility: hidden;"><div class="simplebar-scrollbar" style="transform: translate3d(0px, 0px, 0px); visibility: hidden;"></div></div><div class="simplebar-track simplebar-vertical" style="visibility: visible;"><div class="simplebar-scrollbar" style="height: 214px; transform: translate3d(0px, 0px, 0px); visibility: visible;"></div></div></div>

@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('teacher.layouts.app')
 
 @section('content')
 <meta name="csrf-token" content="{{ csrf_token() }}" />
@@ -150,7 +150,7 @@
                                     <div class="col-lg-11 col-10 editcontent col-content" id = "header">
                                         <div class="card mt-5 shadow-none  border-0">
                                             <div class="card-header" id="quizTitle">
-                                                <h3 class="text-center" >{{$quiz->title}}</h3>
+                                                <h3 class="text-center" contenteditable="true" >{{$quiz->title}}</h3>
                                             </div>
                                             <div class="card-body">
                                                 <form>
@@ -210,7 +210,7 @@
                                                                         <div class="col-12" id="list_option{{$question->id}}">
                                                                             @if(count($quizchoices) > 0)
                                                                             @foreach($quizchoices as $choice)
-                                                                            <div id="containerchoices">
+                                                                            <div id="containerchoices{{$question->id}}">
                                                                                 <input class="form-check-input ml-2" type="radio" name="option1" value="1">
                                                                                 <label class="form-check-label ml-5 option{{$question->id}}" id="option{{$question->id}}" contenteditable="true">{{$choice->description}} 
                                                                                     @if($choice->answer==1)
@@ -393,7 +393,7 @@
                                                                         <div class="col-12">
                                                                             <div class="options p-3 mt-2" id="options{{$question->id}}" style="border:3px solid #3e416d;border-radius:6px;">
                                                                                 @php
-                                                                                $dragoptions = DB::table('lesson_quiz_drag_option')
+                                                                                $dragoptions = DB::table('teacher_quiz_drag_option')
                                                                                     ->where('questionid', $question->id)
                                                                                     ->orderBy('sortid')
                                                                                     ->get();
@@ -409,13 +409,13 @@
                                                                             </div>
                                                                             <p><b>Note: </b>To set up the drop area, please input [~input] where you want the drop zone to appear. Ex. The planet ~input is the biggest planet in the solar system</p>
                                                                             @php
-                                                                            $dropquestions = DB::table('lesson_quiz_drop_question')
+                                                                            $dropquestions = DB::table('teacher_quiz_drop_question')
                                                                                 ->where('questionid', $question->id)
                                                                                 ->orderBy('sortid')
                                                                                 ->get();
 
                                                                             foreach($dropquestions as $item){
-                                                                                $answer = DB::table('lesson_quiz_drop_answer')
+                                                                                $answer = DB::table('teacher_quiz_drop_answer')
                                                                                     ->where('headerid', $item->id)
                                                                                     ->orderBy('sortid')
                                                                                     ->pluck('answer');
@@ -662,30 +662,25 @@
                                     @endforeach
                                 @endif
                             </div>
-                        </div> 
-                    </div>
-                </div> 
+
+                        <div class="save mb-5">
+                            <div class="row">
+                                <div class="col-md-12 d-flex justify-content-end">
+                                    <div class="btn btn-success mr-2  btn-lg"  id="save-quiz-score">Save</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                </div>
+            </div> 
 
     </body>
 
     
     <script src="{{asset('plugins/jquery/jquery.min.js')}}"></script>
+    <script src="{{asset('templatefiles/framework.js')}}"></script>
+    <script src="{{asset('templatefiles/jquery-3.3.1.min.js')}}"></script>
 <script>
-
-    // $(function () {
-    //         //Initialize Select2 Elements
-    //         $('.select2').select2()
-    //         $('.select').select2()
-        
-    //         //Initialize Select2 Elements
-    //         $('.select2bs4').select2({
-    //             theme: 'bootstrap4'
-    //         })
-
-            
-    //     })
-
-
         
         const Toast = Swal.mixin({
             toast: true,
@@ -749,7 +744,7 @@
                                 success: function(response) {
 
                                     Toast.fire({
-                                        icon: 'success',
+                                        type: 'success',
                                         title: 'Description successfully Save!'
                                     })
                                     
@@ -850,7 +845,9 @@
                             var type = $(this).data('question-type');
                             var question = $(this).val();
 
-                            console.log("ID: ", dataid,"Question:", question, "Type:" , type);
+
+
+
 
                             //check if Question has value
                             if (question.length != 0) {
@@ -869,7 +866,7 @@
                                         if (response == 1){
                                     
                                         Toast.fire({
-                                            icon: 'success',
+                                            type: 'success',
                                             title: 'All the changes have been saved'
                                         })
 
@@ -894,7 +891,17 @@
                             $('#list_option' + parentId).append(`<input class="form-check-input ml-2" type="radio" name="option1" value="1">
                             <label class="form-check-label ml-5  option${parentId}" contenteditable="true">Option ${option}</label>`)
                         
-                    })
+                        })
+
+
+                        $(document).on('click', '#save-quiz-score', function(){
+                            
+                            UIkit.notification({
+                                        message: '<span uk-type="type: check"></span> All changes has been save!',
+                                        status: 'success',
+                                        timeout: 1000
+                                        });
+                        })
 
 
 
@@ -943,17 +950,7 @@
                                 console.log($(this).attr('id'));
                                 var rowid = $(this).attr('id');
 
-                                Swal.fire({
-                                title: 'Are you sure you want to delete selected content?',
-                                text: $(this).attr('label'),
-                                type: 'warning',
-                                confirmButtonColor: '#3085d6',
-                                confirmButtonText: 'Delete',
-                                showCancelButton: true,
-                                allowOutsideClick: false
-                                }).then((confirm) => {
-                                    if (confirm.value) {
-                                        $('.dragrow' + rowid).remove()
+                                $('.dragrow' + rowid).remove()
 
                                         $.ajax({
                                                 type: "get",
@@ -965,9 +962,6 @@
                                                 complete: function(data){
                                             }
                                         });
-                                    }
-                                })
-
                             });
 
                 $(document).on('click', '.itemchoices', function(){
@@ -1008,6 +1002,7 @@
                     if (!$(event.target).closest('.dragrow' + last_id).length || $(event.target).hasClass('delrow')) {
                         
                             console.log("Last ID: ", last_id);
+                            
                             if(last_quiz_type == 'multiple_choice'){
                                 
                                 const textareaValue = $('#multiplechoice' + last_id).val();
@@ -1020,7 +1015,7 @@
                                     var i = 1;
                                     $('.option' + last_id).each(function() {
                                             // Get the value of the current label element using its id attribute
-                                            const value = $(this).text();
+                                            const value = $(this).text().trim();
 
                                             console.log(i);
                                             
@@ -1054,6 +1049,7 @@
 
                                 }
 
+
                             
                             else if(last_quiz_type == 'enumeration'){
 
@@ -1083,7 +1079,7 @@
 
                                         
                                             Toast.fire({
-                                                icon: 'success',
+                                                type: 'success',
                                                 title: 'All the changes have been saved'
                                                 
                                             })
@@ -1098,7 +1094,7 @@
 
                                 }else{
                                     UIkit.notification({
-                                        message: '<span uk-icon="icon: close"></span> Item Required!',
+                                        message: '<span uk-type="type: close"></span> Item Required!',
                                         status: 'error',
                                         timeout: 1000
                                         });
@@ -1135,7 +1131,7 @@
                                             if (response == 1){
                                         
                                             Toast.fire({
-                                                icon: 'success',
+                                                type: 'success',
                                                 title: 'All the changes have been saved'
                                             })
 
@@ -1154,7 +1150,7 @@
                                 $.ajax({
                                     type: "get",
                                     dataType: 'json',
-                                    url: "/adminviewbook/createquestion",
+                                    url: "/teacherquiz/createquestion",
                                     data: { 
                                         question : "Drag and drop",
                                         typeofquiz : 5,
@@ -1165,7 +1161,7 @@
                                         if (response == 1){
                                         
                                             Toast.fire({
-                                                icon: 'success',
+                                                type: 'success',
                                                 title: 'All the changes have been saved'
                                             })
 
@@ -1181,15 +1177,15 @@
                                 console.log("Drag and Drop");
                                 $('.drag' + last_id).each(function() {
                                         // Get the value of the current label element using its id attribute
-                                        const value = $(this).text();
+                                        const value = $(this).text().trim();
                                         console.log(value)
 
-                                        // console.log(i);
+        
                                         
                                         $.ajax({
                                             type: "get",
                                             dataType: 'json',
-                                            url: "/adminviewbook/createdragoption",
+                                            url: "/teacherquiz/createdragoption",
                                             data: { 
                                                 questionid : last_id,
                                                 sortid: i,
@@ -1210,36 +1206,36 @@
                                         });
 
                                         var i = 1;
-                                        $('.drop' + last_id).each(function() {
-                                        // Get the value of the current label element using its id attribute
-                                        const value = $(this).val();
-                                        console.log(value);
+                                $('.drop' + last_id).each(function() {
+                                // Get the value of the current label element using its id attribute
+                                const value = $(this).val();
+                                console.log(value);
 
-                                                $.ajax({
-                                                    type: "get",
-                                                    dataType: 'json',
-                                                    url: "/adminviewbook/createdropquestion",
-                                                    data: { 
-                                                        questionid : last_id,
-                                                        sortid: i,
-                                                        description : value
-                                                            },
-                                                    success: function(response) {
-
-                                                        console.log("Drop question Succesfully save!");
-                                                        
+                                        $.ajax({
+                                            type: "get",
+                                            dataType: 'json',
+                                            url: "/teacherquiz/createdropquestion",
+                                            data: { 
+                                                questionid : last_id,
+                                                sortid: i,
+                                                description : value
                                                     },
-                                                    error: function(xhr) {
-                                                        // Handle error here
-                                                    }
-                                                    });
-                                                i+=1;
+                                            success: function(response) {
+
+                                                console.log("Drop question Succesfully save!");
+                                                
+                                            },
+                                            error: function(xhr) {
+                                                // Handle error here
+                                            }
+                                            });
+                                        i+=1;
 
 
-                                        });
+                                });
 
                                         Toast.fire({
-                                            icon: 'success',
+                                            type: 'success',
                                             title: 'All the changes have been saved'
                                         })
                             
@@ -1248,13 +1244,16 @@
                             else if(last_quiz_type == 'image'){
 
                                 var textareaValue = $('#image_item' + last_id).val();
+                                var points = $('#Required' + last_id).val();
                                 console.log("Question: ", textareaValue);
                                 console.log("Quiztype: ", last_quiz_type);
-                                if (textareaValue.length != 0) {
+
+
+                                if(points !== '' && points !== undefined && textareaValue.length != 0) {
                                     $.ajax({
                                         type: "get",
                                         dataType: 'json',
-                                        url: "/adminviewbook/createquestion",
+                                        url: "/teacherquiz/createquestion",
                                         data: { 
                                             question : textareaValue,
                                             typeofquiz : 6,
@@ -1265,7 +1264,7 @@
                                             if (response == 1){
                                         
                                             Toast.fire({
-                                                icon: 'success',
+                                                type: 'success',
                                                 title: 'All the changes have been saved'
                                             })
 
@@ -1276,8 +1275,44 @@
                                             // Handle error here
                                         }
                                     });
+                                }else{
+
+
+                                    UIkit.notification({
+                                        message: '<span uk-type="type: close"></span> Points Required!',
+                                        status: 'error',
+                                        timeout: 1000
+                                        });
+
+                                    $('#Required' + last_id).focus();
+
+
                                 }
+                                
                                 }
+
+                            else if(last_quiz_type == 'short_answer' || last_quiz_type == 'paragraph_answer')
+                            {
+
+                                var points = $('#Required' + last_id).val();
+                                console.log("points: ", points);
+                                console.log("Quiztype: ", last_quiz_type);
+
+
+                                if(points === ''){
+
+                                    UIkit.notification({
+                                        message: '<span uk-type="type: close"></span> Points Required!',
+                                        status: 'error',
+                                        timeout: 1000
+                                        });
+
+                                    $('#Required' + last_id).focus();
+                                
+                                }
+
+
+                            }
 
                             else if(last_quiz_type == 'fill_n_blanks'){
 
@@ -1311,7 +1346,7 @@
                                                             if (response == 1){
                                                         
                                                             Toast.fire({
-                                                                icon: 'success',
+                                                                type: 'success',
                                                                 title: 'All the changes have been saved'
                                                             })
 
@@ -1546,7 +1581,7 @@
                             console.log("Delete button clicked!");
 
                             var id = $(this).data('id');
-                            $(this).parent().remove();
+                            $(this).parent().parent().remove();
 
 
                             
@@ -1714,7 +1749,7 @@
                                                                 <textarea class="form-control" placeholder="Untitled question" id="multiplechoice${response.id}" > ${response.question}</textarea>`;
 
                                             response.choices.forEach(function(item) {
-                                                html += `<div class="col-12">
+                                                html += `<div class="col-12" id="list_option${response.id}">
                                                 <input class="form-check-input ml-2" type="radio" name="option${response.id}" value="${item.id}">
                                                 <label class="form-check-label ml-5 option${response.id}" id="option${response.id}" contenteditable="true">
                                                 ${item.description}`;
@@ -1831,7 +1866,7 @@
                 
                                         
                                             Toast.fire({
-                                                icon: 'success',
+                                                type: 'success',
                                                 title: 'All the changes have been saved'
                                                 
                                             })
@@ -1894,12 +1929,18 @@
                                                                     data-sortid="${i + 1}"
                                                                     data-question-type="8"
                                                                     data-type="8"
-                                                                    class="answer-field d-inline form-control q-input"
-                                                                    type="text"
-                                                                >
+                                                                    id="enumerationfield"
+                                                                    class="answer-field d-inline form-control q-input"`
+                                                            
+
+                                            if (response.answer.length !== 0 && i < response.answer.length) {
+                                                                    html += `value="${response.answer[i].answer}"`;
+                                            }
+
+
+                                            html +=         `type="text">  
                                                             </li>
-                                                            </p>
-                                                        
+                                                        </p>
                                                     </div>
                                                 </div>`
                                             }
@@ -1908,6 +1949,7 @@
 
                                             html += `</div><div class="col-12 p-3 text-end">
                                                                         <button class="btn btn-dark btn-sm answerdoneenum" id="${response.id}">Done</button>
+                                                                        <button class="btn btn-dark btn-sm clearanswer" id="${response.id}">Clear all Answer</button>
                                                                     </div></div>`;
 
                                             $('#quiztioncontent' + parentId).empty().append(html);
@@ -1994,12 +2036,12 @@
 
                                             html+=       `</div>
                                                             </div>
-                                                            <div class="col-12  mt-2">
-                                                                <button class="btn btn-link btn-sm answer-key-enum" id="${response.id}">Answer key</button>
-                                                            </div>
                                                         </div>
-                                                    </div>
-                                                </div>`;
+                                                </div>
+                                                <div class="col-12 mt-2">
+                                                <button class="btn btn-link btn-sm answer-key-enum" id="${response.id}">Answer key</button>
+                                            </div>
+                                        </div>`;
 
                                             
                                             
@@ -2011,9 +2053,48 @@
                                     }
                             });
 
+
+                        
+
                         
 
 
+
+                        });
+
+                        $(document).on('click', '.clearanswer', function(){
+
+                            var parentId = $(this).attr("id");
+
+
+                            $.ajax({
+                                                type: "get",
+                                                url: "/teacherquiz/clearanswerenum",
+                                                data: { 
+                                                    parentId : parentId,
+                                                        },
+                                                success: function(response) {
+
+                                                    UIkit.notification({
+                                                    message: '<span uk-type="type: check"></span> The answer has been cleared!',
+                                                    status: 'success',
+                                                    timeout: 1000
+                                                    });
+                                                    
+                                                    
+                                                },
+                                                error: function(xhr) {
+                                                    // Handle error here
+                                                }
+
+                                    
+                            });
+
+                            $('.answerdoneenum').click();
+                            
+                            
+                            console.log("Done clearing answer")
+                            
 
                         });
 
@@ -2061,7 +2142,7 @@
                                                     if (response == 1){
                                                 
                                                     Toast.fire({
-                                                        icon: 'success',
+                                                        type: 'success',
                                                         title: 'All the changes have been saved'
                                                     })
 
@@ -2172,7 +2253,7 @@
 
                                             $('#quiztype' + id).prop('disabled', false);
                                             var html = ` <p><b>Note: </b>To set up the blanks, please input [~input] where you want the blank to appear. Ex. The planet ~input is the biggest planet in the solar system</p>
-                                            <div id="item_question${response.id}">`
+                                            <div id="item_fill${response.id}">`
                                 
                                             response.fill.forEach(function(item){
                                             html += ` <input type="text" class="form-control fill${response.id}" style="margin-top: 10px; border: 2px solid dodgerblue; color: black;" placeholder="Item text" value="${item.question}">
@@ -2204,678 +2285,314 @@
                         });
 
 
+                        $(document).on('click', '.add_drag_option', function(){
+                            option+=1;
+                            // var parentId = $(this).parent().parent().parent().parent().parent().attr("id");
+                            var parentId = $(this).attr('id');
+                            var addrowid = $(this).attr('id');
+                            console.log("Add row ID: ", addrowid)
+                            console.log("ID: ", parentId)
+                            
+                            // $(this).closest('quizarea2').find('.list_option').empty()
+                            $('#options' + parentId).append('<div class="drag-option btn bg-primary text-white m-1 drag'+parentId+'" contentEditable="true" data-target="drag-1">Option &nbsp;'+option+'</div>')
+
+                        })
 
 
+                
 
-
-
-
+                    $(document).on('click', '.add_drag_question', function(){
+                        option+=1;
+                        var parentId = $(this).attr('id');
+                        var addrowid = $(this).attr('id');
+                        console.log("Add row ID: ", addrowid)
+                        console.log("ID: ", parentId)
                         
+                        $('#item_question' + parentId).append('<input type="text" class="form-control drop'+parentId+'" style="margin-top: 10px; border: 2px solid dodgerblue; color: black;" placeholder="Item text &nbsp;'+option+'">')
 
-
-
-
-
-
-               
-
-                //     $(document).on('click', '.add_drag_option', function(){
-                //         option+=1;
-                //         // var parentId = $(this).parent().parent().parent().parent().parent().attr("id");
-                //         var parentId = $(this).attr('id');
-                //         var addrowid = $(this).attr('id');
-                //         console.log("Add row ID: ", addrowid)
-                //         console.log("ID: ", parentId)
-                        
-                //         // $(this).closest('quizarea2').find('.list_option').empty()
-                //         $('#options' + parentId).append('<div class="drag-option btn bg-primary text-white m-1 drag'+parentId+'" contentEditable="true" data-target="drag-1">Option &nbsp;'+option+'</div>')
-
-                //     })
-
-                //     $(document).on('click', '.add_drag_question', function(){
-                //         option+=1;
-                //         var parentId = $(this).attr('id');
-                //         var addrowid = $(this).attr('id');
-                //         console.log("Add row ID: ", addrowid)
-                //         console.log("ID: ", parentId)
-                        
-                //         // $(this).closest('quizarea2').find('.list_option').empty()
-                //         $('#item_question' + parentId).append('<input type="text" class="form-control drop'+parentId+'" style="margin-top: 10px; border: 2px solid dodgerblue; color: black;" placeholder="Item text &nbsp;'+option+'">')
-
-                //     })
-
-                //     $(document).on('click', '.additem', function(){
-                //         enumerationitem+= 1;
-
-                //         console.log("Item Count:", enumerationitem);
-                //         var quizId = $(this).data('id');
-
-                //         console.log("Add question ID: ", quizId)
-                //         var parentId = $(this).data('id');
-                //         var addrowid = $(this).attr('id');
-                        
-                //         console.log("Add row ID: ", addrowid)
-                //         console.log("ID: ", parentId)
-                        
-                //         $('#item_option' + parentId).append('<input type="text" class="form-control mt-2 ml-2" placeholder="Item text'+enumerationitem+'" disabled>')
-
-                //     })
-
-
-                //     $(document).on('click', '#my-card', function(){
-                //         console.log("Hello")
-
-                //         var quizId = $('#quiz-info').data('quizid');
-                //         console.log(quizId);
-                //         $.ajax({
-                //                     type: "get",
-                //                     dataType: 'json',
-                //                     url: "/adminviewbook/delcoverage",
-                //                     data: { 
-                //                         id: quizId
-                                
-                //                             },
-                //                     success: function(response) {
-
-                //                         console.log("Not Error");
-
-                //                         // Toast.fire({
-                //                         //     type: 'success',
-                //                         //     title: 'Title successfully Save!'
-                //                         //})
-                                        
-                //                     },
-                //                     error: function(xhr) {
-                //                         console.log("Error");
-                //                         // Handle error here
-                //                     }
-                //             });
-
-                //             window.location.reload();
-                //         // $(this).closest('.quizarea2').find('.list_option').empty()
-                //     })
-
+                    })
 
                     
-
-                //     $('#select-lesson').select2({
-                //             allowClear:true,
-                //             placeholder: "All",
-                //             "language": {
-                //                     "noResults": function(){
-                //                     }
-                //             },
-                //             escapeMarkup: function (markup) {
-                //                     return markup;
-                //             },
-                //             ajax: {
-                //                     url: "{{route('lessonSelect')}}",
-                //                     data: function (params) {
-                //                         var query = {
-                //                                 quizId: $('#quiz-info').data('quizid'),
-                //                                 search: params.term,
-                //                                 page: params.page || 0
-                //                         }
-                //                         return query;
-                //                     },
-                //                     dataType: 'json',
-                                    
-                //                     processResults: function (data, params) {
-                //                         params.page = params.page || 0;
-                //                         return {
-                //                                 results: data.results,
-                //                                 pagination: {
-                //                                     more: data.pagination.more
-                //                                 }
-                //                         };
-                                        
-                //                     },
-                //             }
-                //         })
-
-                        
-                
                         
 
-                //         $(document).on('click', '.answer-key-drag', function(){
-                //                 var parentId = $(this).attr('id');
+                        $(document).on('click', '.answer-key-drag', function(){
+                                var parentId = $(this).attr('id');
 
-                //                 var i = 1;
-                //                 console.log("Drag and Drop");
-                //                 $('.drag' + parentId).each(function() {
-                //                         // Get the value of the current label element using its id attribute
-                //                         const value = $(this).text();
-                //                         console.log(value)
+                                var i = 1;
+                                console.log("Drag and Drop");
+                                $('.drag' + parentId).each(function() {
+                                        // Get the value of the current label element using its id attribute
+                                        const value = $(this).text();
+                                        console.log(value)
 
-                //                         // console.log(i);
+                                        // console.log(i);
                                         
-                //                         $.ajax({
-                //                             type: "get",
-                //                             dataType: 'json',
-                //                             url: "/adminviewbook/createdragoption",
-                //                             data: { 
-                //                                 questionid : parentId,
-                //                                 sortid: i,
-                //                                 description : value
-                //                                     },
-                //                             success: function(response) {
+                                        $.ajax({
+                                            type: "get",
+                                            dataType: 'json',
+                                            url: "/teacherquiz/createdragoption",
+                                            data: { 
+                                                questionid : parentId,
+                                                sortid: i,
+                                                description : value
+                                                    },
+                                            success: function(response) {
 
-                //                                 console.log("Options Succesfully save!");
+                                                console.log("Options Succesfully save!");
                                                 
-                //                             },
-                //                             error: function(xhr) {
-                //                                 // Handle error here
-                //                             }
-                //                         });
-
-                //                         i+=1;
-
-                //                         });
-
-                //                         var i = 1;
-                //                         $('.drop' + parentId).each(function() {
-                //                         // Get the value of the current label element using its id attribute
-                //                         const value = $(this).val();
-                //                         console.log(value);
-
-                //                                 $.ajax({
-                //                                     type: "get",
-                //                                     dataType: 'json',
-                //                                     url: "/adminviewbook/createdropquestion",
-                //                                     data: { 
-                //                                         questionid : parentId,
-                //                                         sortid: i,
-                //                                         description : value
-                //                                             },
-                //                                     success: function(response) {
-
-                //                                         console.log("Drop question Succesfully save!");
-                                                        
-                //                                     },
-                //                                     error: function(xhr) {
-                //                                         // Handle error here
-                //                                     }
-                //                                     });
-                //                                 i+=1;
-
-
-                //                         });
-
-                //                         Toast.fire({
-                //                             icon: 'success',
-                //                             title: 'All the changes have been saved'
-                //                         })
-
-                //             $.ajax({
-                //                     type: "get",
-                //                     dataType: 'json',
-                //                     url: "/adminviewbook/createquestion",
-                //                     data: { 
-                //                         question : "Drag and drop",
-                //                         typeofquiz : 5,
-                //                         id: parentId
-                //                             },
-                //                     success: function(response) {
-
-                //                         if (response == 1){
-                                        
-                //                             Toast.fire({
-                //                                 icon: 'success',
-                //                                 title: 'All the changes have been saved'
-                //                             })
-
-                //                             }
-                                        
-                //                     },
-                //                     error: function(xhr) {
-                //                         // Handle error here
-                //                     }
-                //                 });
-
-                                
-
-
-                //             //get drop question
-                //             $.ajax({
-                //                     type: "get",
-                //                     dataType: 'json',
-                //                     url: "/adminviewbook/createquestion",
-                //                     data: { 
-                //                         question : "Drag and drop",
-                //                         typeofquiz : 5,
-                //                         id: parentId
-                //                             },
-                //                     success: function(response) {
-
-                //                         if (response == 1){
-                                        
-                //                             Toast.fire({
-                //                                 icon: 'success',
-                //                                 title: 'All the changes have been saved'
-                //                             })
-
-                //                             }
-                                        
-                //                     },
-                //                     error: function(xhr) {
-                //                         // Handle error here
-                //                     }
-                //                 });
-
-                //             var i = 1;
-                //             console.log("Drag and Drop");
-                //             $('.drag' + parentId).each(function() {
-                //                     // Get the value of the current label element using its id attribute
-                //                     const value = $(this).text();
-                //                     console.log(value)
-
-                //                     // console.log(i);
-                                    
-                //                     $.ajax({
-                //                         type: "get",
-                //                         dataType: 'json',
-                //                         url: "/adminviewbook/createdragoption",
-                //                         data: { 
-                //                             questionid : parentId,
-                //                             sortid: i,
-                //                             description : value
-                //                                 },
-                //                         success: function(response) {
-
-                //                             console.log("Options Succesfully save!");
-                                            
-                //                         },
-                //                         error: function(xhr) {
-                //                             // Handle error here
-                //                         }
-                //                     });
-
-                //                     i+=1;
-
-                //                     });
-
-                //                     var i = 1;
-                //                     $('.drop' + parentId).each(function() {
-                //                     // Get the value of the current label element using its id attribute
-                //                     const value = $(this).val();
-                //                     console.log(value);
-
-                //                             $.ajax({
-                //                                 type: "get",
-                //                                 dataType: 'json',
-                //                                 url: "/adminviewbook/createdropquestion",
-                //                                 data: { 
-                //                                     questionid : parentId,
-                //                                     sortid: i,
-                //                                     description : value
-                //                                         },
-                //                                 success: function(response) {
-
-                //                                     console.log("Drop question Succesfully save!");
-                                                    
-                //                                 },
-                //                                 error: function(xhr) {
-                //                                     // Handle error here
-                //                                 }
-                //                                 });
-                //                             i+=1;
-
-
-                //                     });
-
-                //                     Toast.fire({
-                //                         icon: 'success',
-                //                         title: 'All the changes have been saved'
-                //                     })
-
-                //             getDropQuestion(parentId);
-
-                            
-                //             //get drop question question
-                            
-
-
-                            
-
-
-                //         console.log(parentId)
-
-                        
-
-                //         });
-
-                //         function getDropQuestion(parentId){
-
-                //             $.ajax({
-                //                     type: "get",
-                //                     dataType: 'json',
-                //                     url: "/adminviewbook/getdropquestion",
-                //                     data: { 
-                //                         id: parentId
-                                
-                //                             },
-                //                     success: function(response) {
-                //                             console.log(response);
-
-                //                             $('#quiztype' + parentId).prop('disabled', true);
-
-                //                             var html = `<div class="options p-3 mt-2" style="border:3px solid #3e416d;border-radius:6px;">`;
-                                            
-                                            
-
-                //                             response.drag.forEach(function(item) {
-                //                                 html += `<div class="drag-option btn bg-primary text-white m-1" data-target="drag-1">${item.description}</div>`;
-                                            
-                //                             });
-
-                //                             html += `</div>`
-
-                //                             response.drop.forEach(function(item) {
-                //                                 html += `<p class="ml-2">${item.sortid}. ${item.question} </p>`;
-                                            
-                //                             });
-
-                                            
-
-                //                             html += `</div><div class="col-12 p-3 text-end">
-                //                                                         <button class="btn btn-dark btn-sm answerdonedrag" id="${response.id}">Done</button>
-                //                                                     </div></div>`;
-
-                //                             $('#quiztioncontent' + parentId).empty().append(html);
-
-
-                //                             $( ".drag-option" ).draggable({
-                //                                     helper: "clone",
-                //                                     revertDuration: 100,
-                //                                     revert: 'invalid'
-                //                                 });
-
-                //                             $( ".drop-option" ).droppable({
-                //                                 drop: function(event, ui) {
-
-                //                                 var dragElement = $(ui.draggable)
-                //                                 var dropElement = $(this)
-
-                //                                 dropElement.val(dragElement.text())
-                //                                 dropElement.addClass('bg-primary text-white')
-                //                                 dropElement.prop( "disabled", true );
-
-                //                                 dragElement.removeClass('bg-primary')
-                //                                 dragElement.addClass('bg-dark')
-
-                //                                 console.log("Ambot what to say")
-
-
-                //                                 autoSaveAnswerdragandrop(dropElement)
-
-                //                                 // auto save answer
-                //                                 // autoSaveAnswer(dropElement)
-                //                             }
-
-                //                             });
-                //                         },
-                //                     error: function(xhr) {
-                //                         console.log("Error");
-                //                         // Handle error here
-                //                     }
-                //             })
-                //         }
-
-
-
-                //         $(document).on('click', '.answerdonedrag', function(){
-
-                //             var id = $(this).attr("id");
-                //             console.log(id);
-
-
-                //             $.ajax({
-                //                     type: "get",
-                //                     dataType: 'json',
-                //                     url: "/adminviewbook/returneditquizdrag",
-                //                     data: { 
-                //                         id: id
-                                
-                //                             },
-                //                     success: function(response) {
-                //                             console.log(response);
-
-
-                //                             $('#quiztype' + id).prop('disabled', false);
-                //                             var html = `<div class="row">
-                //                                             <div class="col-12">
-                //                                                 <div class="options p-3 mt-2" id="options${response.id}" style="border:3px solid #3e416d;border-radius:6px;">`
-                                            
-                //                             response.drag.forEach(function(item) {
-                //                             html += `<div class="drag-option btn bg-primary text-white m-1 drag${response.id}" contentEditable="true" data-target="drag-1">
-                //                                                                     ${ item.description }
-                //                                                                 </div>`
-                //                                                             });
-                                            
-                //                             html += `</div>
-                //                             <div class="row justify-content-end p-3 mt-2">
-                //                                 <button class="btn btn-success add_drag_option" id="${response.id}">Add drag option</button>
-                //                             </div>
-
-                //                             <p><b>Note: </b>To set up the drop area, please input [~input] where you want the drop zone to appear. Ex. The planet ~input is the biggest planet in the solar system</p>
-                //                             <div id="item_question${response.id}">`
-                                
-                //                             response.drop.forEach(function(item){
-                //                             html += `<input type="text" class="form-control drop${response.id}" style="margin-top: 10px; border: 2px solid dodgerblue; color: black;" placeholder="Item text" value = "${item.question}">
-                //                             <span>Answer is `
-                //                                 if (!item.answer || item.answer.length === 0) {
-                //                                     html += `<em>undefined</em>`;
-                //                                     } else {
-                //                                     html += `<em>${item.answer}</em>.</span>`;
-                //                                     }
-
-                //                             });
-
-                //                             html += `</div>
-                //                                     <div class="row justify-content-end p-3 mt-2">
-                //                                         <button class="btn btn-success add_drag_question"  id="${response.id}">Add drop question</button>
-                //                                     </div>
-                //                                 <div class="col-12">
-                //                                     <button class="btn btn-link btn-sm answer-key-drag" id="${response.id}">Answer key</button>
-                //                                 </div>
-                //                                 </div>
-                //                             </div>
-                //                         </div>`
-
-                //                         $('#quiztioncontent' + id).empty().append(html);
-                //                         },
-                //                     error: function(xhr) {
-                //                         console.log("Error");
-                //                         // Handle error here
-                //                     }
-                //             });
-
-                        
-
-
-
-                //         });
-
-
-
-
-                //         $(document).on('click', '.itemchoices', function(){
-                //             var radioBtnId = $(this).attr("for");
-                //             var inputElement = $(`input.answer-field[id='${radioBtnId}']`);
-
-                //             inputElement.prop("checked", true);
-                //             autoSaveAnswer(inputElement);
-
-                //             $('.form-check-label').css({
-                //                 "background": "white",
-                //                 "padding": "2px"
-            
-                //             });
-
-                //             $(this).css({
-                //                 "background-color": "rgba(0, 128, 0, 0.5)",
-                //                 "padding": "2px"
-            
-                //                 // "padding": "20px",
-                //             });
-                //         });
-
-                //         $(document).on('click', '#deletechoice', function(){
-                //             // Perform delete functionality here
-                //             console.log("Delete button clicked!");
-
-                //             var id = $(this).data('id');
-                //             $(this).parent().remove();
-
-
-                //             // Example: Remove the parent element of the deletechoice span
-                            
-
-                //             $.ajax({
-                //                 url: '/adminviewbook/del-choices',
-                //                 method: 'GET',
-                //                 data: {
-                //                 id: id
-
-                //                 },
-                //                 success: function(response) {
-                //                     console.log(response);
-                                    
-                                
-                //                     //Handle the response from the server if needed
-                //                 }
-                //             });
-
-
-                //         });
-
-                //         $(document).on('click', '#deleteenum', function(){
-                //             // Perform delete functionality here
-                //             console.log("Delete button clicked!");
-                //             enumerationitem -= 1;
-                        
-
-                //             var id = $(this).data('id');
-                //             $(this).parent().parent().parent().remove();
-
-                //             var textareaValue = $('#enumerationquestion' + id).val();
-
-                //             $.ajax({
-                //                         type: "get",
-                //                         dataType: 'json',
-                //                         url: "/adminviewbook/createquestionitem",
-                //                         data: { 
-                //                             question : textareaValue,
-                //                             typeofquiz : 8,
-                //                             item : enumerationitem,
-                //                             id: id
-                //                                 },
-                //                         success: function(response) {
-
-                //                             if (response == 1){
-
-                //                             enumerationitem = 1;
-                                        
-                //                             Toast.fire({
-                //                                 icon: 'success',
-                //                                 title: 'All the changes have been saved'
+                                            },
+                                            error: function(xhr) {
+                                                // Handle error here
+                                            }
+                                        });
+
+                                        i+=1;
+
+                                        });
+
+                                var i = 1;
+                                $('.drop' + parentId).each(function() {
+                                // Get the value of the current label element using its id attribute
+                                const value = $(this).val();
+                                console.log(value);
+
+                                        $.ajax({
+                                            type: "get",
+                                            dataType: 'json',
+                                            url: "/teacherquiz/createdropquestion",
+                                            data: { 
+                                                questionid : parentId,
+                                                sortid: i,
+                                                description : value
+                                                    },
+                                            success: function(response) {
+
+                                                console.log("Drop question Succesfully save!");
                                                 
-                //                             })
+                                            },
+                                            error: function(xhr) {
+                                                // Handle error here
+                                            }
+                                            });
+                                        i+=1;
 
-                //                             }
+
+                                });
+
+                                Toast.fire({
+                                    type: 'success',
+                                    title: 'All the changes have been saved'
+                                })
+
+                            //get drop question
+                                $.ajax({
+                                        type: "get",
+                                        dataType: 'json',
+                                        url: "/teacherquiz/createquestion",
+                                        data: { 
+                                            question : "Drag and drop",
+                                            typeofquiz : 5,
+                                            id: parentId
+                                                },
+                                        success: function(response) {
+
+                                            if (response == 1){
                                             
-                //                         },
-                //                         error: function(xhr) {
-                //                             // Handle error here
-                //                         }
-                //                     });
+                                                console.log("Question Save!")
 
+                                                }
+                                            
+                                        },
+                                        error: function(xhr) {
+                                            // Handle error here
+                                        }
+                                    });
 
-
-                //         });
-
-
-
-    
-
-                
-
-                //         $(document).on('change', '.question', function(){
-                //             var dataid = $(this).data('id');
-                //             var type = $(this).data('question-type');
-                //             var question = $(this).val();
-
-                //             console.log("ID: ", dataid,"Question:", question, "Type:" , type);
-
-                //             //check if Question has value
-                //             if (question.length != 0) {
                             
-                //                 $.ajax({
-                //                     type: "get",
-                //                     dataType: 'json',
-                //                     url: "/adminviewbook/createquestion",
-                //                     data: { 
-                //                         question : question,
-                //                         typeofquiz : type,
-                //                         id: dataid
-                //                             },
-                //                     success: function(response) {
+                             //get drop question question
+                            getDropQuestion(parentId);
 
-                //                         if (response == 1){
-                                    
-                //                         Toast.fire({
-                //                             icon: 'success',
-                //                             title: 'All the changes have been saved'
-                //                         })
+                        
 
-                //                         }
+                        });
 
-                                        
-                //                     },
-                //                     error: function(xhr) {
-                //                         // Handle error here
-                //                     }
-                //                 });
-                //             }
-                            
-    
+                        function getDropQuestion(parentId){
 
-                //         });
-
-
-          
-
-
-
-
-
-                
-
-
-                //         function autoSaveAnswerdragandrop(thisElement) {
-                //             var answer = $(thisElement).val();
-                //             var questionId = $(thisElement).data('question-id');
-                //             var sortId = $(thisElement).data('sortid');
-
-                //             console.log(`student answer: ${answer}, question-id: ${questionId}, sort-id: ${sortId}`)
-
-                //             $.ajax({
-                //                 url: '/adminviewbook/save-answer-drop',
-                //                 method: 'GET',
-                //                 data: {
-                //                 answer: answer,
-                //                 question_id: questionId,
-                //                 sortId: sortId
-
-                //                 },
-                //                 success: function(response) {
-                //                     console.log(response);
+                            $.ajax({
+                                    type: "get",
+                                    dataType: 'json',
+                                    url: "/teacherquiz/getdropquestion",
+                                    data: { 
+                                        id: parentId
                                 
-                //                     //Handle the response from the server if needed
-                //                 }
-                //             });
+                                            },
+                                    success: function(response) {
+                                            console.log(response);
 
-                //         }
+                                            $('#quiztype' + parentId).prop('disabled', true);
+
+                                            var html = `<div class="options p-3 mt-2" style="border:3px solid #3e416d;border-radius:6px;">`;
+                                            
+                                            
+
+                                            response.drag.forEach(function(item) {
+                                                html += `<div class="drag-option btn bg-primary text-white m-1" data-target="drag-1">${item.description}</div>`;
+                                            
+                                            });
+
+                                            html += `</div>`
+
+                                            response.drop.forEach(function(item) {
+                                                html += `<p class="ml-2">${item.sortid}. ${item.question} </p>`;
+                                            
+                                            });
+
+                                            
+
+                                            html += `</div><div class="col-12 p-3 text-end">
+                                                                        <button class="btn btn-dark btn-sm answerdonedrag" id="${response.id}">Done</button>
+                                                                    </div></div>`;
+
+                                            $('#quiztioncontent' + parentId).empty().append(html);
+
+
+                                            $( ".drag-option" ).draggable({
+                                                    helper: "clone",
+                                                    revertDuration: 100,
+                                                    revert: 'invalid'
+                                                });
+
+                                            $( ".drop-option" ).droppable({
+                                                drop: function(event, ui) {
+
+                                                var dragElement = $(ui.draggable)
+                                                var dropElement = $(this)
+
+                                                dropElement.val(dragElement.text())
+                                                dropElement.addClass('bg-primary text-white')
+                                                dropElement.prop( "disabled", true );
+
+                                                dragElement.removeClass('bg-primary')
+                                                dragElement.addClass('bg-dark')
+
+                                                console.log("Ambot what to say")
+
+
+                                                autoSaveAnswerdragandrop(dropElement)
+
+                                                // auto save answer
+                                                // autoSaveAnswer(dropElement)
+                                            }
+
+                                            });
+                                        },
+                                    error: function(xhr) {
+                                        console.log("Error");
+                                        // Handle error here
+                                    }
+                            })
+                        }
+
+
+                        function autoSaveAnswerdragandrop(thisElement) {
+                            var answer = $(thisElement).val();
+                            var questionId = $(thisElement).data('question-id');
+                            var sortId = $(thisElement).data('sortid');
+
+                            console.log(`student answer: ${answer}, question-id: ${questionId}, sort-id: ${sortId}`)
+
+                            $.ajax({
+                                url: '/teacherquiz/save-answer-drop',
+                                method: 'GET',
+                                data: {
+                                answer: answer,
+                                question_id: questionId,
+                                sortId: sortId
+
+                                },
+                                success: function(response) {
+                                    console.log(response);
+                                
+                                    //Handle the response from the server if needed
+                                }
+                            });
+
+                        }
+
+                        $(document).on('click', '.answerdonedrag', function(){
+
+                            var id = $(this).attr("id");
+                            console.log(id);
+
+
+                            $.ajax({
+                                    type: "get",
+                                    dataType: 'json',
+                                    url: "/teacherquiz/returneditquizdrag",
+                                    data: { 
+                                        id: id
+                                
+                                            },
+                                    success: function(response) {
+                                            console.log(response);
+
+
+                                            $('#quiztype' + id).prop('disabled', false);
+                                            var html = `<div class="row">
+                                                            <div class="col-12">
+                                                                <div class="options p-3 mt-2" id="options${response.id}" style="border:3px solid #3e416d;border-radius:6px;">`
+                                            
+                                            response.drag.forEach(function(item) {
+                                            html += `<div class="drag-option btn bg-primary text-white m-1 drag${response.id}" contentEditable="true" data-target="drag-1">
+                                                                                    ${ item.description }
+                                                                                </div>`
+                                                                            });
+                                            
+                                            html += `</div>
+                                            <div class="row justify-content-end p-3 mt-2">
+                                                <button class="btn btn-success add_drag_option" id="${response.id}">Add drag option</button>
+                                            </div>
+
+                                            <p><b>Note: </b>To set up the drop area, please input [~input] where you want the drop zone to appear. Ex. The planet ~input is the biggest planet in the solar system</p>
+                                            <div id="item_question${response.id}">`
+                                
+                                            response.drop.forEach(function(item){
+                                            html += `<input type="text" class="form-control drop${response.id}" style="margin-top: 10px; border: 2px solid dodgerblue; color: black;" placeholder="Item text" value = "${item.question}">
+                                            <span>Answer is `
+                                                if (!item.answer || item.answer.length === 0) {
+                                                    html += `<em>undefined</em>`;
+                                                    } else {
+                                                    html += `<em>${item.answer}</em>.</span>`;
+                                                    }
+
+                                            });
+
+                                            html += `</div>
+                                                    <div class="row justify-content-end p-3 mt-2">
+                                                        <button class="btn btn-success add_drag_question"  id="${response.id}">Add drop question</button>
+                                                    </div>
+                                                <div class="col-12">
+                                                    <button class="btn btn-link btn-sm answer-key-drag" id="${response.id}">Answer key</button>
+                                                </div>
+                                                </div>
+                                            </div>
+                                        </div>`
+
+                                        $('#quiztioncontent' + id).empty().append(html);
+                                        },
+                                    error: function(xhr) {
+                                        console.log("Error");
+                                        // Handle error here
+                                    }
+                            });
+
+                        
+
+
+
+                        });
+
+
                     });
 
 

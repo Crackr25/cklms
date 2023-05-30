@@ -25,9 +25,10 @@
     <!-- SweetAlert2 -->
     <script src="{{asset('plugins/sweetalert2/sweetalert2.min.js')}}"></script>
     <script src="{{asset('plugins/sweetalert2/sweetalert2.all.min.js')}}"></script>
-    <script src="{{asset('plugins/datatables/jquery.dataTables.js')}}"></script>
-    <script src="{{asset('plugins/datatables-bs4/js/dataTables.bootstrap4.js')}}"></script>
-    <!-- summernote -->
+
+    <!-- include summernote css/js -->
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+ 
 
     <!-- icons -->
     <link rel="stylesheet" href="{{asset('templatefiles/icons.css')}}">
@@ -67,15 +68,17 @@
         <script src="{{asset('plugins/summernote/summernote-bs4.js')}}"></script>
         <script src="{{asset('templatefiles/chart.min.js')}}"></script>
         {{-- <script type="text/javascript" src="{{asset('plugins/jquery-ui/jquery-ui.min.js')}}"></script> --}}
-        <script src="{{asset('templatefiles/chart-custom.js')}}"></script>
         <script src="{{asset('plugins/jquery-ui/jquery-ui.min.js')}}"></script>
         <!-- Select2 -->
         <script src="{{asset('plugins/select2/js/select2.full.min.js')}}"></script>
+        <!-- Summernote -->
+        <script src="{{asset('plugins/summernote/summernote-bs4.js')}}"></script>
         <!-- SweetAlert2 -->
         <script src="{{asset('plugins/sweetalert2/sweetalert2.min.js')}}"></script>
         <script src="{{asset('plugins/sweetalert2/sweetalert2.all.min.js')}}"></script>
         <script src="{{asset('plugins/datatables/jquery.dataTables.js')}}"></script>
         <script src="{{asset('plugins/datatables-bs4/js/dataTables.bootstrap4.js')}}"></script>
+        <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
         @yield('script')
 
     </div>
@@ -84,6 +87,8 @@
     </div>
     <script>
         $(document).ready(function(){
+        
+            
 
             $(document).on('click','#logout',function(){
                 Swal.fire({

@@ -2483,7 +2483,7 @@
 
                                             $('#quiztype' + id).prop('disabled', false);
                                             var html = ` <p><b>Note: </b>To set up the blanks, please input [~input] where you want the blank to appear. Ex. The planet ~input is the biggest planet in the solar system</p>
-                                            <div id="item_question${response.id}">`
+                                            <div id="item_fill${response.id}">`
                                 
                                             response.fill.forEach(function(item){
                                             html += ` <input type="text" class="form-control fill${response.id}" style="margin-top: 10px; border: 2px solid dodgerblue; color: black;" placeholder="Item text" value="${item.question}">
