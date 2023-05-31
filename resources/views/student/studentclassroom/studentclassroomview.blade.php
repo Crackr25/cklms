@@ -111,6 +111,7 @@
                         <li class="uk-active"><a href="#" aria-expanded="true" id="feetab">Feed</a></li>
                         <li class=""><a href="#" aria-expanded="false" id="booksholdertab">Books</a></li>
                         <li class=""><a href="#" aria-expanded="false" id="studenttab">Classmates</a></li>
+                        <li class=""><a href="#" aria-expanded="false" id="quiztab">Quiz</a></li>
                     </ul>
                 </nav>
 
@@ -127,16 +128,17 @@
                 <li class="course-description-content uk-active  " style="" id="feed_holder"></li>
                 <li class="" style="" id="books_holder"></li>
                 <li class="" style="" id="studens_holder"></li>
+                <li class="" style="" id="quiz_holder"></li>
             </ul>
         </div>
     </div>
 </div>
 
 
-    
-   
 
-  
+
+
+
 
 
 @endsection
@@ -144,7 +146,7 @@
 @section('footerscript')
 
         <script>
-              $(document).ready(function(){
+            $(document).ready(function(){
 
 
                 $(document).on('click','.book_info',function(){
@@ -205,6 +207,23 @@
 
                 }
 
+
+                function loadQuiz(){
+
+                    $.ajax({
+                        url: '/studentquiz?classroomview='+'{{$classroominfo->id}}',
+                        type:"GET",
+                        success: function(data){
+
+                            $('#quiz_holder').empty()
+                            $('#quiz_holder').append(data)
+                    
+                        }
+                    })
+
+
+                }
+
                 
                 $(document).on('click','.commentbutton', function(){
 
@@ -248,6 +267,36 @@
                 })
 
 
+                $(document).on('click','#quizheader', function(){
+
+                    const swalWithBootstrapButtons = Swal.mixin({
+                    customClass: {
+                        confirmButton: 'btn btn-success',
+                        cancelButton: 'btn btn-danger'
+                    },
+                    buttonsStyling: true
+                    })
+
+
+
+                    swalWithBootstrapButtons.fire({
+                            title: 'Attempt Quiz',
+                            type: 'question',
+                            showCancelButton: true,
+                            confirmButtonText: 'Yes, Atempt now!',
+                            cancelButtonText: 'No, cancel!',
+                            reverseButtons: true
+                    }).then((result) => {
+
+                        console.log(result.value)
+                    
+                    })
+                })
+
+
+                
+
+
                 loadfeed()
 
                 // setInterval(loadfeed, 5000);
@@ -258,8 +307,12 @@
                 $('#booksholdertab').on('click',function(){
                     loadBooks()
                 })
+                $('#quiztab').on('click',function(){
+                    loadQuiz()
+                    
+                })
 
-              })
+            })
         </script>
 
    <script>

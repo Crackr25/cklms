@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use DB;
 use Crypt;
 use File;
+use Carbon\Carbon;
 class StudentClassroomController extends Controller
 {
     public static function index(Request $request)
@@ -869,7 +870,8 @@ class StudentClassroomController extends Controller
                                 )->get();
 
         // resources\views\student\studentclassroom\classmates.blade.php
-        return view('student.studentclassroom.classmates')->with('classroomstudents',$classroomstudents);
+        return view('student.studentclassroom.classmates')
+            ->with('classroomstudents',$classroomstudents);
 
             
     }
@@ -1001,6 +1003,34 @@ class StudentClassroomController extends Controller
         return view('student.studentclassroom.classroomtable')->with('classrooms',$classrooms);
 
 
+    }
+
+
+    public function studentquiz(Request $request){
+    
+        $currentTime = Carbon::now('Asia/Manila')->isoFormat('YYYY-MM-DD HH:mm:ss');
+
+
+        $sched = DB::table('teacherquizsched')
+                ->where('teacherquizsched.deleted', 0);
+
+            if ($request->get('classroomview') != null && $request->has('classroomview')) {
+                $sched = $sched->where('classroomid', $request->get('classroomview'));
+            }
+
+            $sched = $sched->join('teacherquiz', function ($join) {
+                    $join->on('teacherquizsched.teacherquizid', '=', 'teacherquiz.id');
+                    $join->where('teacherquiz.deleted', 0);
+                })
+                ->select('teacherquizsched.*', 'teacherquiz.*' )
+                ->get();
+
+
+
+        return view('student.studentclassroom.quiz')
+                        ->with('sched',$sched);
+
+            
     }
 
 }

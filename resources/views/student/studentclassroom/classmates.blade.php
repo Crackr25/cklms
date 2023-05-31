@@ -4,7 +4,7 @@
 
 <div class="section-header mb-lg-2 border-0 uk-flex-middle">
       <div class="section-header-left">
-          <h2 class="uk-heading-line text-left"><span>Classmates</span></h2>
+            <h2 class="uk-heading-line text-left"><span>Classmates</span></h2>
       </div>
       
 </div>

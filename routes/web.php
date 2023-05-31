@@ -275,12 +275,20 @@ Route::middleware(['auth', 'isTeacher','isDefaultPass'])->group(function () {
     Route::get('/teacherquizzes', 'Teacher\Teacherquizcontroller@index');   
     Route::get('/teacherclassroom/create', 'Teacher\ClassroomController@create');   
     Route::get('/teachergetavailablecode', 'Teacher\ClassroomController@getavailablecode');
-    Route::get('/teacherquiz/create', 'Teacher\Teacherquizcontroller@create');     
+    Route::get('/teacherquiz/create', 'Teacher\Teacherquizcontroller@create'); 
+    Route::get('/teacherquiz/selectclassroom', 'Teacher\Teacherquizcontroller@classroomSelect')->name('classroomSelect');    
+    Route::get('/teacherquiz/selectstudent', 'Teacher\Teacherquizcontroller@studentSelect')->name('studentSelect');    
 
 
     Route::get('/teacherbooks/{id}', 'Teacher\BookController@index');      
     Route::get('/teacherviewbook/{id}', 'Teacher\BookController@viewbook');  
-    Route::get('/teachermessages', 'Teacher\BookController@messages');   
+    Route::get('/teachermessages', 'Teacher\BookController@messages');
+    
+    //teacherquizsched
+    Route::get('/teachertestavailability', 'Teacher\Teacherquizcontroller@chaptertestavailability');
+    Route::get('/teacherviewresponse', 'Teacher\Teacherquizcontroller@viewResponse');
+    Route::get('/teachergetactivequiz', 'Teacher\Teacherquizcontroller@getactivequiz');
+
 
 
 
@@ -369,6 +377,10 @@ Route::middleware(['auth', 'isStudent','isDefaultPass'])->group(function () {
     Route::get('/studentbooks','Student\StudentClassroomController@studentbooks');
     Route::get('/checkForNewComments','Student\StudentClassroomController@checkForNewComments');
 
+    //Teacher quiz for Student
+    Route::get('/studentquiz','Student\StudentClassroomController@studentquiz');
+
+
     Route::get('/studentQuizContent/{id}/{classroomid}', 'Student\StudentBookController@studentQuizContent');
     Route::get('/studentQuizContentattempt/{id}/{classroomid}', 'Student\StudentBookController@studentQuizContentattempt');
 });
@@ -396,6 +408,8 @@ Route::group(['middleware' => ['auth', 'web']], function() {
     Route::get('/viewquizresponse/{classroomId}/{quizId}/{recordId}', 'GlobalController\ViewBookController@viewquizresponse');
     Route::get('/updatescore', 'GlobalController\ViewBookController@updatescore');
     Route::get('/donecheck', 'GlobalController\ViewBookController@doneCheck');
+    Route::get('/getclassroomstudents', 'GlobalController\ViewBookController@getclassroomstudents');
+    Route::get('/removeallowedstudent', 'GlobalController\ViewBookController@removeallowedstudent');
 
     //View Book    
     Route::get('/viewbook/{ids}', 'GlobalController\ViewBookController@viewbook');     

@@ -61,6 +61,76 @@ class Teacherquizcontroller extends Controller
     }
 
 
+    public function classroomSelect(Request $request)
+    {
+        $page = $request->get('page')*10;
+
+
+        $createdby = DB::table('teachers')
+                    ->where('userid', auth()->user()->id)
+                    ->first()
+                    ->id;
+
+        $classrooms = Db::table('classrooms')
+            ->select(
+                'classrooms.id as id',
+                'classrooms.classroomname as text'
+            )
+            ->orderBy('classrooms.classroomname')
+            ->join('teachers','classrooms.createdby','=','teachers.id')
+            ->where('classrooms.deleted','0')
+            ->where('createdby',$createdby)
+            ->take(10)
+            ->skip($page)
+            ->get();
+
+
+        $classrooms_count = count($classrooms);
+
+
+
+            return @json_encode((object)[
+                    "results"=>$classrooms,
+                    "pagination"=>(object)[
+                            "more"=>$classrooms_count > ($page)  ? true :false
+                    ],
+                    "count_filtered"=>$classrooms_count
+                ]);
+    }
+
+
+    public function studentSelect(Request $request)
+    {
+        $page = $request->get('page')*10;
+
+
+        $classroomid = $request->get('classroomid');
+    
+        $students = DB::table('classroomstudents')
+            ->join('users', 'classroomstudents.studentid', '=', 'users.id')
+            ->select(
+                'classroomstudents.id as id',
+                'users.name as text'
+            )
+            ->where('classroomstudents.classroomid', $classroomid)
+            ->where('classroomstudents.deleted', 0)
+            ->get();
+
+
+        $students_count = count($students);
+
+
+
+            return @json_encode((object)[
+                    "results"=>$students,
+                    "pagination"=>(object)[
+                            "more"=>$students_count > ($page)  ? true :false
+                    ],
+                    "count_filtered"=>$students_count
+                ]);
+    }
+
+
     public function createquiz($id, Request $request)
     {
 
@@ -91,6 +161,152 @@ class Teacherquizcontroller extends Controller
                 ->with('id',$id)
                 ->with('quizquestions',$quizquestions)
                 ->with('quiz',$teacherquizinfo);
+    }
+
+
+    public function chaptertestavailability(Request $request)
+    {
+
+        $allowed_students = $request->get('allowed_students');
+        $randomize = $request->get('randomize');
+        
+        $checkifexists = DB::table('teacherquizsched')
+            ->where('teacherquizid', $request->get('quizId'))
+            ->where('classroomid', $request->get('classroomId'))
+            ->where('deleted','0')
+            ->get();
+
+        $status = null;
+        $quizschedid = null;
+
+        if(count($checkifexists) == 0) {
+            $createdsched = DB::table('teacherquizsched')
+                ->insertGetId([
+                    'teacherquizid'         => $request->get('quizId'),
+                    'classroomid'           => $request->get('classroomId'),
+                    'datefrom'              => $request->get('dateFrom'),
+                    'timefrom'              => $request->get('timeFrom'),
+                    'dateto'                => $request->get('dateTo'),
+                    'timeto'                => $request->get('timeTo'),
+                    'noofattempts'          => $request->get('attempts'),
+                    'randomize'             => $randomize,
+                    'createdby'             => auth()->user()->id,
+                    'createddatetime'       => \Carbon\Carbon::now('Asia/Manila')
+                ]);
+
+                $status = 1;
+                $quizschedid = $createdsched;
+
+        } else {
+            DB::table('teacherquizsched')
+                ->where('id', $checkifexists[0]->id)
+                ->update([
+                    'teacherquizid'         => $request->get('quizId'),
+                    'classroomid'           => $request->get('classroomId'),
+                    'datefrom'              => $request->get('dateFrom'),
+                    'timefrom'              => $request->get('timeFrom'),
+                    'dateto'                => $request->get('dateTo'),
+                    'timeto'                => $request->get('timeTo'),
+                    'noofattempts'          => $request->get('attempts'),
+                    'randomize'             => $randomize,
+                    'status'                => $request->get('status'),
+                    'updateddatetime'       => \Carbon\Carbon::now('Asia/Manila')
+                ]);
+
+            $status = 0;
+            $quizschedid = $checkifexists[0]->id;
+        }
+
+        if (isset($allowed_students)) {
+            foreach ($allowed_students as $student_id) {
+                $countStudent = DB::table('teacher_allowed_student_quiz')
+                    ->where('studentid', $student_id)
+                    ->where('teacherquizschedid', $quizschedid)
+                    ->where('deleted', 0)
+                    ->get();
+
+            
+                // only add new entry if it does not exists
+                if (count($countStudent) == 0) {
+                    DB::table('allowed_student_quiz')
+                        ->insert([
+                            'teacherquizschedid'    => $quizschedid,
+                            'studentid'             => $student_id,
+                            'createdby'             => auth()->user()->id,
+                            'createddatetime'       => \Carbon\Carbon::now('Asia/Manila'),
+                        ]);
+                }
+            }
+        }
+
+        return $status;
+
+    }
+
+    public function viewResponse(Request $request)
+    {
+
+        return view('teacher.teacherquiz.teacherquiz.quizresponse');
+    }
+
+
+    public function getActiveQuiz(Request $request)
+    {
+        $quiz = DB::table('teacherquizsched')
+            ->where('teacherquizsched.deleted', 0)
+            ->where('teacherquizsched.createdby', auth()->user()->id)
+            ->join('teacherquiz',function($join){
+                $join->on('teacherquizsched.teacherquizid','=','teacherquiz.id');
+            })
+            ->select(
+                                'teacherquiz.title',
+                                'teacherquiz.id',
+                                'datefrom',
+                                'timefrom',
+                                'dateto',
+                                'timeto',
+                                'noofattempts',
+                                'randomize',
+                                'teacherquizsched.createddatetime'
+                    )
+            ->get();
+
+        foreach($quiz as $item){
+            $item->search = $item->datefrom.' '.$item->timefrom.', '.$item->dateto.' '.$item->timeto.' '.$item->title;
+
+            $quizsched = DB::table('teacherquizsched')
+                ->where('teacherquizsched.createdby', auth()->user()->id)
+                ->where('teacherquizid',$item->id)
+                ->get();
+
+            if(count($quizsched) != 0){
+
+                $item->isactivated = 1; 
+
+                $allowed_students = DB::table('teacher_allowed_student_quiz')
+                    ->join('users', 'teacher_allowed_student_quiz.studentid', '=', 'users.id')
+                    ->where('teacher_allowed_student_quiz.teacherquizschedid', $quizsched[0]->id)
+                    ->where('teacher_allowed_student_quiz.deleted', 0)
+                    ->select(
+                        'users.id',
+                        'teacher_allowed_student_quiz.teacherquizschedid',
+                        'users.name')
+                    ->get();
+
+                if(count($allowed_students) == 0) {
+                    $item->allowed_students = null;
+                } else {
+                    $item->allowed_students = $allowed_students;
+                }
+
+            } else {
+                $item->allowed_students = null;
+                $item->isactivated = 0; 
+            }
+
+        }
+        
+        return $quiz;
     }
 
     public function saveDescription(Request $request)

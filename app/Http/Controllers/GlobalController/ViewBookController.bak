@@ -371,6 +371,7 @@ class ViewBookController extends Controller
                 ->where('quizid', $chapterquizid)
                 ->where('deleted', 0)
                 ->where('typeofquiz', '!=', 4)
+                // ->where('typeofquiz', '!=', null)
                 ->sum('points');
 
             foreach ($responses as $response) {

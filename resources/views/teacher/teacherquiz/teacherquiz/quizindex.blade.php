@@ -682,12 +682,7 @@
     <script src="{{asset('templatefiles/jquery-3.3.1.min.js')}}"></script>
 <script>
         
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'bottom-end',
-            showConfirmButton: false,
-            timer: 4000,
-            });
+        
 
 
 
@@ -701,6 +696,14 @@
 
 
         $(document).ready(function(){
+            
+            
+            const Toast = Swal.mixin({
+            toast: true,
+            position: 'bottom-end',
+            showConfirmButton: false,
+            timer: 4000,
+            });
 
 
             $('.instruction').summernote({
