@@ -150,12 +150,12 @@
             }
 
             $(document).on('click','#generate_random_code',function(){
-                   
+
                 $.ajax({
                     url: '/teachergetavailablecode',
                     type:"GET",
                     complete: function(data){
-                       
+
                         $('input[name="classroomcode"]').val(data.responseText)
                         $('#create_classroom').removeClass('disabled')
                     }

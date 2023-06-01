@@ -128,6 +128,8 @@ class Teacherquizcontroller extends Controller
             )
             ->where('classroomstudents.classroomid', $classroomid)
             ->where('classroomstudents.deleted', 0)
+            ->take(10)
+            ->skip($page)
             ->get();
 
 
@@ -141,6 +143,35 @@ class Teacherquizcontroller extends Controller
                             "more"=>$students_count > ($page)  ? true :false
                     ],
                     "count_filtered"=>$students_count
+                ]);
+    }
+
+    public function quizSelect(Request $request)
+    {
+        $page = $request->get('page')*10;
+
+
+        $quiz = Db::table('teacherquiz')
+                ->select(
+                    'teacherquiz.id as id',
+                    'teacherquiz.title as text'
+                )
+                ->orderBy('teacherquiz.id')
+                ->where('teacherquiz.deleted','0')
+                ->where('teacherquiz.createdby',auth()->user()->id)
+                ->take(10)
+                ->skip($page)
+                ->get();
+
+
+        $quiz_count = count($quiz);
+
+            return @json_encode((object)[
+                    "results"=>$quiz,
+                    "pagination"=>(object)[
+                            "more"=>$quiz_count > ($page)  ? true :false
+                    ],
+                    "count_filtered"=>$quiz_count
                 ]);
     }
 
@@ -260,7 +291,11 @@ class Teacherquizcontroller extends Controller
     public function viewResponse(Request $request)
     {
 
+
+
         return view('teacher.teacherquiz.teacherquiz.quizresponse');
+
+
     }
 
 
@@ -268,9 +303,21 @@ class Teacherquizcontroller extends Controller
     {
         $quiz = DB::table('teacherquizsched')
             ->where('teacherquizsched.deleted', 0)
-            ->where('teacherquizsched.createdby', auth()->user()->id)
-            ->join('teacherquiz',function($join){
-                $join->on('teacherquizsched.teacherquizid','=','teacherquiz.id');
+            ->where('teacherquizsched.createdby', auth()->user()->id);
+            if($request->get('classroom') != null && $request->get('classroom') != ''){
+
+                $quiz = $quiz->where('teacherquizsched.classroomid', $request->get('classroom'));
+
+            }
+
+            if($request->get('quiz') != null && $request->get('quiz') != ''){
+
+                $quiz = $quiz->where('teacherquizsched.teacherquizid', $request->get('quiz'));
+
+            }
+
+            $quiz = $quiz->join('teacherquiz', function ($join) {
+                $join->on('teacherquizsched.teacherquizid', '=', 'teacherquiz.id');
             })
             ->select(
                                 'teacherquiz.title',
@@ -322,6 +369,51 @@ class Teacherquizcontroller extends Controller
         
         return $quiz;
     }
+
+
+    public function quizresponses(Request $request)
+        {
+            $studentid = $request->get('student');
+            $teacherquizid = $request->get('quizID');
+            $classroomid = $request->get('classroom');
+
+            $responses = DB::table('teacherquizrecords')
+                ->join('users', 'users.id', '=', 'teacherquizrecords.submittedby');
+
+            if($classroomid != null && $classroomid != ''){
+
+                $responses = $responses->where('teacherquizrecords.classroomid', $classroomid);
+
+            }
+
+            if($studentid != null && $studentid != ''){
+
+                $responses = $responses->where('teacherquizrecords.submittedby', $studentid);
+
+            }
+
+            
+            $responses = $responses->where('teacherquizrecords.teacherquizid', $teacherquizid)
+                ->where('teacherquizrecords.deleted', '0')
+                ->where('teacherquizrecords.quizstatus', '1')
+                ->select('teacherquizrecords.id', 'teacherquizrecords.classroomid', 'teacherquizrecords.teacherquizid', 'teacherquizrecords.submittedby', 'users.name', 'teacherquizrecords.totalscore', 'teacherquizrecords.submitteddatetime', 'teacherquizrecords.deleted', 'teacherquizrecords.quizstatus', 'teacherquizrecords.deletedby', 'teacherquizrecords.updatedby', 'teacherquizrecords.updateddatetime')
+                ->get();
+
+            $maxpoints = DB::table('teacherquizquestions')
+                ->where('quizid', $teacherquizid)
+                ->where('deleted', 0)
+                ->where('typeofquiz', '!=', 4)
+                ->sum('points');
+
+            foreach ($responses as $response) {
+                $response->maxpoints = $maxpoints;
+            }
+
+            return $responses;
+    }
+
+
+
 
     public function saveDescription(Request $request)
     {

@@ -347,13 +347,10 @@
                         </div>
                         </div>
                     
-                    <button id="scroll-to-bottom" class="btn btn-dark btn-lg mb-3 mr-3" style= "
+                        <button id="scroll-to-bottom" class="btn btn-dark btn mb-3 mr-3" style="position: fixed; bottom: 0; right: 0;">
+                            <i class="fas fa-arrow-circle-down"></i>
+                        </button>
 
-                        position: fixed;
-                        bottom: 0px;
-                        left: 10px;
-                        padding: 9px 15px 9px 15px !important;
-                    }"><i class="fas fa-arrow-circle-down"></i></button>
         </div> 
         </div> 
         
@@ -588,9 +585,11 @@
                 $('.answer-field').each(function() {
                     $(this).removeClass('error-input')
                     $(this).removeClass('is-invalid')
+                    $(this).removeClass('is-invalid')
+
                     console.log($(this).val())
 
-                    if ($(this).val() == "" ) {
+                    if ($(this).val() == "" && $(this).data('question-type') != 6 ) {
                         
                         if ($(this).prop("disabled")) {
                             $(this).prop('disabled', false);
@@ -633,13 +632,13 @@
                         console.log(dataId);
 
                         $.ajax({
-                            url: '/chaptertestsubmitanswers',
+                            url: '/studentquiz/submitanswers',
                             type:"GET",
                             data: {dataId: dataId},
                             success: function(data){
                                 $('#lesson_content_holder').empty()
                                 UIkit.notification("<span uk-icon='icon: check'></span> Submitted successfully", {status:'success'})
-                                loadQuizContent()
+                                window.location.href = "/";
                             }
                         })
                 }

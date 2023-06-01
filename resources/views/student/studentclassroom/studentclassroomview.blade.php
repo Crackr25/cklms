@@ -270,6 +270,9 @@
                 $(document).on('click','#quizheader', function(){
                     var id = $(this).data('id');
 
+                    var classroomid = '{{$classroominfo->id}}';
+
+
 
 
                     const swalWithBootstrapButtons = Swal.mixin({
@@ -287,11 +290,9 @@
                             cancelButtonText: 'No, cancel!',
                             reverseButtons: true
                     }).then((result) => {
-
-                        console.log(id);
-
-                        window.open(`/student/attemptquiz/${id}`, '_blank');
-                    
+                        if (result.value == true) {
+                            window.open(`/student/attemptquiz/${id}/${classroomid}`, '_blank');
+                        }
                     })
                 })
 

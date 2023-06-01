@@ -1033,7 +1033,7 @@ class StudentClassroomController extends Controller
             
     }
 
-    public function attempquiz(Request $request, $id){
+    public function attempquiz(Request $request, $id, $classroomid){
     
         
         date_default_timezone_set('Asia/Manila');
@@ -1050,6 +1050,7 @@ class StudentClassroomController extends Controller
             $recordid = DB::table('teacherquizrecords')
                 ->insertGetId([
                     'teacherquizid'       => $id,
+                    'classroomid'         => $classroomid,
                     'submittedby'         => auth()->user()->id,
                     'submitteddatetime'   => date('Y-m-d H:i:s')
                 ]);

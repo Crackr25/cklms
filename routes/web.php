@@ -279,6 +279,7 @@ Route::middleware(['auth', 'isTeacher','isDefaultPass'])->group(function () {
     Route::get('/teacherquiz/delete', 'Teacher\Teacherquizcontroller@delete'); 
     Route::get('/teacherquiz/selectclassroom', 'Teacher\Teacherquizcontroller@classroomSelect')->name('classroomSelect');    
     Route::get('/teacherquiz/selectstudent', 'Teacher\Teacherquizcontroller@studentSelect')->name('studentSelect');    
+    Route::get('/teacherquiz/selectquiz', 'Teacher\Teacherquizcontroller@quizSelect')->name('quizSelect');    
 
 
     Route::get('/teacherbooks/{id}', 'Teacher\BookController@index');      
@@ -289,7 +290,7 @@ Route::middleware(['auth', 'isTeacher','isDefaultPass'])->group(function () {
     Route::get('/teachertestavailability', 'Teacher\Teacherquizcontroller@chaptertestavailability');
     Route::get('/teacherviewresponse', 'Teacher\Teacherquizcontroller@viewResponse');
     Route::get('/teachergetactivequiz', 'Teacher\Teacherquizcontroller@getactivequiz');
-
+    Route::get('teacher/quizresponses', 'Teacher\Teacherquizcontroller@quizResponses');
 
 
 
@@ -380,10 +381,10 @@ Route::middleware(['auth', 'isStudent','isDefaultPass'])->group(function () {
 
     //Teacher quiz for Student
     Route::get('/studentquiz','Student\StudentClassroomController@studentquiz');
-    Route::get('/student/attemptquiz/{id}','Student\StudentClassroomController@attempquiz');
+    Route::get('/student/attemptquiz/{id}/{classroomid}','Student\StudentClassroomController@attempquiz');
     Route::get('/studentquiz/save-answer','Student\StudentClassroomController@saveAnswer');
     Route::post('/studentquiz/save-image','Student\StudentClassroomController@saveImage');
-    Route::get('/teacher/submitanswers','Student\StudentClassroomController@submitanswers');
+    Route::get('/studentquiz/submitanswers','Student\StudentClassroomController@submitanswers');
 
 
     Route::get('/studentQuizContent/{id}/{classroomid}', 'Student\StudentBookController@studentQuizContent');
