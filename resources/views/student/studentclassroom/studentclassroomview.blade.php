@@ -268,6 +268,9 @@
 
 
                 $(document).on('click','#quizheader', function(){
+                    var id = $(this).data('id');
+
+
 
                     const swalWithBootstrapButtons = Swal.mixin({
                     customClass: {
@@ -276,9 +279,6 @@
                     },
                     buttonsStyling: true
                     })
-
-
-
                     swalWithBootstrapButtons.fire({
                             title: 'Attempt Quiz',
                             type: 'question',
@@ -288,7 +288,9 @@
                             reverseButtons: true
                     }).then((result) => {
 
-                        console.log(result.value)
+                        console.log(id);
+
+                        window.open(`/student/attemptquiz/${id}`, '_blank');
                     
                     })
                 })

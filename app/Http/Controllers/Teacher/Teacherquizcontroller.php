@@ -61,6 +61,20 @@ class Teacherquizcontroller extends Controller
     }
 
 
+    public function delete(Request $request)
+    {
+
+
+        date_default_timezone_set('Asia/Manila');
+        DB::table('teacherquiz')
+                ->where('id',$request->get('id'))
+                ->update([
+                    'deleted'         => 1,
+                    'deleteddatetime'       => \Carbon\Carbon::now('Asia/Manila')
+                ]);
+    }
+
+
     public function classroomSelect(Request $request)
     {
         $page = $request->get('page')*10;

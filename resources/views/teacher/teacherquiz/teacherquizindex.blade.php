@@ -26,10 +26,112 @@
         padding: 0 !important;
         display: inline !important;
     }
-    /* CSS */
-    .select2-container {
-    width: 100%;
+
+    .course-card-thumbnail {
+    position: relative;
+}
+
+    .close-button {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        width: 30px;
+        height: 30px;
+        border: none;
+        background-color: black;
+        color: white;
+        border-radius: 50%;
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
     }
+
+    .close-button:hover {
+    background-color: white;
+    color: black;
+    }
+
+    .close-button::after {
+        content: "Delete";
+        position: absolute;
+        top: 35px;
+        left: -20px;
+        display: none;
+        background-color: white;
+        color: black;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+    }
+
+    .close-button:hover::after {
+        display: block;
+    }
+
+    .activatequiz:hover {
+    background-color: white;
+    color: black;
+    }
+
+    .activatequiz::after {
+        content: "Activate Quiz";
+        position: absolute;
+        top: 35px;
+        left: -20px;
+        display: none;
+        background-color: white;
+        color: black;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+    }
+
+    .activatequiz:hover::after {
+        display: block;
+    }
+
+
+    .course-card {
+    position: relative;
+    transition: transform 0.3s ease;
+    }
+
+    .course-card:hover {
+        transform: translateY(-10px);
+    }
+
+    .dropdown-title {
+    padding: 0;
+    margin: 0;
+    background: none;
+    border: none;
+    font-size: inherit;
+    color: inherit;
+    cursor: pointer;
+    text-decoration: underline;
+    text-align: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    }
+
+    .dropdown-menu {
+        max-height: 150px;
+        overflow-y: auto;
+        width: 300px;
+        padding: 10px;
+    }
+
+    .dropdown-item.quiz-description {
+        white-space: pre-wrap;
+    }
+
+
+
+
+
 
 </style>
 
@@ -154,7 +256,8 @@
 
             function loadquiz(){
 
-                console.log('loading');
+                $('#quiz_table_holder').empty();
+
 
                 $.ajax({
                     url: "/teacherquizzes?table=table",
@@ -209,6 +312,53 @@
             console.log(selectedQuizId);
 
         })
+
+
+        $(document).on('click','.close-button',function(){
+            var QuizId = $(this).data('id');
+            console.log(QuizId);
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    console.log(result);
+                if (result.value == true) {
+
+                    $.ajax({
+                        url: '/teacherquiz/delete',
+                        type:"GET",
+                        data:{
+                            id: QuizId
+                        },
+                        success: function(data){
+                            console.log("1");
+
+                            loadquiz()
+
+                            Swal.fire(
+                                'Deleted!',
+                                'Your file has been deleted.',
+                                'success'
+                                )
+                            
+                        }
+                    })
+
+                    
+                    
+                }
+                })
+
+            
+
+        })
+
 
         $(document).on('change','#select-classroom',function(){
 

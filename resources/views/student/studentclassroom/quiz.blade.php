@@ -17,7 +17,7 @@
                             
                                 <div class="course-card-footer">
                                         <h5><i class="icon-feather-calendar"></i> Status: <span class="badge ml-1 badge-warning">Overdue</span></h5>
-                                    <button class="btn btn-dark infobtn" data-id = "{{$quiz->id}}" >Info</button>
+                                        <button class="btn btn-info infobtn" data-id = "{{$quiz->id}}" ><i class="fa fa-info-circle" aria-hidden="true"></i></button>
                                 </div>
                             </div>
                     </div>    
@@ -38,7 +38,7 @@
                             
                                 <div class="course-card-footer">
                                         <h5><i class="icon-feather-calendar"></i> Status: <span class="badge ml-1 badge-warning">In Active</span></h5>
-                                    <button class="btn btn-dark infobtn" data-id = "{{$quiz->id}}" >Info</button>
+                                        <button class="btn btn-info infobtn" data-id = "{{$quiz->id}}" ><i class="fa fa-info-circle" aria-hidden="true"></i></button>
                                 </div>
                             </div>
                     </div>    
@@ -59,7 +59,7 @@
                             </a>
                                 <div class="course-card-footer">
                                         <h5><i class="icon-feather-calendar"></i> Status: <span class="badge ml-1 badge-success">Active</span></h5>
-                                    <button class="btn btn-dark infobtn" data-id = "{{$quiz->id}}" >Info</button>
+                                    <button class="btn btn-info infobtn" data-id = "{{$quiz->id}}" ><i class="fa fa-info-circle" aria-hidden="true"></i></button>
                                 </div>
                             </div>
                     </div>    
@@ -97,7 +97,6 @@
         <!-- Modal footer -->
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Save changes</button>
         </div>
         </div>
     </div>
