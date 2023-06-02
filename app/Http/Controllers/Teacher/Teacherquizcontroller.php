@@ -729,7 +729,7 @@ class Teacherquizcontroller extends Controller
                 ]);
             
             DB::table('teacherquizquestions')
-                ->where('id', $request->get('questionid'))
+                ->where('id', $request->get('id'))
                 ->update([
                     'points'             =>  $request->get('item'),
                 ]);
@@ -1195,6 +1195,7 @@ class Teacherquizcontroller extends Controller
 
                     if(isset($answer)){
                         $item->answer = $answer;
+
                         if($check == 1){
 
 
@@ -1208,20 +1209,25 @@ class Teacherquizcontroller extends Controller
 
                             //update points value
                             DB::table('teacherquizrecordsdetail')
+                                    ->where('questionid',$item->id)
+                                    ->where('id', $teacherdetailsid)
+                                    ->where('deleted', 0)
+                                    ->update([
+                                        'points' => 1
 
-                            ->where('id', $teacherdetailsid)
-                            ->where('deleted', 0)
-                            ->update([
-                                'points' => 1
 
-
-                            ]);
-                            
+                                    ]);
+                                    
 
 
 
                         }else{
+
+
+
                             $item->check = 0;
+
+
                         }
                         
                     }else{
@@ -1265,6 +1271,8 @@ class Teacherquizcontroller extends Controller
                     }else{
 
                         $item->answer = "";
+                        $item->detailsid = 0;
+                        $item->pointsgiven = 0;
 
                     }
 
@@ -1447,6 +1455,8 @@ class Teacherquizcontroller extends Controller
                                     ->value('points');
                     }else{
                         $item->picurl = "";
+                        $item->detailsid = 0;
+                        $item->pointsgiven = 0;
                     }
                 }
 
@@ -1582,6 +1592,8 @@ class Teacherquizcontroller extends Controller
                             ->where('deleted', 0)
                             ->count();
 
+
+                        //Check the answer if 1 drop question have only 1 blanks question
                         if ($answercount == 1) {
                             $drop->answer = DB::table('teacherquizrecordsdetail')
                                 ->where('questionid', $drop->id)
@@ -1595,12 +1607,37 @@ class Teacherquizcontroller extends Controller
                                 ->value('answer');
 
                             if ($checkanswer == $drop->answer) {
+
+
+
+                                    $teacherdetailsid = DB::table('teacherquizrecordsdetail')
+                                    ->where('questionid',$drop->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('sortid', 1)
+                                    ->where('deleted',0)
+                                    ->value('id');
+
+                                    //update points value
+                                    DB::table('teacherquizrecordsdetail')
+                                    ->where('id', $teacherdetailsid)
+                                    ->where('sortid',1)
+                                    ->where('deleted', 0)
+                                    ->update([
+                                        'points' => 1
+
+
+                                    ]);
+
+
                                 $score += 1;
                                 $check = '<span><i class="fa fa-check" style="color:rgb(7, 255, 7)" aria-hidden="true"></i></span>';
+                            
                             } else {
                                 $check = '<span><i class="fa fa-times" style="color: red;" aria-hidden="true"></i></span>';
                             }
                             
+
+                            //Set up the drop question for teacher view
                             $questionWithInputs = preg_replace_callback('/~input/', function($matches) use ($drop, &$inputCounter, &$key, &$check) {
                                 $inputField = '<input class="d-inline form-control q-input drop-option q-input ui-droppable bg-primary text-white answer-field" data-question-type="5" data-sortid="'.(++$inputCounter).'" data-question-id="'.$drop->id.'" style="width: 200px; margin: 10px; border-color:black" type="text" id="input-'.$drop->id.'" value="'.$drop->answer.'" disabled>'.$check;
                                 return $inputField;
@@ -1608,7 +1645,11 @@ class Teacherquizcontroller extends Controller
                             $inputCounter = 0;
                             
                             $drop->question = $questionWithInputs;
+
+                        //Check the answer if 1 drop question have multiple blanks question
                         } else if ($answercount > 1) {
+
+
                             $answer = DB::table('teacherquizrecordsdetail')
                                 ->where('questionid', $drop->id)
                                 ->where('headerid', $recordid)
@@ -1623,7 +1664,31 @@ class Teacherquizcontroller extends Controller
                                     ->value('answer');
 
                                 if ($checkanswer == $ans->stringanswer) {
+
+
+
+                                    $teacherdetailsid = DB::table('teacherquizrecordsdetail')
+                                    ->where('questionid',$drop->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('sortid', $ans->sortid)
+                                    ->where('deleted',0)
+                                    ->value('id');
+
+                                    //update points value
+                                    DB::table('teacherquizrecordsdetail')
+                                    ->where('id', $teacherdetailsid)
+                                    ->where('sortid', $ans->sortid)
+                                    ->where('deleted', 0)
+                                    ->update([
+                                        'points' => 1
+
+
+                                    ]);
                                     $score += 1;
+
+
+
+
                                     $ans->check = '<span><i class="fa fa-check" style="color:rgb(7, 255, 7)" aria-hidden="true"></i></span>';
                                 } else {
                                     $ans->check = '<span><i class="fa fa-times" style="color: red;" aria-hidden="true"></i></span>'; 
@@ -1659,6 +1724,8 @@ class Teacherquizcontroller extends Controller
 
 
             }
+
+            //dd($quizQuestions);
             
 
             return view('teacher.teacherquiz.teacherquiz.studentquizresponse')

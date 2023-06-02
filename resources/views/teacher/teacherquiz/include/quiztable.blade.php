@@ -6,20 +6,21 @@
                 
                 <div class="quizCount">
                     <div class="course-card">
-                        <div class="course-card-thumbnail">
-                            <img src="{{asset('assets/images/elearning8.jpg')}}">
-                            <span class="play-button-trigger"></span>
-                            <button class="close-button" data-id="{{$quiz->id}}">×</button> <!-- Add the close button -->
-                        </div>
                         <a href="/teacherquiz/quiz/{{$quiz->id}}">
-                            <div class="course-card-body">
-                                <div class="dropdown">
-                                    <button class="btn btn-link dropdown-toggle dropdown-title" type="button" id="quizDropdown{{$quiz->id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        {{$quiz->title}}
-                                    </button>
-                                    <div class="dropdown-menu" aria-labelledby="quizDropdown{{$quiz->id}}">
-                                        <p class="dropdown-item quiz-description">{{$quiz->description}}</p>
-                                    </div>
+                            <div class="course-card-thumbnail">
+                                <img src="{{asset('assets/images/elearning8.jpg')}}">
+                                <span class="play-button-trigger"></span>
+                                <button class="close-button" data-id="{{$quiz->id}}">×</button> <!-- Add the close button -->
+                            </div>
+                            
+                                <div class="course-card-body">
+                                    <div class="dropdown">
+                                        <button class="btn btn-link dropdown-toggle dropdown-title" type="button" id="quizDropdown{{$quiz->id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            {{$quiz->title}}
+                                        </button>
+                                        <div class="dropdown-menu" aria-labelledby="quizDropdown{{$quiz->id}}">
+                                            <p class="dropdown-item quiz-description">{{$quiz->description}}</p>
+                                        </div>
                         </a>
                                 </div>
                                 <div class="course-card-footer">

@@ -83,9 +83,8 @@
             <tr>
                 <th>Name</th>
                 <th>Date &amp; Time Submitted</th>
-                <th>No. of Attempts</th>
                 <th>Score</th>
-                <th></th>
+                <th>Response</th>
             </tr>
             </thead>
             <tbody id="quizResponseDetailstudent">
@@ -147,6 +146,7 @@
                         <table id="quizDataTable2" class="table table-striped" style="width:100%">
                             <thead class ="thead-dark">
                                 <tr>
+                                    <th>#</th>
                                     <th>Quiz Title</th>
                                     <th>Date</th>
                                     <th>Attempts</th>
@@ -333,8 +333,8 @@
 
         })
     $(document).on('click','.refresh_table',function(){
-                console.log("Refreshed")
-                getActiveQuiz()
+            console.log("Refreshed")
+            getActiveQuiz()
     })
 
 
@@ -377,7 +377,7 @@
                                 <tr>
                                     <td>${entry.name}</td>
                                     <td>${formattedDate}</td>
-                                    <td>${entry.totalscore ? entry.totalscore : 'Not yet scored.'}</td>
+                                    <td>${entry.totalscore ? entry.totalscore : 'Not yet scored.'} / ${entry.maxpoints}</td>
                                     <td><button class="btn btn-primary view-response" data-quiz-id="${quizid}" data-record-id="${entry.id}" data-classroom-id="${entry.classroomid}">View Response</button></td>
                                 </tr>
                             `;
@@ -422,6 +422,8 @@
 
             getQuizResponses(chapterquizid).then(function(data) {
 
+                console.log(data);
+
                 // Create an object to store the latest entries for each submittedby
                 const latestEntries = {};
 
@@ -460,7 +462,7 @@
                         <td class="tooltip-td clickable" data-quiz-id="${filteredQuiz[0].id}" data-student-id="${entry.submittedby}"  data-toggle="tooltip" title="View All Student Responses">
                             <button type="button" class="btn btn-link">${data.length} / ${filteredQuiz[0].noofattempts}</button>
                         </td>
-                        <td>${entry.totalscore ? entry.totalscore : 'Not yet scored.'}</td>
+                        <td>${entry.totalscore ? entry.totalscore : 'Not yet scored.'} / ${entry.maxpoints}</td>
                         <td><button class="btn btn-primary view-response" data-quiz-id="${filteredQuiz[0].id}" data-record-id="${entry.id}" data-classroom-id="${entry.classroomid}">View Response</button></td>
                         </tr>
                     `;
@@ -502,11 +504,24 @@
                     { "data": null},
                     { "data": null},
                     { "data": null},
+                    { "data": null},
                     { "data": "search"}
                 ],
                 columnDefs: [
                     {
                         'targets': 0,
+                        'orderable': false, 
+                        'createdCell':  function (td, cellData, rowData, row, col) {
+                                var text = '<a class="mb-0">'+(row + 1)+'</a>'
+                                $(td)[0].innerHTML =  text
+                                $(td).addClass('text-center')
+                                $(td).addClass('align-middle')
+                        }
+                    },
+                
+                
+                    {
+                        'targets': 1,
                         'orderable': false, 
                         'createdCell':  function (td, cellData, rowData, row, col) {
                                 var text = '<a class="mb-0">'+rowData.title+'</a>'
@@ -516,7 +531,7 @@
                         }
                     },
                     {
-                        'targets': 1,
+                        'targets': 2,
                         'orderable': false, 
                         'createdCell':  function (td, cellData, rowData, row, col) {
                             var date2 =  new Date(Date.parse(rowData.datefrom));
@@ -532,7 +547,7 @@
                         }
                     },
                     {
-                        'targets': 2,
+                        'targets': 3,
                         'orderable': false, 
                         'createdCell':  function (td, cellData, rowData, row, col) {
                             var text = '<a class="mb-0">'+rowData.noofattempts+'</a>'
@@ -542,7 +557,7 @@
                         }
                     },
                     {
-                        'targets': 3,
+                        'targets': 4,
                         'orderable': false, 
                         'createdCell':  function (td, cellData, rowData, row, col) {
                             var date2 = new Date(Date.parse(rowData.createddatetime));
@@ -553,7 +568,7 @@
                         }
                     },
                     {
-                        'targets': 4,
+                        'targets': 5,
                         'orderable': false, 
                         'createdCell':  function (td, cellData, rowData, row, col) {
                             getQuizResponses(rowData.id).then(function(data) {
