@@ -17,10 +17,87 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+
+<style>
+
+
+    .clickable {
+    cursor: pointer;
+    }
+
+    .tooltip-td {
+    padding: 0;
+    }
+
+
+</style>
 </head>
 
 @section('content')
 
+<!-- Modals -->
+<div class="modal fade" id="responseModal" tabindex="-1" aria-labelledby="responseModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Responses</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        <div class="modal-body">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Date &amp; Time Submitted</th>
+                <th>No. of Attempts</th>
+                <th>Score</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody id="quizResponseDetails">
+            </tbody>
+        </table>
+        </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+    </div>
+</div>
+
+<!-- Modals -->
+<div class="modal fade" id="responseModalstudent" tabindex="-1" aria-labelledby="responseModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title" id="ModalLabelstudent">Responses</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        <div class="modal-body">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Name</th>
+                <th>Date &amp; Time Submitted</th>
+                <th>No. of Attempts</th>
+                <th>Score</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody id="quizResponseDetailstudent">
+            </tbody>
+        </table>
+        </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-secondary closemodal" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+    </div>
+</div>
 
 <div class="container-fluid">
     <div class="row justify-content-center">
@@ -100,6 +177,8 @@
 
 <script>
     $(document).ready(function() {
+
+    $('.tooltip-td').tooltip();
 
     $('#classroom').select2({
                             width: '100%',
@@ -257,6 +336,143 @@
                 console.log("Refreshed")
                 getActiveQuiz()
     })
+
+
+    $(document).on('click', '.clickable', function() {
+
+                var studentid = $(this).data('student-id');
+                var quizid = $(this).data('quiz-id');
+                var modalTitle = $('#ModalLabelstudent');
+
+
+                console.log("Student ID: ", studentid , "Quiz ID: ", quizid);
+
+                $('#quizResponseDetailstudent').empty();
+
+                getQuizResponses(quizid).then(function(data) {
+                    // Create an object to store the filtered entries for each submittedby
+                    const filteredEntries = {};
+
+                    // Iterate through the data and filter the entries for each submittedby
+                    data.forEach(entry => {
+                        modalTitle.text(entry.name);
+                        const submittedby = entry.submittedby;
+
+                        if (!filteredEntries[submittedby]) {
+                            filteredEntries[submittedby] = [];
+                        }
+
+                        filteredEntries[submittedby].push(entry);
+                    });
+
+                    // Create the HTML for the filtered entries
+                    let filteredEntriesHtml = '';
+
+                    Object.entries(filteredEntries).forEach(([submittedby, entries]) => {
+                        const entriesHtml = entries.map(entry => {
+                            let options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+                            let formattedDate = new Date(entry.submitteddatetime).toLocaleDateString('en-US', options);
+
+                            return `
+                                <tr>
+                                    <td>${entry.name}</td>
+                                    <td>${formattedDate}</td>
+                                    <td>${entry.totalscore ? entry.totalscore : 'Not yet scored.'}</td>
+                                    <td><button class="btn btn-primary view-response" data-quiz-id="${quizid}" data-record-id="${entry.id}" data-classroom-id="${entry.classroomid}">View Response</button></td>
+                                </tr>
+                            `;
+                        }).join('');
+
+                        filteredEntriesHtml += entriesHtml;
+                    });
+
+                    $(filteredEntriesHtml).appendTo('#quizResponseDetailstudent');
+                });
+
+                $('#responseModalstudent').modal();
+    });
+
+    $(document).on('click', '.closemodal', function() {
+                
+                $('#responseModal').modal('show');
+
+
+    });
+
+    $(document).on('click', '.view-response', function() {
+
+            var recordId = $(this).data('record-id')
+            var selectedQuizId = $(this).data('quiz-id')
+            var classroomid = $(this).data('classroom-id')
+
+            console.log("quizid", selectedQuizId ,"recordId", recordId ,"classroom", classroomid);
+            var url = `/teacherquiz/viewquizresponse/${classroomid}/${selectedQuizId}/${recordId}`;
+
+            window.open(url, '_blank');
+    })
+
+
+
+    $(document).on('click', '.response', function() {
+
+            var chapterquizid = $(this).data('id')
+            var studentEntryHtml;
+
+            $('#quizResponseDetails').empty()
+
+            getQuizResponses(chapterquizid).then(function(data) {
+
+                // Create an object to store the latest entries for each submittedby
+                const latestEntries = {};
+
+                // Iterate through the data and update the latest entry for each submittedby
+                data.forEach(entry => {
+
+                    const submittedby = entry.submittedby;
+                    const datetime = new Date(entry.submitteddatetime);
+                    
+                    if (!latestEntries[submittedby] || datetime > latestEntries[submittedby].datetime) {
+                        latestEntries[submittedby] = { entry, datetime };
+                    }
+                });
+
+                // Create the HTML for the latest entries
+                const latestEntriesHtml = Object.values(latestEntries).map(({ entry, datetime }) => {
+                    let options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+                    let formattedDate = datetime.toLocaleDateString('en-US', options);
+
+
+                    // Calculate no. of attempts
+                    var filteredQuiz = activequiz.filter(function(quiz) {
+                        if (quiz.id == chapterquizid) {
+                            return quiz
+                        }
+                    });
+
+                    console.log('filtered-quiz', filteredQuiz)
+                    console.log('entry', entry)
+                
+
+                    return `
+                        <tr>
+                        <td>${entry.name}</td>
+                        <td>${formattedDate}</td>
+                        <td class="tooltip-td clickable" data-quiz-id="${filteredQuiz[0].id}" data-student-id="${entry.submittedby}"  data-toggle="tooltip" title="View All Student Responses">
+                            <button type="button" class="btn btn-link">${data.length} / ${filteredQuiz[0].noofattempts}</button>
+                        </td>
+                        <td>${entry.totalscore ? entry.totalscore : 'Not yet scored.'}</td>
+                        <td><button class="btn btn-primary view-response" data-quiz-id="${filteredQuiz[0].id}" data-record-id="${entry.id}" data-classroom-id="${entry.classroomid}">View Response</button></td>
+                        </tr>
+                    `;
+                }).join('');
+
+                $(latestEntriesHtml).appendTo('#quizResponseDetails');
+
+            })
+
+            $('#responseModal').modal()
+
+        })
 
     function getQuizResponses(quizID) {
             return $.ajax({

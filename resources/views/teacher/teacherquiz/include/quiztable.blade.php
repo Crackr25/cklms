@@ -20,13 +20,14 @@
                                     <div class="dropdown-menu" aria-labelledby="quizDropdown{{$quiz->id}}">
                                         <p class="dropdown-item quiz-description">{{$quiz->description}}</p>
                                     </div>
+                        </a>
                                 </div>
                                 <div class="course-card-footer">
                                     <h5><i class="icon-feather-calendar"></i> Created: {{\Carbon\Carbon::create($quiz->createddatetime)->isoFormat('MMMM DD, YYYY hh:mm A')}}</h5>
                                     <button class="btn btn-dark activatequiz" data-id="{{$quiz->id}}">Activate</button>
                                 </div>
                             </div>
-                        </a>
+                    
                     </div>
                 </div>
 

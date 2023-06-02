@@ -11,6 +11,8 @@
 
 @endsection
 
+<link rel="stylesheet" href="{{asset('plugins/select2/css/select2.min.css')}}">
+
 <style>
 
     .randomize-checkbox {
@@ -238,6 +240,7 @@
 
 
     <script src="{{asset('plugins/jquery/jquery.min.js')}}"></script>
+    <script src="{{asset('plugins/select2/js/select2.min.js')}}"></script>
 
     <script>
 

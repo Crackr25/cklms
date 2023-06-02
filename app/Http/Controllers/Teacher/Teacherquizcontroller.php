@@ -1131,6 +1131,592 @@ class Teacherquizcontroller extends Controller
     }
 
 
+    public function viewquizresponse($classroomId, $quizId, $recordId, Request $request)
+    {
+
+        $recordid = $recordId;
+        $quizid = $quizId;
+        $classroomid = $classroomId;
+
+        $studinfo = DB::table('teacherquizrecords')
+            ->where('id',$recordId)
+            ->value('studname');
+
+        $quizInfo = DB::table('teacherquiz')
+                        ->where('id',$quizid)
+                        ->select('id','title', 'description' )
+                        ->first();
+
+
+
+        $quizQuestions = DB::table('teacherquizquestions')
+                    ->where('teacherquizquestions.deleted','0')
+                    ->where('quizid', $quizInfo->id)
+                    ->where('typeofquiz', '!=', null)
+                    ->select(
+                        'teacherquizquestions.id',
+                        'teacherquizquestions.question',
+                        'teacherquizquestions.typeofquiz',
+                        'teacherquizquestions.item',
+                        'teacherquizquestions.points',
+                        'teacherquizquestions.ordered'
+                    )
+                    ->get();
+
+        $isAnswered = false;
+
+
+
+
+            foreach($quizQuestions as $item){
+
+                if($item->typeofquiz == 1){
+
+                    $choices = DB::table('teacherquizchoices')
+                                    ->where('questionid',$item->id)
+                                    ->where('deleted',0)
+                                    ->select('description','id','answer', 'sortid')
+                                    ->orderBy('sortid')
+                                    ->get();
+
+                    $item->choices = $choices;
+
+                    $answer = DB::table('teacherquizrecordsdetail')
+                                    ->where('questionid',$item->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('deleted',0)
+                                    ->value('choiceid');
+
+                    $check = DB::table('teacherquizchoices')
+                                    ->where('questionid',$item->id)
+                                    ->where('id', $answer)
+                                    ->where('deleted',0)
+                                    ->value('answer');
+
+                    if(isset($answer)){
+                        $item->answer = $answer;
+                        if($check == 1){
+
+
+                            $item->check = 1;
+
+                            $teacherdetailsid = DB::table('teacherquizrecordsdetail')
+                                    ->where('questionid',$item->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('deleted',0)
+                                    ->value('id');
+
+                            //update points value
+                            DB::table('teacherquizrecordsdetail')
+
+                            ->where('id', $teacherdetailsid)
+                            ->where('deleted', 0)
+                            ->update([
+                                'points' => 1
+
+
+                            ]);
+                            
+
+
+
+                        }else{
+                            $item->check = 0;
+                        }
+                        
+                    }else{
+
+                        $item->answer = 0;
+
+                    }
+
+
+                }
+
+                if($item->typeofquiz == 2 || $item->typeofquiz == 3 ){
+
+                    $answer = DB::table('teacherquizrecordsdetail')
+                                    ->where('questionid',$item->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('deleted',0)
+                                    ->value('stringanswer');
+
+
+                    if(isset($answer)){
+
+                        $item->answer = $answer;
+
+                        $item->detailsid = DB::table('teacherquizrecordsdetail')
+                                    ->where('questionid',$item->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('deleted',0)
+                                    ->value('id');
+
+                        $item->pointsgiven = DB::table('teacherquizrecordsdetail')
+                                    ->where('questionid',$item->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('deleted',0)
+                                    ->value('points');
+
+
+
+
+
+                    }else{
+
+                        $item->answer = "";
+
+                    }
+
+                    
+                }
+
+                if($item->typeofquiz == 7 ){
+
+
+                    $fillquestions = DB::table('teacher_quiz_fill_question')
+                                                ->where('questionid', $item->id)
+                                                ->orderBy('sortid')
+                                                ->get();
+
+                    $item->fill = $fillquestions;
+
+                    $score = 0;
+
+
+                    foreach ($item->fill as $index => $fillItem) {
+                        $key = 0;
+                        $answercount = DB::table('teacherquizrecordsdetail')
+                            ->where('questionid', $fillItem->id)
+                            ->where('headerid', $recordid)
+                            ->where('deleted', 0)
+                            ->count();
+
+                        if ($answercount == 1) {
+                            $fillItem->answer  = DB::table('teacherquizrecordsdetail')
+                                ->where('questionid', $fillItem->id)
+                                ->where('headerid', $recordid)
+                                ->where('deleted', 0)
+                                ->value('stringanswer');
+
+
+                            $checkanswer = DB::table('teacher_quiz_fill_answer')
+                                    ->where('headerid',$fillItem->id)
+                                    ->where('sortid', 1)
+                                    ->value('answer');
+
+                            $check='';
+
+                            if($checkanswer == $fillItem->answer){
+
+                                $teacherdetailsid = DB::table('teacherquizrecordsdetail')
+                                    ->where('questionid',$fillItem->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('sortid', 1)
+                                    ->where('deleted',0)
+                                    ->value('id');
+
+                                //update points value
+                                DB::table('teacherquizrecordsdetail')
+
+                                ->where('id', $teacherdetailsid)
+                                ->where('deleted', 0)
+                                ->where('sortid', 1)
+                                ->update([
+                                    'points' => 1
+
+
+                                ]);
+
+                                $score+= 1;
+
+                                $check = '<span><i class="fa fa-check" style="color:rgb(7, 255, 7)" aria-hidden="true"></i></span>';
+                            
+                            }else{
+                                $check = '<span><i class="fa fa-times" style="color: red;" aria-hidden="true"></i></span>';
+                            }
+
+                            $questionWithInputs = preg_replace_callback('/~input/', function ($matches) use ($fillItem, &$inputCounter, &$key, &$check) {
+                                $inputField = '<input class="answer-field d-inline form-control q-input" data-question-type="7" data-sortid="' . ++$inputCounter . '" data-question-id="' . $fillItem->id . '" style="width: 200px; margin: 10px; border-color:black" type="text" id="input-' . $fillItem->id . '" value="' . $fillItem->answer . '">'.$check;
+                                return $inputField;
+                            }, $fillItem->question);
+                            $inputCounter = 0;
+
+                            $fillItem->question = $questionWithInputs;
+                        } else if ($answercount > 1) {
+
+                            $answer = DB::table('teacherquizrecordsdetail')
+                                ->where('questionid', $fillItem->id)
+                                ->where('headerid', $recordid)
+                                ->select('stringanswer', 'sortid')
+                                ->orderBy('sortid', 'asc')
+                                ->get();
+
+                            foreach($answer as $ans){
+
+                                $checkanswer = DB::table('teacher_quiz_drop_answer')
+                                    ->where('headerid',$fillItem->id)
+                                    ->where('sortid', $ans->sortid)
+                                    ->value('answer');
+
+                                if($checkanswer == $ans->stringanswer){
+
+                                    $score+= 1;
+
+                                    $teacherdetailsid = DB::table('teacherquizrecordsdetail')
+                                    ->where('questionid',$fillItem->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('sortid', $ans->sortid)
+                                    ->where('deleted',0)
+                                    ->value('id');
+
+                                    //update points value
+                                    DB::table('teacherquizrecordsdetail')
+                                    ->where('id', $teacherdetailsid)
+                                    ->where('sortid', $ans->sortid)
+                                    ->where('deleted', 0)
+                                    ->update([
+                                        'points' => 1
+
+
+                                    ]);
+
+                                    $ans->check = '<span><i class="fa fa-check" style="color:rgb(7, 255, 7)" aria-hidden="true"></i></span>';
+                                }else{
+                                    $ans->check = '<span><i class="fa fa-times" style="color: red;" aria-hidden="true"></i></span>'; 
+                                }
+                                
+
+                            } 
+
+                            
+
+                            $sort = -1;
+                            $questionWithInputs = preg_replace_callback('/~input/', function ($matches) use ($fillItem, &$inputCounter, &$key, &$sort, &$answer) {
+                                $inputField = '<input class="answer-field d-inline form-control q-input" data-question-type="7" data-sortid="' . ++$inputCounter . '" data-question-id="' . $fillItem->id . '" value="' . $answer[++$sort]->stringanswer . '" style="width: 200px; margin: 10px; border-color:black" type="text" id="input-' . $fillItem->id . '">'.$answer[$sort]->check;
+                                return $inputField;
+                            }, $fillItem->question);
+                            $inputCounter = 0;
+
+                            $fillItem->answer = $answer;
+                            $fillItem->question = $questionWithInputs;
+                        } else {
+                            $questionWithInputs = preg_replace_callback('/~input/', function ($matches) use ($fillItem, &$inputCounter, &$key) {
+                                $inputField = '<input class="answer-field d-inline form-control q-input" data-question-type="7" data-sortid="' . ++$inputCounter . '" data-question-id="' . $fillItem->id . '" style="width: 200px; margin: 10px; border-color:black" type="text" id="input-' . $fillItem->id . '">';
+                                return $inputField;
+                            }, $fillItem->question);
+                            $inputCounter = 0;
+
+                            $fillItem->question = $questionWithInputs;
+                        }
+                    }
+
+                    $item->score = $score;
+
+                                            
+
+                }
+
+
+                if($item->typeofquiz == 6 ){
+
+                    $protocol = $request->getScheme();
+                    $host = $request->getHost();
+
+                    $rootDomain = $protocol . '://' . $host;
+
+                    $answer = DB::table('teacherquizrecordsdetail')
+                        ->where('questionid',$item->id)
+                        ->where('headerid', $recordid)
+                        ->where('deleted',0)
+                        ->value('picurl');
+
+                    if(isset($answer)){
+                        $item->picurl = $rootDomain.'/'.$answer;
+
+                        $item->detailsid = DB::table('teacherquizrecordsdetail')
+                                    ->where('questionid',$item->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('deleted',0)
+                                    ->value('id');
+
+                        $item->pointsgiven = DB::table('teacherquizrecordsdetail')
+                                    ->where('questionid',$item->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('deleted',0)
+                                    ->value('points');
+                    }else{
+                        $item->picurl = "";
+                    }
+                }
+
+
+                if($item->typeofquiz == 8){
+                
+
+                    $numberOfTimes = $item->item;
+
+
+                    $newArray = []; // Declare an empty array
+
+                    for ($i = 0; $i < $numberOfTimes; $i++) {
+
+                        $answer  = DB::table('teacherquizrecordsdetail')
+                                        ->where('questionid',$item->id)
+                                        ->where('headerid', $recordid)
+                                        ->where('sortid', $i+1)
+                                        ->where('deleted',0)
+                                        ->value('stringanswer');
+                        $newArray[] = $answer;
+                    }
+
+                    $answerArray = [];
+
+                    $score = 0;
+
+                    foreach($newArray as $key=>$new) {
+                        
+
+                        if($item->ordered == 1){
+                            $countval = DB::table('teacher_quiz_enum_answer')
+                            ->where('answer', $new)
+                            ->where('headerid', $item->id)
+                            ->count();
+
+                            if($countval > 0){
+                                $answerArray[] = 1;
+                                $score+=1;
+
+                                $teacherdetailsid = DB::table('teacherquizrecordsdetail')
+                                    ->where('questionid',$item->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('sortid', $key + 1)
+                                    ->where('deleted',0)
+                                    ->value('id');
+
+                                    //update points value
+                                    DB::table('teacherquizrecordsdetail')
+
+                                    ->where('id', $teacherdetailsid)
+                                    ->where('deleted', 0)
+                                    ->update([
+                                        'points' => 1
+
+
+                                    ]);
+                            }else{
+                                $answerArray[] = 0;
+                            }
+                        }else{
+
+                            $countval = DB::table('teacher_quiz_enum_answer')
+                            ->where('answer', $new)
+                            ->where('headerid', $item->id)
+                            ->where('sortid', $key + 1)
+                            ->count();
+
+                            if($countval > 0){
+                                $answerArray[] = 1;
+                                $score+=1;
+
+                                $teacherdetailsid = DB::table('teacherquizrecordsdetail')
+                                    ->where('questionid',$item->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('sortid', $key)
+                                    ->where('deleted',0)
+                                    ->value('id');
+
+                                //update points value
+                                DB::table('teacherquizrecordsdetail')
+                                ->where('id', $teacherdetailsid)
+                                ->where('deleted', 0)
+                                ->update([
+                                    'points' => 1
+
+
+                                ]);
+
+                            }else{
+                                $answerArray[] = 0;
+                            }
+
+                        }
+                    }
+
+
+                    $item->answer = $newArray;
+                    $item->check =  $answerArray;
+                    $item->score =  $score;
+
+
+                }
+
+                if($item->typeofquiz == 5){
+
+                    $dragoption = DB::table('teacher_quiz_drag_option')
+                                    ->where('questionid',$item->id)
+                                    ->where('deleted',0)
+                                    ->select('description','id')
+                                    ->get();
+
+                    $item->drag = $dragoption;
+
+                    $dropquestions = DB::table('teacher_quiz_drop_question')
+                                                ->where('questionid', $item->id)
+                                                ->orderBy('sortid')
+                                                ->get();
+
+                    $item->drop = $dropquestions;
+
+
+                    $score = 0;
+
+                    
+
+                    
+                    foreach($dropquestions as $index => $drop) {
+                        $key = 0;
+                        $answercount = DB::table('teacherquizrecordsdetail')
+                            ->where('questionid', $drop->id)
+                            ->where('headerid', $recordid)
+                            ->where('deleted', 0)
+                            ->count();
+
+                        if ($answercount == 1) {
+                            $drop->answer = DB::table('teacherquizrecordsdetail')
+                                ->where('questionid', $drop->id)
+                                ->where('headerid', $recordid)
+                                ->where('deleted', 0)
+                                ->value('stringanswer');
+
+                            $checkanswer = DB::table('teacher_quiz_drop_answer')
+                                ->where('headerid', $drop->id)
+                                ->where('sortid', 1)
+                                ->value('answer');
+
+                            if ($checkanswer == $drop->answer) {
+                                $score += 1;
+                                $check = '<span><i class="fa fa-check" style="color:rgb(7, 255, 7)" aria-hidden="true"></i></span>';
+                            } else {
+                                $check = '<span><i class="fa fa-times" style="color: red;" aria-hidden="true"></i></span>';
+                            }
+                            
+                            $questionWithInputs = preg_replace_callback('/~input/', function($matches) use ($drop, &$inputCounter, &$key, &$check) {
+                                $inputField = '<input class="d-inline form-control q-input drop-option q-input ui-droppable bg-primary text-white answer-field" data-question-type="5" data-sortid="'.(++$inputCounter).'" data-question-id="'.$drop->id.'" style="width: 200px; margin: 10px; border-color:black" type="text" id="input-'.$drop->id.'" value="'.$drop->answer.'" disabled>'.$check;
+                                return $inputField;
+                            }, $drop->question);
+                            $inputCounter = 0;
+                            
+                            $drop->question = $questionWithInputs;
+                        } else if ($answercount > 1) {
+                            $answer = DB::table('teacherquizrecordsdetail')
+                                ->where('questionid', $drop->id)
+                                ->where('headerid', $recordid)
+                                ->select('stringanswer', 'sortid')
+                                ->orderBy('sortid', 'asc')
+                                ->get();
+                            
+                            foreach ($answer as $ans) {
+                                $checkanswer = DB::table('teacher_quiz_drop_answer')
+                                    ->where('headerid', $drop->id)
+                                    ->where('sortid', $ans->sortid)
+                                    ->value('answer');
+
+                                if ($checkanswer == $ans->stringanswer) {
+                                    $score += 1;
+                                    $ans->check = '<span><i class="fa fa-check" style="color:rgb(7, 255, 7)" aria-hidden="true"></i></span>';
+                                } else {
+                                    $ans->check = '<span><i class="fa fa-times" style="color: red;" aria-hidden="true"></i></span>'; 
+                                }
+                            } 
+
+                            $sort = -1;
+                            $questionWithInputs = preg_replace_callback('/~input/', function($matches) use ($drop, &$inputCounter, &$key, &$sort, &$answer) {
+                                $inputField = '<input class="d-inline form-control q-input drop-option q-input ui-droppable bg-primary text-white answer-field" data-question-type="5" data-sortid="'.++$inputCounter.'" data-question-id="'.$drop->id.'" value="'.$answer[++$sort]->stringanswer.'" style="width: 200px; margin: 10px; border-color:black" type="text" id="input-'.$drop->id.'" disabled>'.$answer[$sort]->check;
+                                return $inputField;
+                            }, $drop->question);
+                            $inputCounter = 0;
+
+                            $drop->answer = $answer;
+                            $drop->question = $questionWithInputs;
+                        } else {
+                            $questionWithInputs = preg_replace_callback('/~input/', function($matches) use ($drop, &$inputCounter, &$key) {
+                                $inputField = '<input class="d-inline form-control q-input drop-option q-input ui-droppable answer-field" data-question-type="5" data-sortid="'.++$inputCounter.'" data-question-id="'.$drop->id.'" style="width: 200px; margin: 10px; border-color:black" type="text" id="input-'.$drop->id.'" disabled>';
+                                return $inputField;
+                            }, $drop->question);
+                            $inputCounter = 0;
+
+                            $drop->question = $questionWithInputs;
+                        }
+                    }
+
+                    $item->score = $score;
+
+                    
+
+
+                }
+
+
+            }
+            
+
+            return view('teacher.teacherquiz.teacherquiz.studentquizresponse')
+                ->with('quizInfo',$quizInfo)
+                ->with('headerid',$recordid)
+                ->with('classroomid',$classroomid)
+                ->with('studinfo',$studinfo)
+                ->with('quizQuestions',$quizQuestions);
+
+    }
+
+    public function updatescore(Request $request)
+    {
+
+        try {
+            $recordId = $request->get('detailsid');
+            $score = $request->get('score');
+    
+            DB::table('teacherquizrecordsdetail')
+                ->where('id', $recordId)
+                ->update([
+                    'points'=> $score,
+                ]);
+
+            return 1;
+        } catch (\Exception $e) {
+            return 0;
+        }
+
+    }
+
+    public function doneCheck(Request $request)
+    {
+
+        try {
+            $headerid = $request->get('headerid');
+
+            $sum = DB::table('teacherquizrecordsdetail')
+                ->where('headerid', $headerid)
+                ->sum('points');
+
+            DB::table('teacherquizrecords')
+                ->where('id', $headerid)
+                ->update([
+                    'checked'=> 1,
+                    'totalscore' => $sum
+                ]);
+
+            
+
+            return 1;
+        } catch (\Exception $e) {
+            return 0;
+        }
+
+    }
+
+
 
 }
 

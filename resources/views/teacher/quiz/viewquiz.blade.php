@@ -124,7 +124,7 @@
                                     </ul>                                    
                                 </td>
                                 <td>
-                                    @if (is_null($quiz->isactivated))
+                                    @if (empty($quiz->isactivated))
                                         <button type="button" class="btn btn-success" data-id="{{ $quiz->id }}" id="activate-quiz">
                                             Activate
                                         </button>

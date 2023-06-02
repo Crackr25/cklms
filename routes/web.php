@@ -326,7 +326,10 @@ Route::middleware(['auth', 'isTeacher','isDefaultPass'])->group(function () {
     Route::get('/teacherquiz/clearanswerenum', 'Teacher\Teacherquizcontroller@clearEnum');
     
     
-
+    //teacherquizviewresponse
+    Route::get('/teacherquiz/viewquizresponse/{classroomId}/{quizId}/{recordId}', 'Teacher\Teacherquizcontroller@viewquizresponse');
+    Route::get('/teacherquiz/updatescore', 'Teacher\Teacherquizcontroller@updatescore');
+    Route::get('/teacherquiz/donecheck', 'Teacher\Teacherquizcontroller@donecheck');
 
     //Classroom View 
     Route::get('/teacherclassroomview', 'Teacher\ClassroomController@viewclassroom'); 
