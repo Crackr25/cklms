@@ -125,7 +125,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="points student-score">
-                                        @if(isset($item->check) == 1)
+                                        @if($item->check == 1)
                                             1
                                         @else
                                             0

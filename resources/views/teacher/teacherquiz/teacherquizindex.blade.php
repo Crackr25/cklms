@@ -130,6 +130,15 @@
         white-space: pre-wrap;
     }
 
+    #viewresponse .response-text {
+        display: none;
+    }
+
+    #viewresponse:hover .response-text {
+        display: inline;
+    }
+
+
 
 
 
@@ -169,7 +178,10 @@
                     <h1>Quiz</h1>
                 </div>
                 <div class="section-header-right">
-                    <a href="/teacherviewresponse" target="_blank" class="btn bs-placeholder btn-default" id="viewresponse"> <i class="fas fa-eye mr-1"></i> View Response</a>
+                    <a href="/teacherviewresponse" target="_blank" class="btn bs-placeholder btn-default" id="viewresponse">
+                        <i class="fas fa-list mr-1"></i>
+                        <span class="response-text">View Response</span>
+                    </a>
                     <a href="#" class="btn bs-placeholder btn-default" id="addquiz" uk-toggle="target: #modal-close-default"> <i class="uil-plus"></i> Add Quiz</a>
                 </div>
             </div>
@@ -190,12 +202,12 @@
                 <div class="modal-body">
                     <form class="was-validated">
                         <div class="form-group">
-                            <label for="attempts">Select Classroom</label>
-                            <select id="select-classroom" class="select-classroom select2" name="classroom">
+                            <label for="classroom[]">Select Classroom</label>
+                            <select id="select-classroom" class="select-classroom select2" name="classroom[]">
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="attempts">Select Students</label>
+                            <label for="students[]">Select Students</label>
                             <select id="select-students" class="select-students select2" name="students[]" multiple="multiple">
                             </select>
                         </div>
@@ -373,39 +385,41 @@
 
 
         $('#select-classroom').select2({
-                            width: '100%',
-                            allowClear:true,
-                            placeholder: "All",
-                            "language": {
-                                    "noResults": function(){
-                                    }
-                            },
-                            escapeMarkup: function (markup) {
-                                    return markup;
-                            },
-                            ajax: {
-                                    url: "{{route('classroomSelect')}}",
-                                    data: function (params) {
-                                        var query = {
-                                                search: params.term,
-                                                page: params.page || 0
-                                        }
-                                        return query;
-                                    },
-                                    dataType: 'json',
-                                    
-                                    processResults: function (data, params) {
-                                        params.page = params.page || 0;
-                                        return {
-                                                results: data.results,
-                                                pagination: {
-                                                    more: data.pagination.more
-                                                }
-                                        };
-                                        
-                                    },
+                width: '100%',
+                allowClear: true,
+                placeholder: "All",
+                language: {
+                    noResults: function () {
+                        return "No results found";
+                    }
+                },
+                escapeMarkup: function (markup) {
+                    return markup;
+                },
+                ajax: {
+                    url: "{{ route('classroomSelect') }}",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        var query = {
+                            search: params.term,
+                            page: params.page || 0
+                        }
+                        return query;
+                    },
+                    processResults: function (data, params) {
+                        params.page = params.page || 0;
+                        return {
+                            results: data.results,
+                            pagination: {
+                                more: data.pagination.more
                             }
-        })
+                        };
+                    },
+                    cache: true
+                }
+        });
+
 
         $('#select-students').select2({
                             width: '100%',

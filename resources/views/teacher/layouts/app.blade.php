@@ -24,6 +24,7 @@
     <link rel="stylesheet" href="{{asset('plugins/fontawesome-free/css/all.min.css')}}">
     <!-- SweetAlert2 -->
     <!-- summernote -->
+    <link rel="stylesheet" href="{{asset('plugins/summernote/summernote.min.css')}}">
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
     <!-- icons -->
     <link rel="stylesheet" href="{{asset('templatefiles/icons.css')}}">

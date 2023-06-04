@@ -6,13 +6,13 @@
                 
                 <div class="quizCount">
                     <div class="course-card">
-                        <a href="/teacherquiz/quiz/{{$quiz->id}}">
+                            <a href="/teacherquiz/quiz/{{$quiz->id}}">
                             <div class="course-card-thumbnail">
                                 <img src="{{asset('assets/images/elearning8.jpg')}}">
                                 <span class="play-button-trigger"></span>
+                            </a>
                                 <button class="close-button" data-id="{{$quiz->id}}">×</button> <!-- Add the close button -->
                             </div>
-                            
                                 <div class="course-card-body">
                                     <div class="dropdown">
                                         <button class="btn btn-link dropdown-toggle dropdown-title" type="button" id="quizDropdown{{$quiz->id}}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -21,7 +21,6 @@
                                         <div class="dropdown-menu" aria-labelledby="quizDropdown{{$quiz->id}}">
                                             <p class="dropdown-item quiz-description">{{$quiz->description}}</p>
                                         </div>
-                        </a>
                                 </div>
                                 <div class="course-card-footer">
                                     <h5><i class="icon-feather-calendar"></i> Created: {{\Carbon\Carbon::create($quiz->createddatetime)->isoFormat('MMMM DD, YYYY hh:mm A')}}</h5>
