@@ -46,14 +46,7 @@
     <!-- Import SweetAlert and Toast libraries -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
+
 
 
 
@@ -150,15 +143,12 @@
 
         <!-- javaScripts
     ================================================== -->
-        <script src="{{asset('plugins/jquery/jquery.min.js')}}"></script>
         <script src="{{asset('templatefiles/framework.js')}}"></script>
-        <script src="{{asset('templatefiles/jquery-3.3.1.min.js')}}"></script>
         <script src="{{asset('templatefiles/simplebar.js')}}"></script>
         {{-- <script src="{{asset('templatefiles/main.js')}}"></script> --}}
         <script src="{{asset('templatefiles/bootstrap-select.min.js')}}"></script>
         <script src="{{asset('plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
         <script src="{{asset('plugins/summernote/summernote-bs4.js')}}"></script>
-        <script src="{{asset('templatefiles/chart.min.js')}}"></script>
         {{-- <script type="text/javascript" src="{{asset('plugins/jquery-ui/jquery-ui.min.js')}}"></script> --}}
         <script src="{{asset('plugins/jquery-ui/jquery-ui.min.js')}}"></script>
         <!-- Select2 -->
@@ -179,8 +169,6 @@
 </div>
 <script>
   $(document).ready(function(){
-
-    ui-helper-hidden-accessible
 
       $(document).on('click','#logout',function(){
         Swal.fire({

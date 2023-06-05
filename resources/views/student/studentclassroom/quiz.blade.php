@@ -12,7 +12,11 @@
                             </div>
                             <div class="course-card-body">
                                 <h4>{{$quiz->title}}</h4>
-                                <p>Score: 25 / 30</p>
+                                @if(isset($quiz->score) && $quiz->score->checked == 1)
+                                        <li ><span><b>Score:</b></span> {{$quiz->score->totalscore}} / {{$quiz->maxpoints}}</li>
+                                @else
+                                    <li ><span><b>Score:</b></span> Not yet graded</li>
+                                @endif
                                 
                             
                                 <div class="course-card-footer">
@@ -33,8 +37,12 @@
                             </div>
                             <div class="course-card-body">
                                 <h4>{{$quiz->title}}</h4>
-                                <p>Score: 25 / 30</p>
-                                
+                                @if(isset($quiz->score) && $quiz->score->checked == 1)
+                                        <li ><span><b>Score:</b></span> {{$quiz->score->totalscore}} / {{$quiz->maxpoints}}</li>
+                                @else
+                                    <li ><span><b>Score:</b></span> Not yet graded</li>
+                                @endif
+                        
                             
                                 <div class="course-card-footer">
                                         <h5><i class="icon-feather-calendar"></i> Status: <span class="badge ml-1 badge-warning">In Active</span></h5>
@@ -54,11 +62,25 @@
                             </div>
                             <div class="course-card-body">
                                 <h4>{{$quiz->title}}</h4>
-                                <p>Not Yet Graded</p>
+                                @if(isset($quiz->score) && $quiz->score->checked == 1)
+                                    <li ><span><b>Score:</b></span> {{$quiz->score->totalscore}} / {{$quiz->maxpoints}}</li>
+                                @else
+                                    <li ><span><b>Score:</b></span> Not yet graded</li>
+                                @endif
                                 
                             </a>
                                 <div class="course-card-footer">
-                                        <h5><i class="icon-feather-calendar"></i> Status: <span class="badge ml-1 badge-success">Active</span></h5>
+                                        <h5><i class="icon-feather-calendar"></i> Status: <span class="badge ml-1 badge-success">Active</span><span class="badge ml-1 badge-success"> 
+                                        @if(!empty($quiz->continuequiz))
+                                            Continue
+                                        @else
+                                            @if($quiz->attemptsLeft > 0)
+                                                {{$quiz->btn}}
+                                            @else
+                                            <span>No attempts left</span>
+                                            @endif
+                                        @endif
+                                        </span></h5>
                                     <button class="btn btn-info infobtn" data-id = "{{$quiz->id}}" ><i class="fa fa-info-circle" aria-hidden="true"></i></button>
                                 </div>
                             </div>

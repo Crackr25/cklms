@@ -436,6 +436,20 @@ class Teacherquizcontroller extends Controller
         return 1;
     }
 
+    public function saveTitle(Request $request)
+    {
+
+
+        DB::table('teacherquiz')
+            ->where('id', $request->get('quizId'))
+            ->update([
+                'Title'   => $request->get('title')
+            ]);
+
+        return 1;
+    }
+
+
 
     public function addQuestion(Request $request)
     {
@@ -1187,6 +1201,7 @@ class Teacherquizcontroller extends Controller
                     ->where('questionid', $request->get('questionid'))
                     ->where('sortid', $request->get('sortid'))
                     ->value('question');
+
 
                 
                 $count = substr_count($description, $keyword);

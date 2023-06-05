@@ -319,42 +319,51 @@ class StudentBookController extends Controller
 
         }
 
-    public function studentQuizContent($quizid, $clasroomid){
-
-
+    public function studentQuizContent($quizid, $clasroomid)
+    {
 
             $chapterquizsched = DB::table('chapterquizsched')
-                            ->where('chapterquizid',$quizid)
-                            ->where('classroomid',$clasroomid)
-                            ->select(
-                                'classroomid',
-                                'datefrom',
-                                'dateto',
-                                'timefrom',
-                                'timeto',
-                                'noofattempts',
-                                'status',
-                                'createddatetime',
-                                'updateddatetime',
-                                'id'
-                            )
-                            ->where('deleted',0)
-                            ->first();
+                ->where('chapterquizid',$quizid)
+                ->where('classroomid',$clasroomid)
+                ->select(
+                    'classroomid',
+                    'datefrom',
+                    'dateto',
+                    'timefrom',
+                    'timeto',
+                    'noofattempts',
+                    'status',
+                    'createddatetime',
+                    'updateddatetime',
+                    'id'
+                )
+                ->where('deleted',0)
+                ->first();
 
-            
+            $allowedstudents = null;
+            if(isset($chapterquizsched)){
+                //check for quiz restriction
+                $allowedstudents = DB::table('allowed_student_quiz')
+                    ->where('chapterquizschedid',$chapterquizsched->id)
+                    ->where('deleted',0)
+                    ->select(
+                        'id',
+                        'chapterquizschedid',
+                        'studentid'
+                    )
+                    ->get();
 
+                // dd($allowedstudents);
+            }
 
-            // $isAnswered = false;
 
             $numberOfAttempts = 0;
-
             $numberOfAttempts =  DB::table('chapterquizrecords')
-                                    ->where('submittedby',auth()->user()->id)
-                                    ->where('chapterquizid',$quizid)
-                                    ->count();
+                ->where('submittedby',auth()->user()->id)
+                ->where('chapterquizid',$quizid)
+                ->where('quizstatus', 1)
+                ->count();
             
-            
-
             if($numberOfAttempts == 0){
                 if(isset($chapterquizsched)){
                     $chapterquizsched->btn = "Attempt Quiz";
@@ -366,11 +375,8 @@ class StudentBookController extends Controller
             }
 
             $attemptsLeft = 0;
-
             if(isset($chapterquizsched->noofattempts)){
-                
                 $attemptsLeft = $chapterquizsched->noofattempts - $numberOfAttempts;
-
             }
 
             $lastattempt = DB::table('chapterquizrecords')
@@ -379,6 +385,14 @@ class StudentBookController extends Controller
                                 ->where('deleted',0)
                                 ->latest('submitteddatetime')
                                 ->value('submitteddatetime');
+
+            $continuequiz = DB::table('chapterquizrecords')
+                                ->where('submittedby',auth()->user()->id)
+                                ->where('chapterquizid',$quizid)
+                                ->where('deleted',0)
+                                ->where('quizstatus',0)
+                                ->latest('submitteddatetime')
+                                ->value('id');
 
             $score = DB::table('chapterquizrecords')
                                 ->where('submittedby',auth()->user()->id)
@@ -399,25 +413,20 @@ class StudentBookController extends Controller
             }
 
 
-            $continuequiz = DB::table('chapterquizrecords')
-                                ->where('submittedby',auth()->user()->id)
-                                ->where('chapterquizid',$quizid)
-                                ->where('deleted',0)
-                                ->where('quizstatus',0)
-                                ->latest('submitteddatetime')
-                                ->value('id');
             
-
 
             return view('global.viewbook.quizcontent.studentquiz')
             
+                        ->with('allowedstudents',$allowedstudents)
                         ->with('chapterquizsched',$chapterquizsched)
                         ->with('continuequiz',$continuequiz)
                         ->with('attemptsLeft',$attemptsLeft)
                         ->with('lastattempt',$lastattempt)
-                        ->with('score',$score);
-            
-        }
+                        ->with('score',$score)
+                        ->with('maxpoints',$maxpoints);
+    
+
+    }
 
     public function retakeQuiz($id){
 

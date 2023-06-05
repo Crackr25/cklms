@@ -16,7 +16,6 @@
 
                         <!-- logo -->
                         <a href="dashboard.html" class="logo">
-                            <img src="../assets/images/logo-dark.svg" alt="">
                             <span> Courseplus</span>
                         </a>
 

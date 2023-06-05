@@ -193,8 +193,8 @@
 
 
                                             {{-- Multiple choice --}}
-
-                                            @if($question->typeofquiz == 1)
+                                        @switch($question->typeofquiz )
+                                            @case(1)
                                             <div id={{$question->id}} class="row p-4 dragrow{{$question->id}}">
                                                 <div class="col-lg-1 col-2 rowhidden buttonholder{{$question->id}} d-flex align-items-center">
                                                 </div>
@@ -240,16 +240,16 @@
                                                                                     @endif
                                                                                     <span id= "deletechoice" data-id= "{{$choice->id}}" class = "pl-1"><i class="fa fa-trash" aria-hidden="true"></i></span>
                                                                                 </label>
-                                                                                
-                                                                            
                                                                             </div>
                                                                             
                                                                             @endforeach
                                                                             @endif
                                                                         </div>
-                                                                        <button class="form-control addoption" style="margin: 20px; " id="{{$question->id}}">Add option</button>
                                                                         <div class="col-12">
-                                                                            <button class="btn btn-link btn-sm answer-key" id="{{$question->id}}">Answer key</button>
+                                                                            <div class="row justify-content-end p-3 mt-2">
+                                                                                    <button class="btn btn-success addoption" id="{{$question->id}}">Add option</button>
+                                                                            </div>
+                                                                            <button class="btn btn-primary btn-sm answer-key" id="{{$question->id}}">Answer key</button>
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -258,13 +258,14 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            @break
                                         
                                             
                     
 
                                             {{-- Short Answer --}}
 
-                                            @elseif($question->typeofquiz == 2)
+                                            @case(2)
                                             <div id={{$question->id}} class="row p-4 dragrow{{$question->id}}">
                                                 <div class="col-lg-1 col-2 rowhidden buttonholder{{$question->id}} d-flex align-items-center">
                                                 </div>
@@ -303,6 +304,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            @break
                                             
                                             
                                             
@@ -310,7 +312,7 @@
 
                                             {{-- Paragraph --}}
                                             
-                                            @elseif($question->typeofquiz == 3)
+                                            @case(3)
                                             <div id={{$question->id}} class="row p-4 dragrow{{$question->id}}">
                                                 <div class="col-lg-1 col-2 rowhidden buttonholder{{$question->id}} d-flex align-items-center">
                                                 </div>
@@ -349,11 +351,12 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            @break
                     
 
                                             {{-- Instruction --}}
 
-                                            @elseif($question->typeofquiz == 4)
+                                            @case(4)
                                             <div id={{$question->id}} class="row p-4 dragrow{{$question->id}}">
                                                 <div class="col-lg-1 col-2 rowhidden buttonholder{{$question->id}} d-flex align-items-center">
                                                 </div>
@@ -385,12 +388,13 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            @break
                                             
                                             
                             
                                             
                                             {{-- Drag and Drop --}}
-                                            @elseif($question->typeofquiz == 5)
+                                            @case(5)
                                             <div id={{$question->id}} class="row p-4 dragrow{{$question->id}}">
                                                 <div class="col-lg-1 col-2 rowhidden buttonholder{{$question->id}} d-flex align-items-center">
                                                 </div>
@@ -417,6 +421,7 @@
                                                                                 @php
                                                                                 $dragoptions = DB::table('lesson_quiz_drag_option')
                                                                                     ->where('questionid', $question->id)
+                                                                                    ->where('deleted', 0)
                                                                                     ->orderBy('sortid')
                                                                                     ->get();
                                                                                 @endphp
@@ -463,7 +468,7 @@
                                                                                 <button class="btn btn-success add_drag_question" id="{{$question->id}}">Add drop question</button>
                                                                             </div>
                                                                             <div class="col-12">
-                                                                                <button class="btn btn-link btn-sm answer-key-drag" id="{{$question->id}}">Answer key</button>
+                                                                                <button class="btn btn-primary btn-sm answer-key" id="{{$question->id}}">Answer key</button>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -479,7 +484,7 @@
 
                                             {{-- Image answer --}}
 
-                                            @elseif($question->typeofquiz == 6)
+                                            @case(6)
                                             <div id={{$question->id}} class="row p-4 dragrow{{$question->id}}">
                                                 <div class="col-lg-1 col-2 rowhidden buttonholder{{$question->id}} d-flex align-items-center">
                                                 </div>
@@ -518,7 +523,7 @@
                                     
 
                                             {{-- Fill in the blanks --}}
-                                            @elseif($question->typeofquiz ==7)
+                                            @case(7)
                                             <div id={{$question->id}} class="row p-4 dragrow{{$question->id}}">
                                                 <div class="col-lg-1 col-2 rowhidden buttonholder{{$question->id}} d-flex align-items-center">
                                                 </div>
@@ -545,6 +550,7 @@
                                                                             @php
                                                                                 $fillquestions = DB::table('lesson_fill_question')
                                                                                     ->where('questionid', $question->id)
+                                                                                    ->where('deleted', 0)
                                                                                     ->orderBy('sortid')
                                                                                     ->get();
 
@@ -601,7 +607,7 @@
 
                                             {{-- Enumerations --}}
 
-                                            @elseif($question->typeofquiz == 8)
+                                            @case(8)
                                             <div id={{$question->id}} class="row p-4 dragrow{{$question->id}}">
                                                 <div class="col-lg-1 col-2 rowhidden buttonholder{{$question->id}} d-flex align-items-center">
                                                 </div>
@@ -680,7 +686,8 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @endif
+                                            @break
+                                        @endswitch
                                     @endforeach
                                 @endif
                             </div>
@@ -690,8 +697,9 @@
 
     </body>
 
-    
     <script src="{{asset('plugins/jquery/jquery.min.js')}}"></script>
+    <script src="{{asset('templatefiles/framework.js')}}"></script>
+    <script src="{{asset('templatefiles/jquery-3.3.1.min.js')}}"></script>
 <script>
 
     $(function () {
@@ -705,7 +713,7 @@
             })
 
             
-        })
+    })
 
 
         
@@ -726,33 +734,6 @@
         $(document).ready(function(){
 
 
-
-            // drag and drop
-        $( ".drag-option" ).draggable({
-                    helper: "clone",
-                    revertDuration: 100,
-                    revert: 'invalid'
-                });
-
-        $( ".drop-option" ).droppable({
-            drop: function(event, ui) {
-
-                var dragElement = $(ui.draggable)
-                var dropElement = $(this)
-
-                dropElement.val(dragElement.text())
-                dropElement.addClass('bg-primary text-white')
-                dropElement.prop( "disabled", true );
-
-                dragElement.removeClass('bg-primary')
-                dragElement.addClass('bg-dark')
-
-                // auto save answer
-                // autoSaveAnswer(dropElement)
-            }
-
-            });
-
             $('.instruction').summernote({
                                 height: 200,
                                 toolbar: [
@@ -766,18 +747,18 @@
                                                 ]
                                 });
 
-                $('.imageanswer').summernote({
-                                height: 200,
-                                toolbar: [
-                                        // [groupName, [list of button]]
-                                        ['style', ['bold', 'italic', 'underline', 'clear']],
-                                        // ['font', ['strikethrough', 'superscript', 'subscript']],
-                                        ['fontsize', ['fontsize']],
-                                        ['color', ['color']],
-                                        ['para', ['ul', 'ol', 'paragraph']],
-                                        // ['height', ['height']]
-                                                ]
-                                });
+            $('.imageanswer').summernote({
+                            height: 200,
+                            toolbar: [
+                                    // [groupName, [list of button]]
+                                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                                    // ['font', ['strikethrough', 'superscript', 'subscript']],
+                                    ['fontsize', ['fontsize']],
+                                    ['color', ['color']],
+                                    ['para', ['ul', 'ol', 'paragraph']],
+                                    // ['height', ['height']]
+                                            ]
+                            });
 
 
                 $(document).on('click', function(event) {
@@ -786,9 +767,10 @@
                     if (!$(event.target).closest('.dragrow' + last_id).length || $(event.target).hasClass('delrow')) {
                         
                             console.log("Last ID: ", last_id);
-                            if(last_quiz_type == 'multiple_choice'){
+                        switch (last_quiz_type) {
+                            case 'multiple_choice':
                                 
-                                const textareaValue = $('#multiplechoice' + last_id).val();
+                                var textareaValue = $('#multiplechoice' + last_id).val();
                                 console.log("Question: ", textareaValue);
                                 console.log("Quiztype: ", last_quiz_type);
                                 
@@ -798,7 +780,7 @@
                                     var i = 1;
                                     $('.option' + last_id).each(function() {
                                             // Get the value of the current label element using its id attribute
-                                            const value = $(this).text();
+                                            const value = $(this).text().trim();
 
                                             console.log(i);
                                             
@@ -824,16 +806,11 @@
                                             i+=1;
 
                                             });
+                                            }
+                                            break;
 
-                                }
-
-
-                                
-
-                                }
-
-                            
-                            else if(last_quiz_type == 'enumeration'){
+                                            
+                            case 'enumeration':
 
                                 var textareaValue = $('#enumerationquestion' + last_id).val();
                                 var itemval = $('#enumerationitem' + last_id).val();
@@ -870,27 +847,28 @@
                                             
                                         },
                                         error: function(xhr) {
-                                            // Handle error here
-                                        }
-                                    });
-
-                                }else{
+                                             // Handle error here
                                             Toast.fire({
-                                                icon: 'error',
-                                                title: 'Item is required'
+                                                type: 'error',
+                                                title: 'Something went wrong'
                                             })
-                                $('#enumerationitem' + last_id).css('border-color', 'red');
+                                        }
+                                        });
 
-
-
-                                }
+                                        }else{
+                                                    Toast.fire({
+                                                        icon: 'error',
+                                                        title: 'Item is required'
+                                                    })
+                                        $('#enumerationitem' + last_id).css('border-color', 'red');
+                                        $('#enumerationitem' + last_id).focus();
+                                        }
 
 
                         
-                                }
+                                        break;
 
-                            else if(last_quiz_type == 'instruction'){
-
+                            case 'instruction':
                                 var textareaValue = $('#instruction_item' + last_id).val();
                                 console.log("Question: ", textareaValue);
                                 console.log("Quiztype: ", last_quiz_type);
@@ -919,12 +897,17 @@
                                         },
                                         error: function(xhr) {
                                             // Handle error here
+                                            Toast.fire({
+                                                type: 'error',
+                                                title: 'Something went wrong'
+                                            })
                                         }
-                                    });
-                                }
-                            }
+                                        });
+                                        }
+                                        break;
+                            
 
-                            else if(last_quiz_type == 'drag_drop'){
+                            case 'drag_drop':
 
                                 $.ajax({
                                     type: "get",
@@ -937,18 +920,17 @@
                                             },
                                     success: function(response) {
 
-                                        if (response == 1){
-                                        
-                                            Toast.fire({
-                                                icon: 'success',
-                                                title: 'All the changes have been saved'
-                                            })
-
-                                            }
+                                        if (response == 1) {
+                                        console.log(response);
+                                        }
                                         
                                     },
                                     error: function(xhr) {
                                         // Handle error here
+                                        Toast.fire({
+                                            type: 'error',
+                                            title: 'Something went wrong'
+                                        })
                                     }
                                 });
 
@@ -956,7 +938,7 @@
                                 console.log("Drag and Drop");
                                 $('.drag' + last_id).each(function() {
                                         // Get the value of the current label element using its id attribute
-                                        const value = $(this).text();
+                                        const value = $(this).text().trim();
                                         console.log(value)
 
                                         // console.log(i);
@@ -977,6 +959,10 @@
                                             },
                                             error: function(xhr) {
                                                 // Handle error here
+                                                Toast.fire({
+                                                    type: 'error',
+                                                    title: 'Something went wrong'
+                                                })
                                             }
                                         });
 
@@ -1006,8 +992,12 @@
                                                     },
                                                     error: function(xhr) {
                                                         // Handle error here
+                                                        Toast.fire({
+                                                            type: 'error',
+                                                            title: 'Something went wrong'
+                                                        })
                                                     }
-                                                    });
+                                                });
                                                 i+=1;
 
 
@@ -1018,14 +1008,14 @@
                                             title: 'All the changes have been saved'
                                         })
                             
-                                }
+                                        break;
 
-                            else if(last_quiz_type == 'image'){
+                            case 'image':
 
                                 var textareaValue = $('#image_item' + last_id).val();
                                 console.log("Question: ", textareaValue);
                                 console.log("Quiztype: ", last_quiz_type);
-                                if (textareaValue.length != 0) {
+                                if (points !== '' && points !== undefined && textareaValue.length != 0) {
                                     $.ajax({
                                         type: "get",
                                         dataType: 'json',
@@ -1048,13 +1038,41 @@
                                             
                                         },
                                         error: function(xhr) {
-                                            // Handle error here
+                                            Toast.fire({
+                                                type: 'error',
+                                                title: 'File is too large'
+                                            });
                                         }
                                     });
+                                } else {
+                                    UIkit.notification({
+                                        message: '<span uk-type="type: close"></span> Points Required!',
+                                        status: 'error',
+                                        timeout: 1000
+                                    });
+                                    $('#Required' + last_id).focus();
                                 }
-                                }
+                                break;
 
-                            else if(last_quiz_type == 'fill_n_blanks'){
+
+                            case 'short_answer':
+                            case 'paragraph_answer':
+                                    var points = $('#Required' + last_id).val();
+                                    console.log("points: ", points);
+                                    console.log("Quiztype: ", last_quiz_type);
+
+                                    if (points === '') {
+                                    UIkit.notification({
+                                        message: '<span uk-type="type: close"></span> Points Required!',
+                                        status: 'error',
+                                        timeout: 1000
+                                    });
+                                    $('#Required' + last_id).focus();
+                                    }
+
+                                    break;
+
+                            case 'fill_n_blanks':
 
 
                                     var i = 1;
@@ -1067,9 +1085,6 @@
 
                                             console.log(i);
                                             console.log(value);
-
-
-                                            if (value.length != 0) {
 
                                                 if(i==1){
 
@@ -1094,7 +1109,10 @@
                                                             
                                                         },
                                                         error: function(xhr) {
-                                                            // Handle error here
+                                                            Toast.fire({
+                                                                type: 'error',
+                                                                title: 'Something went wrong'
+                                                            })
                                                         }
                                                     });
                                                 }
@@ -1109,31 +1127,25 @@
                                                                 },
                                                         success: function(response) {
 
-                                                            console.log("Drop question Succesfully save!");
+                                                            console.log("Fill question Succesfully save!");
                                                             
                                                             
                                                         },
                                                         error: function(xhr) {
                                                             // Handle error here
+                                                            Toast.fire({
+                                                                type: 'error',
+                                                                title: 'Something went wrong'
+                                                            })
                                                         }
                                                         });
 
-                                                i+=1;
+                                                            i+=1;
+                                                        });
 
-                                            }
-                                        
+                                                        break;
 
-                                            
-
-                                            });
-
-                                    
-
-                                    
-
-                                }
-
-                            else{
+                            default:
                                 var quizTitle = $('#quizTitle h3').text();
                                 var description = $('#description').val();                        
 
@@ -1180,8 +1192,8 @@
                                     }
                             });
 
-
-                            }
+                            break;
+                        }
                         
                     
 
@@ -1189,6 +1201,7 @@
                     }
                 });
                     
+
 
 
                 $(document).on('click', '.editcontent', function(){
@@ -1217,7 +1230,7 @@
 
                         
                         id = $(this).attr('id');
-                        console.log("This ID: ", id);
+                        console.log("Thiss ID: ", id);
 
                         $('.btn-group-vertical').remove();
 
@@ -1237,48 +1250,32 @@
                             
                     
         
-                        })
+                })
 
-                    $(document).on('click', '.delrow', function(){
-                        console.log("$(this).attr('id')");
-                        console.log($(this).attr('id'));
-                        var rowid = $(this).attr('id');
+                $(document).on('click', '.delrow', function(){
+                    console.log("$(this).attr('id')");
+                    console.log($(this).attr('id'));
+                    var rowid = $(this).attr('id');
+                    $('.dragrow' + rowid).remove()
 
-                        Swal.fire({
-                        title: 'Are you sure you want to delete selected content?',
-                        text: $(this).attr('label'),
-                        type: 'warning',
-                        confirmButtonColor: '#3085d6',
-                        confirmButtonText: 'Delete',
-                        showCancelButton: true,
-                        allowOutsideClick: false
-                    }).then((confirm) => {
-                        if (confirm.value) {
-                            $('.dragrow' + rowid).remove()
+                        $.ajax({
+                                type: "get",
+                                dataType: 'json',
+                                url: "/adminviewbook/delquestion",
+                                data: { 
+                                    id: rowid
+                                        },
+                                complete: function(data){
+                            }
+                        });
 
-                            $.ajax({
-                                    type: "get",
-                                    dataType: 'json',
-                                    url: "/adminviewbook/delquestion",
-                                    data: { 
-                                        id: rowid
-                                            },
-                                    complete: function(data){
-                                }
-                            });
-                        }
-                    })
-
-                        
-
-                        // $('.dragrow' + rowid).remove();
-                    })
+                })
 
 
 
 
                     
-                    $(document).on('click', '.newrow', function(){
+                $(document).on('click', '.newrow', function(){
                         var addrow;
                         var quizId = $('#quiz-info').data('quizid');
 
@@ -1314,8 +1311,8 @@
                                                 '<div id="'+addrow+'" class="col-lg-11 col-10 editcontent col-content identifier'+addrow+'">' +
                                                 '<div class="card mt-5 shadow-none border-0">' +
                                                 '<div class="card-header">' +
-                                                    '<div class="row justify-content-end">' +
-                                                        '<div class="col-6 mr-1 quizarea">' +
+                                                    '<div class="row ml-2 justify-content-end">' +
+                                                        '<div class="col-sm-6 col-md-10 col-lg-6 mr-1 quizarea">' +
                                                             '<select class="form-control quiztype" data-id="'+addrow+'" id="quiztype'+addrow+'">' +
                                                             '<option value="multiple_choice">Multiple Choice</option>' +
                                                             '<option value="instruction">Instruction</option>' +
@@ -1330,20 +1327,22 @@
                                                         '<div class="col-12">'+
                                                         '<div id="quiztioncontent'+addrow+'">'+
                                                             '<div class="row">' +  
-                                                            '<div class="col-12 m-2">'+
-                                                                '<textarea class="form-control question" placeholder="Untitled question" data-id ="'+addrow+'" data-question-type ="1" style="height: 20px !important;" id="multiplechoice'+addrow+'" ></textarea>'+
-                                                            '</div>'+
-                                                            '<div class="col-12 ml-4"  id="list_option'+addrow+'">' +
-                                                                '<input class="form-check-input" type="radio" name="option1" value="1">'+
-                                                                '<label class="form-check-label option'+addrow+'" id="option'+addrow+'" contenteditable="true">Option '+option+'</label>'+
+                                                                '<div class="col-12 m-2">'+
+                                                                    '<textarea class="form-control question" placeholder="Untitled question" data-id ="'+addrow+'" data-question-type ="1" style="height: 20px !important;" id="multiplechoice'+addrow+'" ></textarea>'+
+                                                                '</div>'+
+                                                                '<div class="col-12"  id="list_option'+addrow+'">' +
+                                                                    '<input class="form-check-input ml-2" type="radio" name="option1" value="1">'+
+                                                                    '<label class="form-check-label option'+addrow+' ml-5" id="option'+addrow+'" contenteditable="true">Option '+option+'</label>'+
+                                                                '</div>' +
                                                             '</div>' +
-                                                            '<button class="form-control addoption" style="margin: 20px; " id="'+addrow+'">Add option</button>'+
+                                                            '<div class="col-12">' +
+                                                                '<div class="row justify-content-end p-3 mt-2">'+
+                                                                    '<button class="btn btn-success addoption" id="'+addrow+'">Add option</button>'+
+                                                                '</div>'+
+                                                                ' <button class="btn btn-primary btn-sm answer-key" id="'+addrow+'">Answer key</button>'+
+                                                            '</div>'+
                                                         '</div>' +
-                                                        '<div class="col-12">' +
-                                                            '<button class="btn btn-link btn-sm answer-key" id="'+addrow+'">Answer key</button>'+
-                                                        '</div>'+
-                                                        '</div>' +
-                                                        '</div>' +
+                                                    '</div>' +
                                                 '</div>' +
                                                 '</div>' +
                                                 '</div>' +
@@ -1353,12 +1352,18 @@
                                         
                                     },
                                     error: function(xhr) {
-                                        // Handle error here
+                                    // Handle error here
+                                        Toast.fire({
+                                            type: 'error',
+                                            title: 'Something went wrong'
+                                        })
+
                                     }
                         });
 
 
-                    })
+                    });
+
 
                     
                     var option = 0;
@@ -1371,184 +1376,173 @@
                         console.log(select_quiz_type);
                         console.log("Add row ID: ", addrowid)
                         console.log("ID: ", parentId)
-                        
-                        
-                        if(select_quiz_type == 'short_answer'){
-                            $('#quiztioncontent' + parentId).empty();
-                            $('#quiztioncontent' + parentId).append('<h6><label class= "ml-2" for="number_question' + parentId + '">Points:</label></h6>');
-                            $('#quiztioncontent' + parentId).append('<input type="number" class="form-control m-2 addpoints" placeholder="Required" data-id= "' + parentId + '" id="Required' + parentId + '">');
-                            $('#quiztioncontent' + parentId).append('<h6><label class= "ml-2" for="shortz_answer_question' + parentId + '">Question:</label></h6>');
-                            $('#quiztioncontent' + parentId).append('<textarea class="form-control m-2 question shortz_answer_question"'+parentId+'" data-id ="'+parentId+'" data-question-type ="2" placeholder="Untitled question" style="height: 20px !important;" id="shortz_answer_question'+parentId+'" ></textarea>');
-                            $('#quiztioncontent' + parentId).append('<h6><label class= "ml-2" for="shortz_answer_answer' + parentId + '">Guide answer</label></h6>');
-                            $('#quiztioncontent' + parentId).append('<textarea class="form-control m-2 setanswer" data-id="'+parentId+'" placeholder="Set Guide Answer:" style="height: 20px !important;" id="shortz_answer_answer'+parentId+'" ></textarea>');
-                            $('#quiztioncontent' + parentId).append('<input type="text" class="form-control mt-2 ml-2" placeholder="Short answer text" disabled>');
-                        
-                        }
-
-
-                        if(select_quiz_type == 'multiple_choice'){
-                            option = 1;
-                            $('#quiztioncontent' + parentId).empty();
-                            $('#quiztioncontent' + parentId).append('<div class="row">'+
-                                                                        '<div class="col-12 m-2">'+
-                                                                            '<textarea class="form-control question" placeholder="Untitled question" data-id ="'+parentId+'" data-question-type ="1" id="exampleTextarea" ></textarea>'+
-                                                                        '</div>'+
-                                                                        '<div class="col-12 ml-4"  id="list_option'+parentId+'">' +
-                                                                            '<input class="form-check-input" type="radio" name="option1" value="1">'+
-                                                                            '<label class="form-check-label" contenteditable="true">Option '+option+'</label>'+
-                                                                        '</div>' +
-                                                                        '<button class="form-control addoption" style="margin: 20px;" data-id="'+parentId+'" id="'+parentId+'">Add option</button>'+
-                                                                        '</div>' +
-                                                                        '<div class="col-12">' +
-                                                                            '<button class="btn btn-link btn-sm answer-key" id="'+addrow+'">Answer key</button>'+
-                                                                        '</div>')
-                                            }
-
-                        if(select_quiz_type == 'paragraph_answer'){
-                            $('#quiztioncontent' + parentId).empty();
-                            $('#quiztioncontent' + parentId).append('<h6><label class= "ml-2" for="number_question' + parentId + '">Points:</label></h6>');
-                            $('#quiztioncontent' + parentId).append('<input type="number" class="form-control m-2 addpoints" placeholder="Required" data-id= "' + parentId + '" id="Required' + parentId + '">');
-                            $('#quiztioncontent' + parentId).append('<h6><label class= "ml-2" for="long_answer_question' + parentId + '">Question:</label></h6>');
-                            $('#quiztioncontent' + parentId).append('<textarea class="form-control m-2 question" placeholder="Untitled question" data-id ="'+parentId+'" data-question-type ="3" style="height: 20px !important;" id="long_answer_question'+parentId+'" ></textarea>');
-                            $('#quiztioncontent' + parentId).append('<h6><label class= "ml-2" for="Long_answer_answer' + parentId + '">Guide answer:</label></h6>');
-                            $('#quiztioncontent' + parentId).append('<textarea class="form-control m-2 setanswer"'+parentId+'" placeholder="Set Guide Answer:" style="height: 20px !important;" id="long_answer_answer'+parentId+'" ></textarea>');
-                            $('#quiztioncontent' + parentId).append('<input type="text" class="form-control mt-2 ml-2" placeholder="Long answer text" disabled>');
-
-                            
-                        }
-                        
-                        if(select_quiz_type == 'enumeration'){
-                            enumerationitem = 1;
-                            $('#quiztioncontent' + parentId).empty();
-                            $('#quiztioncontent' + parentId).append('<div class="row">'+
-                                                                    '<div class="col-12 m-2">')
-                            $('#quiztioncontent' + parentId).append('<textarea class="form-control m-2" placeholder="Untitled question" data-id ="'+parentId+'" data-question-type ="8" id="enumerationquestion'+parentId+'" ></textarea>');
-                            $('#quiztioncontent' + parentId).append('<input type="number" class="form-control mt-2 ml-2" placeholder="Item count" data-id= "' + parentId + '" id="enumerationitem' + parentId + '">');
-                            $('#quiztioncontent' + parentId).append('</div>' +
-                                                                    '</div>');
-                            $('#quiztioncontent' + parentId).append('<div class="col-12">'+
-                                '<button class="btn btn-link btn-sm ml-2 answer-key-enum" id="'+parentId+'">Answer key</button>'+
-                            '</div>')
-
-                    
-                        }
 
 
 
-                        if(select_quiz_type == 'instruction'){
-                            $('#quiztioncontent' + parentId).empty();
-                            $('#quiztioncontent' + parentId).append('<div class="row">'+
-                            '                                           <div class="col-12 m-2">'+
-                                                                            '<textarea class="form-control mt-2 question" placeholder="Untitled instruction" style="width: 100% !important;" data-id ="'+parentId+'" data-question-type ="1" id="instruction_item'+parentId+'" ></textarea>'+
-                                                                        '</div>'+
-                                                                    '</div>')
-                            $('#instruction_item' + parentId).summernote({
-                                height: 200,
-                                toolbar: [
-                                        // [groupName, [list of button]]
+                        switch (select_quiz_type) {
+                            case 'multiple_choice':
+                                option = 1;
+                                $('#quiztioncontent' + parentId).empty().append(
+                                    '<div class="row">' +
+                                    '<div class="col-12 m-2">' +
+                                    '<textarea class="form-control question" placeholder="Untitled question" data-id="' + parentId + '" data-question-type="1" style="height: 20px !important;" id="multiplechoice' + parentId + '"></textarea>' +
+                                    '</div>' +
+                                    '<div class="col-12" id="list_option' + parentId + '">' +
+                                    '<input class="form-check-input ml-2" type="radio" name="option1" value="1">' +
+                                    '<label class="form-check-label option' + parentId + ' ml-5" id="option' + parentId + '" contenteditable="true">Option ' + option + '</label>' +
+                                    '</div>' +
+                                    '</div>' +
+                                    '<div class="col-12">' +
+                                    '<div class="row justify-content-end p-3 mt-2">' +
+                                    '<button class="btn btn-success addoption" id="' + parentId + '">Add option</button>' +
+                                    '</div>' +
+                                    '<button class="btn btn-link btn-sm answer-key" id="' + parentId + '">Answer key</button>' +
+                                    '</div>'
+                                );
+                                break;
+
+                            case 'short_answer':
+                                $('#quiztioncontent' + parentId).empty().append(
+                                    '<h6><label class="ml-2" for="number_question' + parentId + '">Points:</label></h6>' +
+                                    '<input type="number" class="form-control m-2 addpoints is-invalid" placeholder="Required" data-id="' + parentId + '" id="Required' + parentId + '">' +
+                                    '<h6><label class="ml-2" for="shortz_answer_question' + parentId + '">Question:</label></h6>' +
+                                    '<textarea class="form-control m-2 question shortz_answer_question"' + parentId + '" data-id="' + parentId + '" data-question-type="2" placeholder="Untitled question" style="height: 20px !important;" id="shortz_answer_question' + parentId + '"></textarea>' +
+                                    '<h6><label class="ml-2" for="shortz_answer_answer' + parentId + '">Guide answer</label></h6>' +
+                                    '<textarea class="form-control m-2 setanswer" data-id="' + parentId + '" placeholder="Set Guide Answer:" style="height: 20px !important;" id="shortz_answer_answer' + parentId + '"></textarea>' +
+                                    '<input type="text" class="form-control mt-2 ml-2" placeholder="Short answer text" disabled>'
+                                );
+                                break;
+
+                            case 'paragraph_answer':
+                                $('#quiztioncontent' + parentId).empty().append(
+                                    '<h6><label class="ml-2" for="number_question' + parentId + '">Points:</label></h6>' +
+                                    '<input type="number" class="form-control m-2 addpoints is-invalid" placeholder="Required" data-id="' + parentId + '" id="Required' + parentId + '">' +
+                                    '<h6><label class="ml-2" for="long_answer_question' + parentId + '">Question:</label></h6>' +
+                                    '<textarea class="form-control m-2 question" placeholder="Untitled question" data-id="' + parentId + '" data-question-type="3" style="height: 20px !important;" id="long_answer_question' + parentId + '"></textarea>' +
+                                    '<h6><label class="ml-2" for="Long_answer_answer' + parentId + '">Guide answer:</label></h6>' +
+                                    '<textarea class="form-control m-2 setanswer"' + parentId + '" placeholder="Set Guide Answer:" style="height: 20px !important;" id="long_answer_answer' + parentId + '"></textarea>' +
+                                    '<input type="text" class="form-control mt-2 ml-2" placeholder="Long answer text" disabled>'
+                                );
+                                break;
+
+                            case 'enumeration':
+                                enumerationitem = 1;
+                                $('#quiztioncontent' + parentId).empty().append(
+                                    '<div class="row">' +
+                                    '<div class="col-12 m-2">' +
+                                    '<textarea class="form-control m-2" placeholder="Untitled question" data-id="' + parentId + '" data-question-type="8" id="enumerationquestion' + parentId + '"></textarea>' +
+                                    '<input type="number" class="form-control mt-2 ml-2" placeholder="Item count" data-id="' + parentId + '" id="enumerationitem' + parentId + '">' +
+                                    '</div>' +
+                                    '</div>' +
+                                    '<div class="col-12">' +
+                                    '<button class="btn btn-link btn-sm ml-2 answer-key-enum" id="' + parentId + '">Answer key</button>' +
+                                    '</div>'
+                                );
+                                break;
+
+                            case 'instruction':
+                                $('#quiztioncontent' + parentId).empty().append(
+                                    '<div class="row">' +
+                                    '<div class="col-12 m-2">' +
+                                    '<textarea class="form-control mt-2 question" placeholder="Untitled instruction" style="width: 100% !important;" data-id="' + parentId + '" data-question-type="1" id="instruction_item' + parentId + '"></textarea>' +
+                                    '</div>' +
+                                    '</div>'
+                                );
+                                $('#instruction_item' + parentId).summernote({
+                                    height: 200,
+                                    toolbar: [
                                         ['style', ['bold', 'italic', 'underline', 'clear']],
-                                        // ['font', ['strikethrough', 'superscript', 'subscript']],
                                         ['fontsize', ['fontsize']],
                                         ['color', ['color']],
-                                        ['para', ['ul', 'ol', 'paragraph']],
-                                        // ['height', ['height']]
-                                                ]
+                                        ['para', ['ul', 'ol', 'paragraph']]
+                                    ]
                                 });
-                            
-                            }
+                                break;
 
-
-                            if(select_quiz_type == 'fill_n_blanks'){
+                            case 'fill_n_blanks':
                                 var option = 0;
-                                $('#quiztioncontent' + parentId).empty();
-                                $('#quiztioncontent' + parentId).append(`<div class="row">
-                                                                        <div class="col-12 m-2">
-                                                                        <p><b>Note: </b>To set up the blanks, please input [~input] where you want the blank to appear. Ex. The planet ~input is the biggest planet in the solar system</p>
-                                                                        <div id="item_fill${parentId}">
-                                                                        <input type="text" class="form-control fill${parentId}" style="margin-top: 10px; border: 2px solid dodgerblue; color: black;" placeholder="Item text &nbsp;${option}">
-                                                                        </div>
-                                                                        <div class="row justify-content-end p-3 mt-2">
-                                                                        <button class="btn btn-success add_fill_question"  id="${parentId}">Add fill question</button>
-                                                                        </div>
-                                                                        <div class="col-12">
-                                                                            <button class="btn btn-link btn-sm answer-key-fill" id="${parentId}">Answer key</button>
-                                                                        </div>
-                                                                        </div>
-                                                                        </div>`);
-                            
-                            }       
-
-                            
-                            
-
-                        if(select_quiz_type == 'drag_drop'){
-                            var option = 0;
-                            $('#quiztioncontent' + parentId).empty();
-                            $('#quiztioncontent' + parentId).append('<div class="row">'+
-                                                                    '<div class="col-12 m-2">'+
-                                                                    '<div class="options p-3 mt-2" id="options'+parentId+'" style="border:3px solid #3e416d;border-radius:6px;">'+
-                                                                    '<div class="drag-option btn bg-primary text-white m-1 drag'+parentId+'" contentEditable="true" data-target="drag-1">Option &nbsp;' + option  + '</div>'+
-                                                                    '</div>' +
-                                                                    '<div class="row justify-content-end p-3 mt-2">' +
-                                                                        '<button class="btn btn-success add_drag_option" id="'+parentId+'">Add drag option</button>'+
-                                                                    '</div>'
+                                $('#quiztioncontent' + parentId).empty().append(
+                                    '<div class="row">' +
+                                    '<div class="col-12 m-2">' +
+                                    '<p><b>Note: </b>To set up the blanks, please input [~input] where you want the blank to appear. Ex. The planet ~input is the biggest planet in the solar system</p>' +
+                                    '<div id="item_fill' + parentId + '">' +
+                                    '<input type="text" class="form-control fill' + parentId + '" style="margin-top: 10px; border: 2px solid dodgerblue; color: black;" placeholder="Item text &nbsp;' + option + '">' +
+                                    '</div>' +
+                                    '<div class="row justify-content-end p-3 mt-2">' +
+                                    '<button class="btn btn-success add_fill_question"  id="' + parentId + '">Add fill question</button>' +
+                                    '</div>' +
+                                    '</div>' +
+                                    '<div class="col-12">' +
+                                    '<button class="btn btn-link btn-sm answer-key-fill" id="' + parentId + '">Answer key</button>' +
+                                    '</div>' +
+                                    '</div>'
                                 );
+                                break;
 
-                                // <button class="form-control add_drag_option" style="margin-top: 10px; " id="add_dragoption'+parentId+'">Add drag option</button>`
-                            $('#quiztioncontent' + parentId).append('<p><b>Note: </b>To set up the drop area, please input [~input] where you want the drop zone to appear. Ex. The planet ~input is the biggest planet in the solar system</p>' +
-                                                '<div id="item_question'+parentId+'">'+
-                                                    '<input type="text" class="form-control drop'+parentId+'" style="margin-top: 10px; border: 2px solid dodgerblue; color: black;" placeholder="Item text &nbsp;'+option+'">'+
-                                                '</div>'+
-                                                '<div class="row justify-content-end p-3 mt-2">' +
-                                                    '<button class="btn btn-success add_drag_question"  id="'+parentId+'">Add drop question</button>' +
-                                                '</div>'+
-                                                '<div class="col-12">'+
-                                                    '<button class="btn btn-link btn-sm answer-key-drag" id="'+parentId+'"">Answer key</button>'+
-                                                '</div>'+
-                                                '</div>'+ 
-                                                '</div>'+
-                                                '</div>')
-                                }
+                            case 'drag_drop':
+                                var option = 0;
+                                $('#quiztioncontent' + parentId).empty().append(
+                                    '<div class="row">' +
+                                    '<div class="col-12 m-2">' +
+                                    '<div class="options p-3 mt-2" id="options' + parentId + '" style="border:3px solid #3e416d;border-radius:6px;">' +
+                                    '<div class="drag-option btn bg-primary text-white m-1 drag' + parentId + '" contentEditable="true" data-target="drag-1">Option &nbsp;' + option + '</div>' +
+                                    '</div>' +
+                                    '<div class="row justify-content-end p-3 mt-2">' +
+                                    '<button class="btn btn-success add_drag_option" id="' + parentId + '">Add drag option</button>' +
+                                    '</div>' +
+                                    '</div>' +
+                                    '</div>' +
+                                    '<p><b>Note: </b>To set up the drop area, please input [~input] where you want the drop zone to appear. Ex. The planet ~input is the biggest planet in the solar system</p>' +
+                                    '<div id="item_question' + parentId + '">' +
+                                    '<input type="text" class="form-control drop' + parentId + '" style="margin-top: 10px; border: 2px solid dodgerblue; color: black;" placeholder="Item text &nbsp;' + option + '">' +
+                                    '</div>' +
+                                    '<div class="row justify-content-end p-3 mt-2">' +
+                                    '<button class="btn btn-success add_drag_question"  id="' + parentId + '">Add drop question</button>' +
+                                    '</div>' +
+                                    '<div class="col-12">' +
+                                    '<button class="btn btn-primary btn-sm answer-key" id="' + parentId + '">Answer key</button>' +
+                                    '</div>' +
+                                    '</div>' +
+                                    '</div>'
+                                );
+                                break;
 
-                            if(select_quiz_type == 'image'){
-                                $('#quiztioncontent' + parentId).empty();
-                                
-                                $('#quiztioncontent' + parentId).append(`<div class="row">
-                                                                            <div class="col-12 m-2">`);
-                                $('#quiztioncontent' + parentId).append('<h6><label class= "ml-2" for="number_question' + parentId + '">Points:</label></h6>');
-                                $('#quiztioncontent' + parentId).append('<input type="number" class="form-control m-2 addpoints" placeholder="Required" data-id= "' + parentId + '" id="Required' + parentId + '">');
-                                                                                
-                                $('#quiztioncontent' + parentId).append(`<textarea class="form-control question" placeholder="Untitled instruction" data-id ="${parentId}" data-question-type ="6"  style="height: 20px !important;"  id="image_item${parentId}" ></textarea>
-                                                                                <input type="file" class="mt-2" disabled>
-                                                                            </div>
-                                                                        </div>`);
+                            case 'image':
+                                $('#quiztioncontent' + parentId).empty().append(
+                                    '<div class="row">' +
+                                    '<div class="col-12 m-2">' +
+                                    '<h6><label class="ml-2" for="number_question' + parentId + '">Points:</label></h6>' +
+                                    '<input type="number" class="form-control m-2 addpoints is-invalid" placeholder="Required" data-id="' + parentId + '" id="Required' + parentId + '">' +
+                                    '<textarea class="form-control question" placeholder="Untitled instruction" data-id="' + parentId + '" data-question-type="6"  style="height: 20px !important;"  id="image_item' + parentId + '"></textarea>' +
+                                    '<input type="file" class="mt-2" disabled>' +
+                                    '</div>' +
+                                    '</div>'
+                                );
                                 $('#image_item' + parentId).summernote({
                                     height: 200,
                                     toolbar: [
-                                            // [groupName, [list of button]]
-                                            ['style', ['bold', 'italic', 'underline', 'clear']],
-                                            // ['font', ['strikethrough', 'superscript', 'subscript']],
-                                            ['fontsize', ['fontsize']],
-                                            ['color', ['color']],
-                                            ['para', ['ul', 'ol', 'paragraph']],
-                                            // ['height', ['height']]
-                                                    ]
-                                    });
+                                        ['style', ['bold', 'italic', 'underline', 'clear']],
+                                        ['fontsize', ['fontsize']],
+                                        ['color', ['color']],
+                                        ['para', ['ul', 'ol', 'paragraph']]
+                                    ]
+                                });
+                                break;
+                        }
 
-                            
-                            }
 
-                    })
+                    });
 
 
 
                     $(document).on('click', '.addoption', function(){
+
                         option+=1;
                         var parentId = $(this).attr('id');
-                        console.log("ID: ", parentId)
-                        $('#list_option' + parentId).append(`<input class="form-check-input" type="radio" name="option1" value="1">
-                        <label class="form-check-label option${parentId}" contenteditable="true">Option ${option}</label>`)
-                        
+                        console.log("ADD OPTION ID: ", parentId)
+                        $('#list_option' + parentId).append(`<input class="form-check-input ml-2" type="radio" name="option1" value="1">
+                        <label class="form-check-label ml-5  option${parentId}" contenteditable="true">Option ${option}</label>`)
+                    
                     })
 
                     $(document).on('click', '.add_fill_question', function(){
@@ -1676,77 +1670,59 @@
                         
                     // Add click event listener to answer key button
                     $(document).on('click', '.answer-key', function(){
+                        
 
                         var parentId = $(this).attr('id');
-                        console.log(parentId)
+                        var question = $('#multiplechoice' + parentId).val();
+                        console.log(question);
                         
-                        const textareaValue = $('#multiplechoice' + parentId).val();
-                        console.log("Question: ", textareaValue);
+                        if(question.length > 0){
+                            function saveChoices(parentId) {
+                                    var promises = []; // Array to store the promises
 
-                        var i = 1;
-                        $('.option' + parentId).each(function() {
-                                // Get the value of the current label element using its id attribute
-                                const value = $(this).text();
-
-                                console.log(i);
-                                
-                                $.ajax({
-                                    type: "get",
-                                    dataType: 'json',
-                                    url: "/adminviewbook/createchoices",
-                                    data: { 
-                                        questionid : parentId,
-                                        sortid: i,
-                                        description : value
-                                            },
-                                    success: function(response) {
-
-                                        console.log("Choices Succesfully save!");
+                                    var i = 1;
+                                    $('.option' + parentId).each(function() {
+                                        const value = $(this).text();
+                                        console.log(i);
                                         
-                                    },
-                                    error: function(xhr) {
-                                        // Handle error here
-                                    }
-                                });
+                                        var promise = $.ajax({
+                                            type: "get",
+                                            dataType: 'json',
+                                            url: "/adminviewbook/createchoices",
+                                            data: { 
+                                                questionid : parentId,
+                                                sortid: i,
+                                                description : value
+                                            }
+                                        });
 
-                                i+=1;
+                                        promises.push(promise); // Add the promise to the array
+                                        i += 1;
+                                    });
 
-                                });
-                        
-                        
-                        $.ajax({
-                            type: "get",
-                            dataType: 'json',
-                            url: "/adminviewbook/createquestion",
-                            data: { 
-                                question : textareaValue,
-                                typeofquiz : 1,
-                                id: parentId
-                                    },
-                            success: function(response) {
-
-                                if (response == 1){
-                            
-                                Toast.fire({
-                                    icon: 'success',
-                                    title: 'All the changes have been saved'
-                                })
-
-                                }
-
-                                getQuestion(parentId);
-
-                                
-                            },
-                            error: function(xhr) {
-                                // Handle error here
+                                    return Promise.all(promises); // Return a promise that resolves when all AJAX requests are completed
                             }
+
+
+                            saveChoices(parentId)
+                                .then(function() {
+                                    getQuestion(parentId); // Call getQuestion function after all saveChoices AJAX requests are completed
+                                })
+                                .catch(function(error) {
+                                    // Handle error here
+                                });
+
+                            }else{
+                                UIkit.notification({
+                                        message: '<span uk-type="type: close"></span> Question Required!',
+                                        status: 'error',
+                                        timeout: 1000
+                                    });
+                            }
+
                         });
                         
                         
-
-                        
-                            });
 
                         function getQuestion(parentId){
 
@@ -1784,7 +1760,7 @@
                                             $('#quiztioncontent' + parentId).empty().append(html);
                                         },
                                     error: function(xhr) {
-                                        console.log("Error");
+                                        console.log("error");
                                         // Handle error here
                                     }
 
@@ -1794,206 +1770,76 @@
 
                         $(document).on('click', '.answer-key-drag', function(){
                                 var parentId = $(this).attr('id');
-
+            
                                 var i = 1;
-                                console.log("Drag and Drop");
-                                $('.drag' + parentId).each(function() {
-                                        // Get the value of the current label element using its id attribute
-                                        const value = $(this).text();
-                                        console.log(value)
-
-                                        // console.log(i);
-                                        
-                                        $.ajax({
-                                            type: "get",
-                                            dataType: 'json',
-                                            url: "/adminviewbook/createdragoption",
-                                            data: { 
-                                                questionid : parentId,
-                                                sortid: i,
-                                                description : value
-                                                    },
-                                            success: function(response) {
-
-                                                console.log("Options Succesfully save!");
-                                                
-                                            },
-                                            error: function(xhr) {
-                                                // Handle error here
-                                            }
-                                        });
-
-                                        i+=1;
-
-                                        });
-
-                                        var i = 1;
-                                        $('.drop' + parentId).each(function() {
-                                        // Get the value of the current label element using its id attribute
-                                        const value = $(this).val();
-                                        console.log(value);
-
-                                                $.ajax({
-                                                    type: "get",
-                                                    dataType: 'json',
-                                                    url: "/adminviewbook/createdropquestion",
-                                                    data: { 
-                                                        questionid : parentId,
-                                                        sortid: i,
-                                                        description : value
-                                                            },
-                                                    success: function(response) {
-
-                                                        console.log("Drop question Succesfully save!");
-                                                        
-                                                    },
-                                                    error: function(xhr) {
-                                                        // Handle error here
-                                                    }
-                                                    });
-                                                i+=1;
-
-
-                                        });
-
-                                        Toast.fire({
-                                            icon: 'success',
-                                            title: 'All the changes have been saved'
-                                        })
-
-                            $.ajax({
-                                    type: "get",
-                                    dataType: 'json',
-                                    url: "/adminviewbook/createquestion",
-                                    data: { 
-                                        question : "Drag and drop",
-                                        typeofquiz : 5,
-                                        id: parentId
-                                            },
-                                    success: function(response) {
-
-                                        if (response == 1){
-                                        
-                                            Toast.fire({
-                                                icon: 'success',
-                                                title: 'All the changes have been saved'
-                                            })
-
-                                            }
-                                        
-                                    },
-                                    error: function(xhr) {
-                                        // Handle error here
-                                    }
-                                });
-
-                                
-
-
-                            //get drop question
-                            $.ajax({
-                                    type: "get",
-                                    dataType: 'json',
-                                    url: "/adminviewbook/createquestion",
-                                    data: { 
-                                        question : "Drag and drop",
-                                        typeofquiz : 5,
-                                        id: parentId
-                                            },
-                                    success: function(response) {
-
-                                        if (response == 1){
-                                        
-                                            Toast.fire({
-                                                icon: 'success',
-                                                title: 'All the changes have been saved'
-                                            })
-
-                                            }
-                                        
-                                    },
-                                    error: function(xhr) {
-                                        // Handle error here
-                                    }
-                                });
-
-                            var i = 1;
+                            var dragPromises = [];
                             console.log("Drag and Drop");
                             $('.drag' + parentId).each(function() {
-                                    // Get the value of the current label element using its id attribute
-                                    const value = $(this).text();
-                                    console.log(value)
+                                const value = $(this).text();
+                                console.log(value);
 
-                                    // console.log(i);
-                                    
-                                    $.ajax({
+                                var dragPromise = $.ajax({
+                                    type: "get",
+                                    dataType: 'json',
+                                    url: "/adminviewbook/createdragoption",
+                                    data: {
+                                        questionid: parentId,
+                                        sortid: i,
+                                        description: value
+                                    }
+                                });
+
+                                dragPromises.push(dragPromise);
+                                i += 1;
+                            });
+
+                            var dropPromises = [];
+                            i = 1;
+                            $('.drop' + parentId).each(function() {
+                                const value = $(this).val();
+                                console.log(value);
+
+                                var dropPromise = $.ajax({
+                                    type: "get",
+                                    dataType: 'json',
+                                    url: "/adminviewbook/createdropquestion",
+                                    data: {
+                                        questionid: parentId,
+                                        sortid: i,
+                                        description: value
+                                    }
+                                });
+
+                                dropPromises.push(dropPromise);
+                                i += 1;
+                            });
+
+                            Promise.all([...dragPromises, ...dropPromises])
+                                .then(function() {
+                                    Toast.fire({
+                                        type: 'success',
+                                        title: 'All the changes have been saved'
+                                    });
+
+                                    var questionPromise = $.ajax({
                                         type: "get",
                                         dataType: 'json',
-                                        url: "/adminviewbook/createdragoption",
-                                        data: { 
-                                            questionid : parentId,
-                                            sortid: i,
-                                            description : value
-                                                },
-                                        success: function(response) {
-
-                                            console.log("Options Succesfully save!");
-                                            
-                                        },
-                                        error: function(xhr) {
-                                            // Handle error here
+                                        url: "/adminviewbook/createquestion",
+                                        data: {
+                                            question: "Drag and drop",
+                                            typeofquiz: 5,
+                                            id: parentId
                                         }
                                     });
 
-                                    i+=1;
-
-                                    });
-
-                                    var i = 1;
-                                    $('.drop' + parentId).each(function() {
-                                    // Get the value of the current label element using its id attribute
-                                    const value = $(this).val();
-                                    console.log(value);
-
-                                            $.ajax({
-                                                type: "get",
-                                                dataType: 'json',
-                                                url: "/adminviewbook/createdropquestion",
-                                                data: { 
-                                                    questionid : parentId,
-                                                    sortid: i,
-                                                    description : value
-                                                        },
-                                                success: function(response) {
-
-                                                    console.log("Drop question Succesfully save!");
-                                                    
-                                                },
-                                                error: function(xhr) {
-                                                    // Handle error here
-                                                }
-                                                });
-                                            i+=1;
-
-
-                                    });
-
-                                    Toast.fire({
-                                        icon: 'success',
-                                        title: 'All the changes have been saved'
-                                    })
-
-                            getDropQuestion(parentId);
-
-                            
-                            //get drop question question
-                            
-
-
-                            
-
-
-                        console.log(parentId)
+                                    return questionPromise;
+                                })
+                                .then(function() {
+                                    getDropQuestion(parentId);
+                                })
+                                .catch(function(error) {
+                                    // Handle error here
+                                });
 
                         
 
@@ -2079,83 +1925,52 @@
 
                         $(document).on('click', '.answer-key-fill', function(){
                             var parentId = $(this).attr('id');
-
+                            
                             var i = 1;
                             var validation = true;
-                            
+
+                            var promises = []; // Array to store the promises
 
                             $('.fill' + parentId).each(function() {
-                                    // Get the value of the current label element using its id attribute
-                                    const value = $(this).val();
+                                const value = $(this).val();
+                                console.log(i);
+                                console.log(value);
 
-                                    console.log(i);
-                                    console.log(value);
-
-
-                                    if (value.length != 0) {
-
-                                        if(i==1){
-
-                                            $.ajax({
-                                                type: "get",
-                                                url: "/adminviewbook/createquestion",
-                                                data: { 
-                                                    question : "Fill in the blanks",
-                                                    typeofquiz : 7,
-                                                    id: parentId
-                                                        },
-                                                success: function(response) {
-
-                                                    if (response == 1){
-                                                
-                                                    Toast.fire({
-                                                        icon: 'success',
-                                                        title: 'All the changes have been saved'
-                                                    })
-
-                                                    }
-                                                    
-                                                },
-                                                error: function(xhr) {
-                                                    // Handle error here
-                                                }
-                                            });
-                                        }
-
-                                        $.ajax({
-                                                type: "get",
-                                                url: "/adminviewbook/createfillquestion",
-                                                data: { 
-                                                    questionid : parentId,
-                                                    sortid: i,
-                                                    description : value
-                                                        },
-                                                success: function(response) {
-
-                                                    console.log("Drop question Succesfully save!");
-                                                    
-                                                    
-                                                },
-                                                error: function(xhr) {
-                                                    // Handle error here
-                                                }
-                                                });
-
-                                        i+=1;
-
+                                    if (i == 1) {
+                                        var questionPromise = $.ajax({
+                                            type: "get",
+                                            url: "/adminviewbook/createquestion",
+                                            data: {
+                                                question : "Fill in the blanks",
+                                                typeofquiz : 7,
+                                                id: parentId
+                                            }
+                                        });
+                                        promises.push(questionPromise); // Add the promise to the array
                                     }
-                                
 
-                                    
-
+                                    var fillPromise = $.ajax({
+                                        type: "get",
+                                        url: "/adminviewbook/createfillquestion",
+                                        data: {
+                                            questionid: parentId,
+                                            sortid: i,
+                                            description: value
+                                        }
                                     });
+                                    promises.push(fillPromise); // Add the promise to the array
 
-                            getfillquestion(parentId)
+                                    i += 1;
+                    
+                            });
 
-
-
-                            
-
+                            Promise.all(promises)
+                                .then(function() {
+                                    getfillquestion(parentId);
+                                })
+                                .catch(function(error) {
+                                    // Handle error here
+                                });
 
                             console.log(parentId);
 
@@ -2340,37 +2155,41 @@
                                         id: id
                                 
                                             },
-                                    success: function(response) {
+                                    success: function(response)  {
                                             console.log(response);
 
                                             $('#quiztype' + id).prop('disabled', false);
 
 
+
                                             var html = `<div class="row">
                                                             <div class="col-12 m-2">
-                                                                <textarea class="form-control" placeholder="Untitled question" id="multiplechoice${response.id}" > ${response.question}</textarea>`;
+                                                                <textarea class="form-control" placeholder="Untitled question" id="multiplechoice${response.id}" > ${response.question}</textarea>
+                                                            </div>
+                                                        <div class="col-12" id="list_option${response.id}">`;
 
                                             response.choices.forEach(function(item) {
-                                                html += `<div class="col-12">
-                                                <input class="form-check-input ml-2" type="radio" name="option${response.id}" value="${item.id}">
-                                                <label class="form-check-label ml-5 option${response.id}" id="option${response.id}" contenteditable="true">
-                                                ${item.description}`;
-                                                
-                                                if(item.answer == 1){
-                                                    html +=`<span class= "ml-2"><i class="fa fa-check" style="color:rgb(7, 255, 7)" aria-hidden="true"></i></span>`;
-                                                }
-                                                
-                                                
-                                                html += `</label>
-                                                </div>`;
+                                                html += `<div id="containerchoices${response.id}">
+                                                            <input class="form-check-input ml-2" type="radio" name="option${response.id}" value="${item.id}">
+                                                            <label class="form-check-label ml-5 option${response.id}" id="option${response.id}" contenteditable="true">
+                                                                ${item.description}`;
+                                                                
+                                                                if(item.answer == 1){
+                                                                    html +=`<span class="ml-2"><i class="fa fa-check" style="color:rgb(7, 255, 7)" aria-hidden="true"></i></span>`;
+                                                                }
+                                                                
+                                                                html += `<span id="deletechoice" data-id="${item.id}" class="pl-1"><i class="fa fa-trash" aria-hidden="true"></i></span>
+                                                            </label>
+                                                        </div>`;
                                             });
 
 
-                                            
-
-                                            html += `<button class="form-control addoption" style="margin: 20px; " id="${response.id}">Add option</button>`;
-                                            html += `<div class="col-12">
-                                                    <button class="btn btn-link btn-sm answer-key" id="${response.id}">Answer key</button>
+                                            html += `</div>
+                                                    <div class="col-12">
+                                                        <div class="row justify-content-end p-3 mt-2">
+                                                            <button class="btn btn-success addoption" id="${response.id}">Add option</button>
+                                                        </div>
+                                                        <button class="btn btn-primary btn-sm answer-key" id="${response.id}">Answer key</button>
                                                     </div>`;
 
                                             $('#quiztioncontent' + id).empty().append(html);
@@ -2442,7 +2261,7 @@
                                                         <button class="btn btn-success add_drag_question"  id="${response.id}">Add drop question</button>
                                                     </div>
                                                 <div class="col-12">
-                                                    <button class="btn btn-link btn-sm answer-key-drag" id="${response.id}">Answer key</button>
+                                                    <button class="btn btn-primary btn-sm answer-key" id="${response.id}">Answer key</button>
                                                 </div>
                                                 </div>
                                             </div>
@@ -2632,7 +2451,8 @@
                             console.log("Delete button clicked!");
 
                             var id = $(this).data('id');
-                            $(this).parent().remove();
+                            $(this).parent().parent().remove();
+                            //$(this).parent().remove();
 
 
                             // Example: Remove the parent element of the deletechoice span

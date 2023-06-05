@@ -143,6 +143,7 @@ Route::middleware(['auth', 'isAdministrator','isDefaultPass'])->group(function (
     Route::get('/adminviewbook/createquiz', 'Admin\BookController@createquiz'); 
     Route::get('/adminviewbook/getquizlist', 'Admin\BookController@getquiz');  
     Route::get('/adminviewbook/createquiztitle', 'Admin\BookController@createdescription'); 
+    Route::get('/adminviewbook/createdescription', 'Admin\BookController@quizDescription'); 
     Route::get('/adminviewbook/addquestion', 'Admin\BookController@addquestion');
     Route::get('/adminviewbook/createquestion', 'Admin\BookController@createquestion');
     Route::get('/adminviewbook/createquestionitem', 'Admin\BookController@createquestionitem');
@@ -295,6 +296,7 @@ Route::middleware(['auth', 'isTeacher','isDefaultPass'])->group(function () {
 
 
     //teacherquiz
+    Route::get('/teacherquiz/quiz/title', 'Teacher\Teacherquizcontroller@saveTitle');
     Route::get('/teacherquiz/quiz/description', 'Teacher\Teacherquizcontroller@saveDescription');
     Route::get('/teacherquiz/quiz/{id}', 'Teacher\Teacherquizcontroller@createquiz');
     Route::get('/teacherquiz/addquestion', 'Teacher\Teacherquizcontroller@addQuestion');

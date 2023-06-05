@@ -288,7 +288,6 @@ class ViewBookController extends Controller
         // $bookinfo->parts = $parts;
         // $bookinfo->chapters = $chapters;
         // $bookinfo->classroomid = $classroomid;
-   
         return view('global.viewbook.viewbookindex')
             ->with('classroomid', $classroomid)
             ->with('bookinfo', $bookinfo);
@@ -309,15 +308,46 @@ class ViewBookController extends Controller
             ->get();
 
         foreach ($quiz as $item) {
-            
+
             $item->chapter = DB::table('chapters')->where('id',$item->chapterid)->value('title');
 
-
             if(empty($item->coverage)){
-            $item->coverage = "Coverage not defined";
+                $item->coverage = "Coverage not defined";
+            }
+
+            $quizsched = DB::table('chapterquizsched')
+                ->where('classroomid',$classroomid)
+                ->where('chapterquizid',$item->id)
+                ->get();
+
+            if(count($quizsched) != 0){
+
+                $item->isactivated = $quizsched[0]->status; 
+
+                $allowed_students = DB::table('allowed_student_quiz')
+                    ->join('users', 'allowed_student_quiz.studentid', '=', 'users.id')
+                    ->where('allowed_student_quiz.chapterquizschedid', $quizsched[0]->id)
+                    ->where('allowed_student_quiz.deleted', 0)
+                    ->select(
+                        'users.id',
+                        'allowed_student_quiz.chapterquizschedid',
+                        'users.name')
+                    ->get();
+
+                if(count($allowed_students) == 0) {
+                    $item->allowed_students = null;
+                } else {
+                    $item->allowed_students = $allowed_students;
+                }
+
+            } else {
+                $item->allowed_students = null;
+                $item->isactivated = null; 
             }
 
         }
+
+        // dd($quiz);
 
         return view('teacher.quiz.viewquiz')
             ->with('quizzes', $quiz)
@@ -340,15 +370,24 @@ class ViewBookController extends Controller
                                 'dateto',
                                 'timeto',
                                 'noofattempts',
-                                'chapterquizsched.createddatetime'
+                                'chapterquizsched.createddatetime',
+                                'chapterquizsched.updateddatetime'
                     )
             ->orderBy('createddatetime', 'desc')
+            ->orderBy('updateddatetime', 'desc')
             ->get();
 
 
         foreach($quiz as $item){
             $item->search = $item->datefrom.' '.$item->timefrom.', '.$item->dateto.' '.$item->timeto.' '.$item->title;
+            if(isset($item->updateddatetime)){
+                $item->activedate = $item->updateddatetime;
+            }else{
+                $item->activedate = $item->createddatetime;
+            }
         }
+
+        
         
         return $quiz;
     }
@@ -370,6 +409,7 @@ class ViewBookController extends Controller
             $maxpoints = DB::table('lessonquizquestions')
                 ->where('quizid', $chapterquizid)
                 ->where('deleted', 0)
+                ->where('typeofquiz', '!=', null)
                 ->where('typeofquiz', '!=', 4)
                 ->sum('points');
 
@@ -477,6 +517,7 @@ class ViewBookController extends Controller
                     }else{
 
                         $item->answer = 0;
+                        $item->check = 0;
 
                     }
 
@@ -514,7 +555,9 @@ class ViewBookController extends Controller
 
                     }else{
 
+                        $item->detailsid = -1;
                         $item->answer = "";
+                        $item->pointsgiven = 0;
 
                     }
 
@@ -697,6 +740,8 @@ class ViewBookController extends Controller
                                     ->value('points');
                     }else{
                         $item->picurl = "";
+                        $item->detailsid = -1;
+                        $item->pointsgiven = 0;
                     }
                 }
 
@@ -967,37 +1012,52 @@ class ViewBookController extends Controller
     }
 
 
+    public function getclassroomstudents(Request $request)
+    {
+        try {
+            $classroomid = $request->get('classroomid');
+    
+            $students = DB::table('classroomstudents')
+                ->join('users', 'classroomstudents.studentid', '=', 'users.id')
+                ->select('classroomstudents.*', 'users.name')
+                ->where('classroomstudents.classroomid', $classroomid)
+                ->where('classroomstudents.deleted', 0)
+                ->get();
+    
+            // Transform the data into the expected format
+            $formattedData = $students->map(function ($student) {
+                return [
+                    'id' => $student->id,
+                    'text' => $student->name
+                ];
+            });
+    
+            return response()->json($formattedData);
+    
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to retrieve students'], 500);
+        }
+    }
+
+
     public function chaptertestavailability(Request $request)
     {
 
-        // return $request->all();
+        $allowed_students = $request->get('allowed_students');
+        $randomize = $request->get('randomize');
         
-        // date_default_timezone_set('Asia/Manila');
-
-        // $noofattempts = $request->get('noofattempts');
-        // $chaptertestid = $request->get('chaptertestid');
-        // $classroomid = $request->get('classroomid');
-
-        // $activityrange = explode(' - ', $request->get('activitydatetimerange'));
-
-        // $datetimefrom = explode(' ',$activityrange[0]);
-        // $datefrom = date('Y-m-d', strtotime($datetimefrom[0]));
-        // $timefrom = date('H:i:s', strtotime($datetimefrom[1].' '.$datetimefrom[2]));
-
-        // $datetimeto = explode(' ',$activityrange[1]);
-        // $dateto = date('Y-m-d', strtotime($datetimeto[0]));
-        // $timeto = date('H:i:s', strtotime($datetimeto[1].' '.$datetimeto[2])); 
-
         $checkifexists = DB::table('chapterquizsched')
             ->where('chapterquizid', $request->get('quizId'))
             ->where('classroomid', $request->get('classroomId'))
             ->where('deleted','0')
             ->get();
 
-        if(count($checkifexists) == 0)
-        {
-            DB::table('chapterquizsched')
-                ->insert([
+        $status = null;
+        $quizschedid = null;
+
+        if(count($checkifexists) == 0) {
+            $createdsched = DB::table('chapterquizsched')
+                ->insertGetId([
                     'chapterquizid'         => $request->get('quizId'),
                     'classroomid'           => $request->get('classroomId'),
                     'datefrom'              => $request->get('dateFrom'),
@@ -1005,49 +1065,57 @@ class ViewBookController extends Controller
                     'dateto'                => $request->get('dateTo'),
                     'timeto'                => $request->get('timeTo'),
                     'noofattempts'          => $request->get('attempts'),
+                    'randomize'             => $randomize,
                     'createdby'             => auth()->user()->id,
                     'createddatetime'       => \Carbon\Carbon::now('Asia/Manila')
                 ]);
 
-                return 1;
+                $status = 1;
+                $quizschedid = $createdsched;
 
-        }else{
-
+        } else {
             DB::table('chapterquizsched')
-                        ->where('id', $checkifexists[0]->id)
-                        ->update([
-                            'chapterquizid'         => $request->get('quizId'),
-                            'classroomid'           => $request->get('classroomId'),
-                            'datefrom'              => $request->get('dateFrom'),
-                            'timefrom'              => $request->get('timeFrom'),
-                            'dateto'                => $request->get('dateTo'),
-                            'timeto'                => $request->get('timeTo'),
-                            'noofattempts'          => $request->get('attempts'),
-                            'updateddatetime'       => \Carbon\Carbon::now('Asia/Manila')
-                        ]);
+                ->where('id', $checkifexists[0]->id)
+                ->update([
+                    'chapterquizid'         => $request->get('quizId'),
+                    'classroomid'           => $request->get('classroomId'),
+                    'datefrom'              => $request->get('dateFrom'),
+                    'timefrom'              => $request->get('timeFrom'),
+                    'dateto'                => $request->get('dateTo'),
+                    'timeto'                => $request->get('timeTo'),
+                    'noofattempts'          => $request->get('attempts'),
+                    'randomize'             => $randomize,
+                    'status'                => $request->get('status'),
+                    'updateddatetime'       => \Carbon\Carbon::now('Asia/Manila')
+                ]);
 
-
-            return 0;
+            $status = 0;
+            $quizschedid = $checkifexists[0]->id;
         }
 
+        if (isset($allowed_students)) {
+            foreach ($allowed_students as $student_id) {
+                $countStudent = DB::table('allowed_student_quiz')
+                    ->where('studentid', $student_id)
+                    ->where('chapterquizschedid', $quizschedid)
+                    ->where('deleted', 0)
+                    ->get();
 
-            // $schedinfo = Db::table('chapterquizsched')
-            //     ->where('id', $schedid)
-            //     ->first();
+            
+                // only add new entry if it does not exists
+                if (count($countStudent) == 0) {
+                    DB::table('allowed_student_quiz')
+                        ->insert([
+                            'chapterquizschedid'    => $quizschedid,
+                            'studentid'             => $student_id,
+                            'createdby'             => auth()->user()->id,
+                            'createddatetime'       => \Carbon\Carbon::now('Asia/Manila'),
+                        ]);
+                }
+            }
+        }
 
-            // $schedinfo->datefrom    = date('m-d-Y', strtotime($schedinfo->datefrom));
-            // $schedinfo->timefrom    = date('h:i:s A', strtotime($schedinfo->timefrom));
-            // $schedinfo->dateto      = date('m-d-Y', strtotime($schedinfo->dateto));
-            // $schedinfo->timeto      = date('h:i:s A', strtotime($schedinfo->timeto));
-
-            // return collect($schedinfo);
-
-        // }else{
-
-        // }
-
-        
-
+        return $status;
 
     }
 

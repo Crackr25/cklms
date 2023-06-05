@@ -44,6 +44,12 @@
                 </div>
             </div>
             <div class="uk-margin">
+                <label class="uk-form-label" for="form-horizontal-file">Cover photo</label>
+                <div class="uk-form-controls">
+                    <input class="uk-input" name="classroomimage" type="file" accept="image/*">
+                </div>
+            </div>
+            <div class="uk-margin">
                 <label class="uk-form-label" for="form-horizontal-text">Classroom Code</label>
                 <div class="uk-form-controls">
                     <input class="uk-input" name="classroomcode" id="form-horizontal-text" type="text" placeholder="Classroom Code" disabled>

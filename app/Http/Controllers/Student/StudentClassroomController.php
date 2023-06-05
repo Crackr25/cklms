@@ -1025,11 +1025,62 @@ class StudentClassroomController extends Controller
                 ->select('teacherquizsched.*', 'teacherquiz.*' )
                 ->get();
 
+        foreach ($sched as $item){
+
+            $numberOfAttempts = 0;
+            $numberOfAttempts =  DB::table('teacherquizrecords')
+                ->where('submittedby',auth()->user()->id)
+                ->where('teacherquizid',$item->teacherquizid)
+                ->where('quizstatus', 1)
+                ->count();
+            
+            if($numberOfAttempts == 0){
+                    $item->btn = "Attempt Quiz";
+            }else{
+                    $item->btn = "Retake Quiz";
+            }
+
+            $attemptsLeft = 0;
+            if($item->noofattempts){
+                $item->attemptsLeft = $item->noofattempts - $numberOfAttempts;
+            }
+
+            $item->continuequiz = DB::table('teacherquizrecords')
+                                ->where('submittedby',auth()->user()->id)
+                                ->where('teacherquizid',$item->teacherquizid)
+                                ->where('deleted',0)
+                                ->where('quizstatus',0)
+                                ->latest('submitteddatetime')
+                                ->value('id');
+
+            $item->score = DB::table('teacherquizrecords')
+                                ->where('submittedby',auth()->user()->id)
+                                ->where('teacherquizid',$item->teacherquizid)
+                                ->select('totalscore', 'checked')
+                                ->where('deleted',0)
+                                ->where('quizstatus',1)
+                                ->latest('submitteddatetime')
+                                ->first();
+
+            $maxpoints = DB::table('teacherquizquestions')
+                ->where('quizid', $item->teacherquizid)
+                ->where('deleted', 0)
+                ->where('typeofquiz', '!=', 4)
+                ->sum('points');
+            
+            if(isset($item->score)){
+                $item->maxpoints = $maxpoints;
+            }
+
+        }
+
+            
 
 
+
+        //dd($sched);
         return view('student.studentclassroom.quiz')
                         ->with('sched',$sched);
-
             
     }
 
@@ -1052,6 +1103,7 @@ class StudentClassroomController extends Controller
                     'teacherquizid'       => $id,
                     'classroomid'         => $classroomid,
                     'submittedby'         => auth()->user()->id,
+                    'studname'            => auth()->user()->name,
                     'submitteddatetime'   => date('Y-m-d H:i:s')
                 ]);
         }else{

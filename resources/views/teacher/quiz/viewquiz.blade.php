@@ -16,8 +16,19 @@
 @section('content')
 
 
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+
 <!-- Styles -->
 <style>
+    .clickable {
+    cursor: pointer;
+    }
+
+    .tooltip-td {
+    padding: 0;
+    }
+
     .allowed-students li {
         margin-top: 1em;
     }
@@ -58,17 +69,15 @@
 
                 <div class="card-body">
                     <div id="quizTable2">
-                        <table id="quizDataTable2" class="table table-bordered" style="width:100%">
-                            <thead>
+                        <table id="quizDataTable2" class="table table-striped" style="width:100%">
+                            <thead class ="thead-dark">
                                 <tr>
+                                    <th>#</th>
                                     <th>Quiz Title</th>
-                                    <th>Date start</th>
-                                    <th>Time start</th>
-                                    <th>Date end</th>
-                                    <th>Time end</th>
+                                    <th>Date</th>
                                     <th>Attempts</th>
                                     <th>Activated on</th>
-                                    <th>Response</th>
+                                    <th class="text-center align-middle ">Response</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -96,7 +105,7 @@
 
                 <div class="card-body">
                     <div class="collapse" id="quizTable">
-                        <table id="quizDataTable" class="table table-bordered">
+                        <table id="quizDataTable" class="table table-striped">
                             <thead>
                                 <tr>
                                     <th>Chapter</th>
@@ -165,7 +174,7 @@
         <table class="table">
             <thead>
             <tr>
-                <th>Name</th>
+                <th>Student Name</th>
                 <th>Date &amp; Time Submitted</th>
                 <th>No. of Attempts</th>
                 <th>Score</th>
@@ -178,6 +187,38 @@
         </div>
         <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+    </div>
+    </div>
+</div>
+
+
+<!-- Modals -->
+<div class="modal fade" id="responseModalstudent" tabindex="-1" aria-labelledby="responseModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title" id="ModalLabelstudent">Responses</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        <div class="modal-body">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Student Name</th>
+                <th>Date &amp; Time Submitted</th>
+                <th>Score</th>
+                <th>Response</th>
+            </tr>
+            </thead>
+            <tbody id="quizResponseDetailstudent">
+            </tbody>
+        </table>
+        </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-secondary closemodal" data-dismiss="modal">Close</button>
         </div>
     </div>
     </div>
@@ -240,21 +281,19 @@
 <script src="{{asset('plugins/jquery/jquery.min.js')}}"></script>
 <script src="{{asset('templatefiles/framework.js')}}"></script>
 <script src="{{asset('templatefiles/jquery-3.3.1.min.js')}}"></script>
-
-<script src="{{asset('templatefiles/chart.min.js')}}"></script>
-<script src="{{asset('templatefiles/chart-custom.js')}}"></script>
 <script src="{{asset('plugins/jquery-ui/jquery-ui.min.js')}}"></script>
-
 <script src="{{asset('plugins/sweetalert2/sweetalert2.min.js')}}"></script>
 <script src="{{asset('plugins/sweetalert2/sweetalert2.all.min.js')}}"></script>
 <script src="{{asset('plugins/datatables/jquery.dataTables.js')}}"></script>
 <script src="{{asset('plugins/datatables-bs4/js/dataTables.bootstrap4.js')}}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
 
 <script>
     $(document).ready(function() {
 
 
-        $('.select-students').select2();
+        
 
 
         // globals
@@ -346,15 +385,13 @@
 
         function renderQuizDataTable(){
             $("#quizDataTable2").DataTable({
+                responsive: true,
                 destroy: true,
                 data:activequiz,
                 order: [[0, 'asc']],
                 lengthChange: false,
-                responsive: true,
                 ordering: false,
                 columns: [
-                    { "data": null},
-                    { "data": null},
                     { "data": null},
                     { "data": null},
                     { "data": null},
@@ -367,71 +404,63 @@
                         'targets': 0,
                         'orderable': false, 
                         'createdCell':  function (td, cellData, rowData, row, col) {
-                                var text = '<a class="mb-0">'+rowData.title+'</a>'
+                                var text = '<a class="mb-0">'+(row + 1)+'</a>'
                                 $(td)[0].innerHTML =  text
+                                $(td).addClass('text-center')
+                                $(td).addClass('align-middle')
                         }
                     },
+                
+                
                     {
                         'targets': 1,
                         'orderable': false, 
                         'createdCell':  function (td, cellData, rowData, row, col) {
-                            var date2 =  new Date(Date.parse(rowData.datefrom));
-                            var markdate = date2.toLocaleDateString("en-US", {month: "long", year: "numeric", day: "numeric"});
-                            var text = '<a class="mb-0">'+markdate+'</a>'
-                            $(td)[0].innerHTML =  text
+                                var text = '<a class="mb-0">'+rowData.title+'</a>'
+                                $(td)[0].innerHTML =  text
+                                $(td).addClass('text-center')
+                                $(td).addClass('align-middle')
                         }
                     },
                     {
                         'targets': 2,
                         'orderable': false, 
                         'createdCell':  function (td, cellData, rowData, row, col) {
-                            var date2 =  new Date(Date.parse( '1970-01-01T' + rowData.timefrom));
-                            const timeString = date2.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit"});
-                            var text = '<a class="mb-0">'+timeString+'</a>';
-                            $(td)[0].innerHTML = text;
+                            var date2 =  new Date(Date.parse(rowData.datefrom));
+                            var markdate = date2.toLocaleDateString("en-US", {month: "long", year: "numeric", day: "numeric"});
+                            var date3 =  new Date(Date.parse( '1970-01-01T' + rowData.timefrom));
+                            const timeString = date3.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit"});
+                            var date4 =  new Date(Date.parse(rowData.dateto));
+                            var markdate2 = date4.toLocaleDateString("en-US", {month: "long", year: "numeric", day: "numeric"});
+                            var date5 =  new Date(Date.parse( '1970-01-01T' + rowData.timeto));
+                            const timeString2 = date5.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit"});
+                            var text = '<a class="mb-0">'+markdate+' '+timeString+ ' - ' +markdate2+' '+timeString2+'</a>'
+                            $(td)[0].innerHTML =  text
                         }
                     },
                     {
                         'targets': 3,
                         'orderable': false, 
                         'createdCell':  function (td, cellData, rowData, row, col) {
-                            var date2 =  new Date(Date.parse(rowData.dateto));
-                            var markdate = date2.toLocaleDateString("en-US", {month: "long", year: "numeric", day: "numeric"});
-                            var text = '<a class="mb-0">'+markdate+'</a>'
+                            var text = '<a class="mb-0">'+rowData.noofattempts+'</a>'
                             $(td)[0].innerHTML =  text
+                            $(td).addClass('text-center')
+                            $(td).addClass('align-middle')
                         }
                     },
                     {
                         'targets': 4,
                         'orderable': false, 
                         'createdCell':  function (td, cellData, rowData, row, col) {
-                            var date2 =  new Date(Date.parse( '1970-01-01T' + rowData.timeto));
+                            var date2 = new Date(Date.parse(rowData.activedate));
+                            const dateString = date2.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
                             const timeString = date2.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit"});
-                            var text = '<a class="mb-0">'+timeString+'</a>'
-                            $(td)[0].innerHTML =  text
-                        }
-                    },
-                    {
-                        'targets': 5,
-                        'orderable': false, 
-                        'createdCell':  function (td, cellData, rowData, row, col) {
-                            var text = '<a class="mb-0">'+rowData.noofattempts+'</a>'
-                            $(td)[0].innerHTML =  text
-                        }
-                    },
-                    {
-                        'targets': 6,
-                        'orderable': false, 
-                        'createdCell':  function (td, cellData, rowData, row, col) {
-                            var date2 = new Date(Date.parse(rowData.createddatetime));
-                            const dateString = date2.toLocaleDateString("en-US", { year: "numeric", month: "2-digit", day: "2-digit" });
-                            const timeString = date2.toLocaleTimeString("en-US", { hour12: true, hour: "2-digit", minute: "2-digit", second: "2-digit" });
                             var text = '<a class="mb-0">'+ dateString + ' ' + timeString +'</a>'
                             $(td)[0].innerHTML =  text
                         }
                     },
                     {
-                        'targets': 7,
+                        'targets': 5,
                         'orderable': false, 
                         'createdCell':  function (td, cellData, rowData, row, col) {
                             getQuizResponses(rowData.id).then(function(data) {
@@ -475,6 +504,8 @@
                     $(".select-students").select2({
                         data: data,
                         width: '100%',
+                        allowClear:true,
+                        placeholder: "All",
                         minimumResultsForSearch: Infinity
                     })
 
@@ -879,12 +910,15 @@
                         <tr>
                         <td>${entry.name}</td>
                         <td>${formattedDate}</td>
-                        <td>${data.length} / ${filteredQuiz[0].noofattempts}</td>
-                        <td>${entry.totalscore ? entry.totalscore : 'Not yet scored.'}</td>
-                        <td><button class="btn btn-primary view-response" data-quiz-id="${filteredQuiz[0].id}" data-record-id="${entry.id}">View Response</button></td>
+                        <td class="tooltip-td clickable" data-quiz-id="${filteredQuiz[0].id}" data-student-id="${entry.submittedby}"  data-toggle="tooltip" title="View All Student Responses">
+                            <button type="button" class="btn btn-link">${data.length} / ${filteredQuiz[0].noofattempts}</button>
+                        </td>
+                        <td>${entry.totalscore ? entry.totalscore : 'Not yet scored.'} / ${entry.maxpoints}</td>
+                        <td><button class="btn btn-primary view-response" data-quiz-id="${filteredQuiz[0].id}" data-record-id="${entry.id}" data-classroom-id="${entry.classroomid}">View Response</button></td>
                         </tr>
                     `;
                 }).join('');
+
 
                 $(latestEntriesHtml).appendTo('#quizResponseDetails');
 
@@ -893,6 +927,61 @@
             $('#responseModal').modal()
 
         })
+
+
+        $(document).on('click', '.clickable', function() {
+
+                var studentid = $(this).data('student-id');
+                var quizid = $(this).data('quiz-id');
+                var modalTitle = $('#ModalLabelstudent');
+
+
+                console.log("Student ID: ", studentid , "Quiz ID: ", quizid);
+
+                $('#quizResponseDetailstudent').empty();
+
+                getQuizResponses(quizid).then(function(data) {
+                    // Create an object to store the filtered entries for each submittedby
+                    const filteredEntries = {};
+
+                    // Iterate through the data and filter the entries for each submittedby
+                    data.forEach(entry => {
+                        modalTitle.text(entry.name);
+                        const submittedby = entry.submittedby;
+
+                        if (!filteredEntries[submittedby]) {
+                            filteredEntries[submittedby] = [];
+                        }
+
+                        filteredEntries[submittedby].push(entry);
+                    });
+
+                    // Create the HTML for the filtered entries
+                    let filteredEntriesHtml = '';
+
+                    Object.entries(filteredEntries).forEach(([submittedby, entries]) => {
+                        const entriesHtml = entries.map(entry => {
+                            let options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+                            let formattedDate = new Date(entry.submitteddatetime).toLocaleDateString('en-US', options);
+
+                            return `
+                                <tr>
+                                    <td>${entry.name}</td>
+                                    <td>${formattedDate}</td>
+                                    <td>${entry.totalscore ? entry.totalscore : 'Not yet scored.'} / ${entry.maxpoints}</td>
+                                    <td><button class="btn btn-primary view-response" data-quiz-id="${quizid}" data-record-id="${entry.id}" data-classroom-id="${entry.classroomid}">View Response</button></td>
+                                </tr>
+                            `;
+                        }).join('');
+
+                        filteredEntriesHtml += entriesHtml;
+                    });
+
+                    $(filteredEntriesHtml).appendTo('#quizResponseDetailstudent');
+                });
+
+                $('#responseModalstudent').modal();
+        });
 
         $(document).on('click', '.view-response', function() {
 

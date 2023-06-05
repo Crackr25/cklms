@@ -159,7 +159,7 @@
                                     <div class="col-lg-11 col-10 editcontent col-content" id = "header">
                                         <div class="card mt-5 shadow-none  border-0">
                                             <div class="card-header" id="quizTitle">
-                                                <h3 class="text-center" contenteditable="true" >{{$quiz->title}}</h3>
+                                                <h3 class="text-center title" contenteditable="true" >{{$quiz->title}}</h3>
                                             </div>
                                             <div class="card-body">
                                                 <form>
@@ -736,18 +736,35 @@
                                                 ]
                                 });
 
-                $('.imageanswer').summernote({
-                                height: 200,
-                                toolbar: [
-                                        // [groupName, [list of button]]
-                                        ['style', ['bold', 'italic', 'underline', 'clear']],
-                                        // ['font', ['strikethrough', 'superscript', 'subscript']],
-                                        ['fontsize', ['fontsize']],
-                                        ['color', ['color']],
-                                        ['para', ['ul', 'ol', 'paragraph']],
-                                        // ['height', ['height']]
-                                                ]
-                                });
+            $('.imageanswer').summernote({
+                            height: 200,
+                            toolbar: [
+                                    // [groupName, [list of button]]
+                                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                                    // ['font', ['strikethrough', 'superscript', 'subscript']],
+                                    ['fontsize', ['fontsize']],
+                                    ['color', ['color']],
+                                    ['para', ['ul', 'ol', 'paragraph']],
+                                    // ['height', ['height']]
+                                            ]
+                            });
+
+                $(document).on('input', '.title', function() {
+                    var title = $(this).text();
+                    var quizId = $('#quiz-info').data('quizid');
+                    console.log("Description: " ,title, "ID: " , quizId);
+
+                    $.ajax({
+                                type: "GET",
+                                url: "/teacherquiz/quiz/title",
+                                data: { 
+                                    title : title,
+                                    quizId      : quizId
+                                        }
+                        });
+
+
+                });
 
                 $(document).on('change', '.description', function() {
                     var description = $(this).val();
@@ -863,7 +880,7 @@
                                         type: 'error',
                                         title: 'Something went wrong'
                                     })
-                                }
+                                    }
                         });
 
 
@@ -956,7 +973,7 @@
 
                         
                         id = $(this).attr('id');
-                        console.log("This ID: ", id);
+                        console.log("Thiss ID: ", id);
 
                         $('.btn-group-vertical').remove();
 
@@ -1091,12 +1108,12 @@
                                         }
                                         },
                                         error: function(xhr) {
-                                    // Handle error here
-                                    Toast.fire({
-                                        type: 'error',
-                                        title: 'Something went wrong'
-                                    })
-                                }
+                                            // Handle error here
+                                            Toast.fire({
+                                                type: 'error',
+                                                title: 'Something went wrong'
+                                            })
+                                    }
                                     });
                                     } else {
                                     UIkit.notification({
@@ -1157,10 +1174,7 @@
                                     },
                                     success: function(response) {
                                         if (response == 1) {
-                                        Toast.fire({
-                                            type: 'success',
-                                            title: 'All the changes have been saved'
-                                        });
+                                        console.log(response);
                                         }
                                     },
                                     error: function(xhr) {
@@ -1217,15 +1231,15 @@
                                         description: value
                                         },
                                         success: function(response) {
-                                        console.log("Drop question Successfully saved!");
+                                            console.log("Drop question Successfully saved!");
                                         },
                                         error: function(xhr) {
-                                    // Handle error here
-                                    Toast.fire({
-                                        type: 'error',
-                                        title: 'Something went wrong'
-                                    })
-                                }
+                                            // Handle error here
+                                            Toast.fire({
+                                                type: 'error',
+                                                title: 'Something went wrong'
+                                            })
+                                        }
                                     });
 
                                     i += 1;
@@ -2117,7 +2131,6 @@
                                 console.log(i);
                                 console.log(value);
 
-                                if (value.length != 0) {
                                     if (i == 1) {
                                         var questionPromise = $.ajax({
                                             type: "get",
@@ -2143,7 +2156,7 @@
                                     promises.push(fillPromise); // Add the promise to the array
 
                                     i += 1;
-                                }
+                    
                             });
 
                             Promise.all(promises)
@@ -2504,7 +2517,7 @@
                                                         <button class="btn btn-success add_drag_question"  id="${response.id}">Add drop question</button>
                                                     </div>
                                                 <div class="col-12">
-                                                     <button class="btn btn-primary btn-sm answer-key-drag" id="${response.id}">Answer key</button>
+                                                    <button class="btn btn-primary btn-sm answer-key-drag" id="${response.id}">Answer key</button>
                                                 </div>
                                                 </div>
                                             </div>
