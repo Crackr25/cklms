@@ -26,6 +26,7 @@ class PasswordGeneratorController extends Controller
             $users =  collect(UsersModel::allusers())->where('usertypeid','!=','7')->values();
         }
 
+    
         return view('admin.passwordgenerator.resultstable')
             ->with('users', $users)
             ->with('usertype', $request->get('usertype'));

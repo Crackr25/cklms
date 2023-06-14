@@ -83,9 +83,19 @@
             <a href="#" target="_blank" type="button" class="btn btn-info uk-first-column" id="modal_view_book_button">
                 <i class="icon-feather-book-open mr-2h mr-2"></i>View Book
             </a>
+            <a href="#" type="button" class="btn btn-info uk-first-column" id="modal_view_quiz_button">
+                <i class="icon-feather-book-open mr-2h mr-2"></i>View Quiz Summarry
+            </a>
         </div>
     </div> 
 </div>
+
+
+
+
+
+
+
 <div class="course-details-wrapper topic-1 uk-light pt-5 bg-success">
     <div class="container p-sm-0">
         <div uk-grid="" class="uk-grid uk-grid-stack">
@@ -134,6 +144,40 @@
     </div>
 </div>
 
+<div id="myModal" class="uk-modal" uk-modal>
+    <div class="uk-modal-dialog uk-modal-dialog-large">
+        <button class="uk-modal-close-default" type="button" uk-close></button>
+        <div class="uk-modal-header">
+            <h2 class="uk-modal-title">{{ auth()->user()->name }}</h2>
+        </div>
+
+
+        <div class="uk-modal-body">
+                <h5 class="grades"></h5>
+                <h5 class="percentage"></h5>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Quiz Title</th>
+                        <th>Date &amp; Time Submitted</th>
+                        <th>No. of Attempts</th>
+                        <th>Score</th>
+                        <th>Percentage</th>
+                    </tr>
+                </thead>
+                <tbody id="quizResponseDetails">
+                    <!-- Table rows go here -->
+                </tbody>
+            </table>
+        </div>
+        <div class="uk-modal-footer">
+            <button class="uk-button uk-button-default uk-modal-close" type="button">Close</button>
+        </div>
+    </div>
+</div>
+
+
+
 
 
 
@@ -145,7 +189,13 @@
 
 @section('footerscript')
 
+
+
+        <script src="{{asset('templatefiles/jquery-3.3.1.min.js')}}"></script>
+
         <script>
+
+
             $(document).ready(function(){
 
 
@@ -157,8 +207,90 @@
                     $('#modal_book_title').text($(this).attr('data-title'))
                     $('#modal_book_cover').attr('src',$(this).attr('data-cover'))
                     $('#modal_view_book_button').attr('href','/viewbook/'+$(this).attr('view-book-id'))
+                    $('#modal_view_quiz_button').attr('data-id', $(this).attr('view-book-id'));
+
 
                 })
+
+                $(document).on('click','#modal_view_quiz_button',function(){
+
+                    var selectedBook = $(this).attr('data-id');
+
+                    console.log(selectedBook);
+
+                    $('#quizResponseDetails').empty();
+
+                    var sum = 0;
+                    getQuizResponses(selectedBook).then(function(data) {
+                        console.log(data);
+
+                        let sum = 0; // Variable to store the sum of scores
+                        let maxpointstotal = 0; // Variable to store the sum of scores
+
+                        // Iterate through the data and filter the entries for each submittedby
+                        // Create the HTML for the filtered entries
+                        let filteredEntriesHtml = '';
+
+                        const entriesHtml = data.map(entry => {
+                            let options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+                            let formattedDate = new Date(entry.date).toLocaleDateString('en-US', options);
+
+                            if (entry.score) {
+                                sum += entry.score; // Add the score to the sum
+                                maxpointstotal += parseInt(entry.maxpoints);
+                                console.log(entry.maxpoints)
+                                console.log(maxpointstotal)
+                            }
+
+                            return `
+                                <tr>
+                                    <td>${entry.title}</td>
+                                    <td>${formattedDate}</td>
+                                    <td>${entry.attempt ? entry.attempt : 'Not yet taken.'}</td>
+                                    <td>${entry.score ? entry.score + '/' + entry.maxpoints : 'Not yet graded.'}</td>
+                                    <td>${entry.score ? Math.round((entry.score/entry.maxpoints) * 100) + '%' : 'Not yet graded.'}</td>
+                                </tr>
+                            `;
+                        }).join('');
+
+                        filteredEntriesHtml += entriesHtml;
+
+                        $(filteredEntriesHtml).appendTo('#quizResponseDetails');
+
+                        
+                        // Update the grades element with the sum of scores
+                        $('.grades').text('Partial Total Score: '+ sum + '/' + maxpointstotal); // Replace `maxPoints` with the maximum points possible for the quiz
+                        
+                        //Calculate the tital percentage of grades
+                        let average = Math.round((sum/maxpointstotal) * 100)
+
+                        $('.percentage').text('Partial Average : '+ average  + '%'); 
+
+                        console.log('Sum of scores:', sum);
+                        console.log('Sum of maxpoints:', maxpointstotal);
+                    });
+
+
+                    UIkit.modal('#myModal').show();
+
+
+                    //     $(latestEntriesHtml).appendTo('#quizResponseDetails');
+
+                    
+
+                })
+
+
+
+                function getQuizResponses(selectedBook) {
+                    return $.ajax({
+                        type:'GET',
+                        url: '/student/quizsummarry',
+                        data:{
+                            selectedBook: selectedBook,
+                        }
+                    })
+                }
 
                 function loadfeed(){
 

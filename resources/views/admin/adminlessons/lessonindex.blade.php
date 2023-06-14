@@ -43,7 +43,8 @@
                 top: 5%; 
                 left: 115%; 
             } 
-              
+
+            
             .gfg_tooltip .gfg_text::after { 
                 content: ""; 
                 position: absolute; 
@@ -55,7 +56,8 @@
                 border-color: transparent gray transparent  
                                 transparent; 
             } 
-              
+
+
             .gfg_tooltip:hover .gfg_text { 
                 visibility: visible; 
             } 

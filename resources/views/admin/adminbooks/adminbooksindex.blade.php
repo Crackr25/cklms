@@ -76,7 +76,12 @@
                                     <div class="uk-first-column book">
                                         {{-- <div class="uk-first-column"> --}}
                                         <a href="/adminviewbook/index?id={{$book->bookid}}" class="uk-text-bold">
-                                            <img src="{{asset($book->picurl)}}" onerror="this.onerror = null, this.src='{{asset('/altimages/temp-book-cover.png')}}'"  class="mb-2 w-100 shadow rounded">
+                                            @if(isset($book->picurl))
+                                                <img src="{{asset($book->picurl)}}" onerror="this.onerror = null, this.src='{{asset('/altimages/temp-book-cover.png')}}'"  class="mb-2 w-100 shadow rounded">
+                                            @else
+                                                <img src="{{asset('/altimages/temp-book-cover.png')}}" onerror="this.onerror = null, this.src='{{asset('/altimages/temp-book-cover.png')}}'"  class="mb-2 w-100 shadow rounded">
+
+                                            @endif
                                             {{$book->booktitle}}
                                         </a>
                                     </div>

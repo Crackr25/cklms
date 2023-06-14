@@ -127,6 +127,7 @@ Route::middleware(['auth', 'isAdministrator','isDefaultPass'])->group(function (
 
     Route::get('/adminviewbook/getchapters', 'Admin\BookController@getchapters');    
     Route::get('/adminviewbook/getlessons', 'Admin\BookController@getlessons');  
+    Route::get('/adminviewbook/updatesort', 'Admin\BookController@updateSort');   
     
     Route::get('/adminviewbook/getpartinfo', 'Admin\BookController@getpartinfo');
     Route::get('/adminviewbook/getchapterinfo', 'Admin\BookController@getchapterinfo');
@@ -157,6 +158,7 @@ Route::middleware(['auth', 'isAdministrator','isDefaultPass'])->group(function (
     Route::get('/adminviewbook/del-choices', 'Admin\BookController@delChoices');
     Route::get('/adminviewbook/setpoints', 'Admin\BookController@setPoints');
     Route::get('/adminviewbook/setguideanswer', 'Admin\BookController@setGuideanswer');
+    Route::post('/adminviewbook/save-image', 'Admin\BookController@saveImage');
     
     //Answer Key
     Route::get('/adminviewbook/getquestion', 'Admin\BookController@getquestion');
@@ -216,7 +218,10 @@ Route::middleware(['auth', 'isAdministrator','isDefaultPass'])->group(function (
     Route::get('/admincreatelessons', 'Admin\PartController@createlessons');    
     // Route::get('/adminlessoncontents', 'Admin\LessonController@viewlesson');    
     Route::get('/adminlessondelete', 'Admin\LessonController@deletelesson'); 
-    Route::post('/adminlessoncontentcreate', 'Admin\LessonController@createcontent');    
+
+    Route::match(['get', 'post'], '/adminlessoncontentcreate', 'Admin\LessonController@createcontent');
+    
+    //Route::post('/adminlessoncontentcreate', 'Admin\LessonController@createcontent');    
     Route::post('/adminlessoncontentupdate', 'Admin\LessonController@updatecontent');   
     Route::post('/adminlessoncontentdelete', 'Admin\LessonController@deletecontent');    
     
@@ -274,7 +279,8 @@ Route::middleware(['auth', 'isTeacher','isDefaultPass'])->group(function () {
 
     Route::get('/teacherclassrooms', 'Teacher\ClassroomController@index');   
     Route::get('/teacherquizzes', 'Teacher\Teacherquizcontroller@index');   
-    Route::get('/teacherclassroom/create', 'Teacher\ClassroomController@create');   
+   // Route::post('/teacherclassroom/create', 'Teacher\ClassroomController@create'); 
+    Route::post('/teacherclassroom/create/rooms', 'Teacher\ClassroomController@create');     
     Route::get('/teachergetavailablecode', 'Teacher\ClassroomController@getavailablecode');
     Route::get('/teacherquiz/create', 'Teacher\Teacherquizcontroller@create'); 
     Route::get('/teacherquiz/delete', 'Teacher\Teacherquizcontroller@delete'); 
@@ -380,6 +386,7 @@ Route::middleware(['auth', 'isStudent','isDefaultPass'])->group(function () {
 
 
     Route::get('/studentfeed','Student\StudentClassroomController@studentfeed');
+    Route::get('/student/quizsummarry','Student\StudentClassroomController@quizSummarry');
     Route::get('/studentclassmates','Student\StudentClassroomController@studentclassmates');
     Route::get('/studentbooks','Student\StudentClassroomController@studentbooks');
     Route::get('/checkForNewComments','Student\StudentClassroomController@checkForNewComments');
@@ -417,6 +424,7 @@ Route::group(['middleware' => ['auth', 'web']], function() {
     Route::get('/quiz/{ids}', 'GlobalController\ViewBookController@viewquiz');
     Route::get('/quizresponses', 'GlobalController\ViewBookController@quizresponses');
     Route::get('/viewquizresponse/{classroomId}/{quizId}/{recordId}', 'GlobalController\ViewBookController@viewquizresponse');
+    Route::get('/viewquizanalytics/{quizid}/{classroomid}/{bookid}', 'GlobalController\ViewBookController@viewquizanalytics');
     Route::get('/updatescore', 'GlobalController\ViewBookController@updatescore');
     Route::get('/donecheck', 'GlobalController\ViewBookController@doneCheck');
     Route::get('/getclassroomstudents', 'GlobalController\ViewBookController@getclassroomstudents');
@@ -426,7 +434,9 @@ Route::group(['middleware' => ['auth', 'web']], function() {
     Route::get('/viewbook/{ids}', 'GlobalController\ViewBookController@viewbook');     
 
     Route::get('/viewbookchaptertestavailability', 'GlobalController\ViewBookController@chaptertestavailability');
+    Route::get('/quizTable', 'GlobalController\ViewBookController@quizTable');
     Route::get('/getactivequiz', 'GlobalController\ViewBookController@getActiveQuiz');
+    Route::get('//endquiz', 'GlobalController\ViewBookController@endQuiz');
     Route::get('/globalsetting/profileview', 'GlobalController\UserProfileController@profileview');   
     
     Route::get('/videoconference/start','GlobalController\VideoConferenceController@startcall');

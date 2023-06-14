@@ -7,11 +7,16 @@
                             border-radius: 10px  !important;" id="quiz-info">
                 <div class="card-header">
                     <h1 class="card-title">
-                        Quiz Status {{$allowedstudents == ''}}
+                    {{$chapterquizsched->title}} {{$allowedstudents == ''}}
                     </h1>
                 </div>
                 <div class="card-body">
                     <h4><span>Status: </span> <b>Inactive</b> </h4>
+                    @if(isset($chapterquizsched))
+                                <h4><span> Coverage: </span> <b> {{$chapterquizsched->coverage}}</b> </h4>
+                                @else
+                                <h4><span> Coverage: </span> <b> Coverage Not Defined</b> </h4>
+                                @endif
                     <p>Please contact your teacher to open this quiz.</p>
                 </div>
             </div>
@@ -31,13 +36,18 @@
                             border-radius: 10px  !important;" id="quiz-info">
                                     <div class="card-header">
                                         <h1 class="card-title">
-                                            Quiz Status
+                                            {{$chapterquizsched->title}}
                                         </h1>
                                     </div>
                                     
                                     
                                 <div class="card-body">
                                     <h4><span> Status: </span> <b>Overdue</b> </h4>
+                                    @if(isset($chapterquizsched))
+                                    <h4><span> Coverage: </span> <b> {{$chapterquizsched->coverage}}</b> </h4>
+                                    @else
+                                    <h4><span> Coverage: </span> <b> Coverage Not Defined</b> </h4>
+                                    @endif
                                     <ul class="list-unstyled">
                                         @if(isset($score) && $score->checked == 1)
                                             <li ><span><b>Score:</b></span> {{$score->totalscore}} / {{$score->maxpoints}}</li>
@@ -65,12 +75,17 @@
                         border-radius: 10px  !important;" id="quiz-info">
                                 <div class="card-header">
                                     <h1 class="card-title">
-                                        Quiz Status
+                                        {{$chapterquizsched->title}}
                                     </h1>
                                 </div>
 
                             <div class="card-body">
                                 <h4><span> Status: </span> <b>Active</b> </h4>
+                                @if(isset($chapterquizsched))
+                                <h4><span> Coverage: </span> <b> {{$chapterquizsched->coverage}}</b> </h4>
+                                @else
+                                <h4><span> Coverage: </span> <b> Coverage Not Defined</b> </h4>
+                                @endif
                                 <ul class="list-unstyled">
                                     <li class=""><span>Deadline:</span> {{\Carbon\Carbon::create($chapterquizsched->dateto.' '.$chapterquizsched->timeto)->isoFormat('MMMM DD, YYYY hh:mm A')}}</li>
                                     <li class=""><span>Attempts:</span> {{$attemptsLeft}} / {{$chapterquizsched->noofattempts}} </li>

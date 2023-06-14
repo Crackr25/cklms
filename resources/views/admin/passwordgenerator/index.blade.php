@@ -55,8 +55,19 @@
     </div>
     
 @endsection
+
+
+<script src="{{asset('plugins/jquery/jquery.min.js')}}"></script>
+
 @section('script')
+
+
+
+
+
 <script>
+
+    
     $(document).ready(function(){
         // function filter(usertype){
         //     $.ajax({
@@ -153,6 +164,16 @@
                 }
             })
         })
+
+        $(document).on('click','#resetpassword', function(){
+
+            var id = $(this).data('id');
+
+            console.log('Reset Password: ', id);
+
+
+
+        });
         // $('#searchclassroominput').keyup(function(){
         //     thistable.search($(this).val()).draw() ;
         // })

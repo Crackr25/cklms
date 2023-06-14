@@ -25,7 +25,8 @@ class ClassroomController extends Controller
                     'classrooms.id',
                     'classrooms.classroomname',
                     'classrooms.code',
-                    'classrooms.createddatetime'
+                    'classrooms.createddatetime',
+                    'classrooms.picurl'
                 )
                 ->orderBy('classrooms.classroomname')
                 ->join('teachers','classrooms.createdby','=','teachers.id')
@@ -42,6 +43,9 @@ class ClassroomController extends Controller
                                 });
 
             }
+
+        
+
 
             $classroomCount = $classrooms->count();
 
@@ -62,6 +66,10 @@ class ClassroomController extends Controller
                 'data'=>$classrooms->get(),
                 'filtertype'=>$filtertype
             ]);
+            
+
+            
+            
 
             if(count($data[0]->data) > 0){
 
@@ -75,9 +83,22 @@ class ClassroomController extends Controller
                         ->where('classroomid', $classroom->id)
                         ->where('deleted','0')
                         ->count();
+
+                    if(isset($classroom->picurl)){
+
+                        $protocol = $request->getScheme();
+                        $host = $request->getHost();
+                        $rootDomain = $protocol . '://' . $host;
+
+                        $classroom->picurl = $rootDomain.'/'.$classroom->picurl;
+                    
+                    }
+                    
                 }
 
             }
+
+
 
             return view('teacher.classrooms.include.classroomtable')
                             ->with('data',$data);
@@ -133,11 +154,23 @@ class ClassroomController extends Controller
             
         if(count($checkifexists) == 0){
 
+            $imageFile = $request->file('selectedFile');
+
+
+
+            // Save the image locally
+            $imageName = time() . '_' . $imageFile->getClientOriginalName();
+            $imageFile->move(public_path('bookcover'), $imageName);
+
+        // Store the image URL path
+            $data= 'bookcover/' . $imageName;
+
             $id = DB::table('classrooms')
                 ->insertGetID([
                     'classroomname' => $request->get('classroomname'),
                     'code'          => $request->get('code'),
                     'createdby'     => $createdby,
+                    'picurl'        => $data,
                     'createddatetime'   => date('Y-m-d H:i:s')
                 ]);
 
@@ -161,11 +194,11 @@ class ClassroomController extends Controller
                 'logoutUrl' => explode('/',url()->full())[2].'/videoconference/closevideoconference'
             ]); 
 
-            return '1';
+            //return $booksdata;
 
         }else{
 
-            return '0';
+           // return 0;
 
         }
     }

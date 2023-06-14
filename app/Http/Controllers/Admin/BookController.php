@@ -408,6 +408,19 @@ class BookController extends Controller
             ->get();
 
 
+        $protocol = $request->getScheme();
+        $host = $request->getHost();
+
+        $rootDomain = $protocol . '://' . $host;
+
+        foreach($quizquestions as $item){
+
+            if($item->typeofquiz == 9){
+                $item->image = $rootDomain.'/'.$item->picurl;
+            }
+        }
+
+
 
         if($chapterquizinfo->title == null || $chapterquizinfo->title == ""){
             $chapterquizinfo->title = "Untitled Quiz";
@@ -418,6 +431,7 @@ class BookController extends Controller
         }
 
 
+        //dd($quizquestions);
 
         return view('admin.adminquiz.quizindex')
         ->with('id',$id)
@@ -437,6 +451,49 @@ class BookController extends Controller
         ]);
 
         return $id;
+    }
+
+
+    public function saveImage(Request $request)
+    {
+
+        $question_id = $request->get('question_id');
+        $imageFile = $request->file('answer');
+
+
+        $data = [
+            'question'  => "Image holder",
+            'typeofquiz' => 9,
+        ];
+
+
+        // Save the image locally
+        $imageName = time() . '_' . $imageFile->getClientOriginalName();
+        $imageFile->move(public_path('quizquestion'), $imageName);
+
+        // Store the image URL path
+        $data['picurl'] = 'quizquestion/' . $imageName;
+
+        // Make the complete path of image
+        $protocol = $request->getScheme();
+        $host = $request->getHost();
+
+        $rootDomain = $protocol . '://' . $host;
+
+        // insert data
+
+        $data['updateddatetime'] = \Carbon\Carbon::now('Asia/Manila');
+
+
+        DB::table('lessonquizquestions')
+        ->where('id', $question_id)
+        ->update($data);
+
+
+        $data['picurl'] = $rootDomain . '/' . $data['picurl'];
+
+        return $data;
+
     }
 
     public function delquestion(Request $request)
@@ -903,15 +960,14 @@ class BookController extends Controller
             $clouddestinationPath = dirname(base_path(), 1).'/'.$urlFolder.'/books/'.$request->get('editbooktitle').'/';
     
     
-            try{
+            // try{
     
-                $file->move($clouddestinationPath, $file->getClientOriginalName());
+            //     $file->move($clouddestinationPath, $file->getClientOriginalName());
     
-            }
-            catch(\Exception $e){
-               
+            // }
+            // catch(\Exception $e){
         
-            }
+            // }
                 // return basename($request->get('content'));
             $destinationPath = public_path('books/'.$request->get('editbooktitle').'/');
                 // return $filename;
@@ -922,15 +978,21 @@ class BookController extends Controller
     
             }
             catch(\Exception $e){
-               
+                
         
             }
-            // return $file->getClientOriginalName();
+
+            
+            
             DB::table('books')
             ->where('id', $request->get('editbookid'))
             ->update([
                 'picurl'            => 'books/'.$request->get('editbooktitle').'/'.$file->getClientOriginalName(),
             ]);
+
+            return back();
+
+
         }
         DB::table('books')
             ->where('id', $request->get('editbookid'))
@@ -1114,15 +1176,15 @@ class BookController extends Controller
             $clouddestinationPath = dirname(base_path(), 1).'/'.$urlFolder.'/books/'.$request->get('title').'/';
     
     
-            try{
+            // try{
     
-                $file->move($clouddestinationPath, $file->getClientOriginalName());
+            //     $file->move($clouddestinationPath, $file->getClientOriginalName());
     
-            }
-            catch(\Exception $e){
-               
+            // }
+            // catch(\Exception $e){
         
-            }
+        
+            // }
                 // return basename($request->get('content'));
             $destinationPath = public_path('books/'.$request->get('title').'/');
                 // return $filename;
@@ -1133,7 +1195,6 @@ class BookController extends Controller
     
             }
             catch(\Exception $e){
-               
         
             }
             // return back();
@@ -1164,6 +1225,38 @@ class BookController extends Controller
         }
         return back();
     }
+    public function updateSort(Request $request)
+    {
+        // return $request->all();
+        // return ;
+
+        $type = $request->get('type');
+
+
+
+        if($type == 'lesson'){
+
+            DB::table('lessons')
+            ->where('id', $request->get('id'))
+            ->update([
+                'sortid'   => $request->get('sortid')
+            ]);
+
+        }else if($type == 'quiz'){
+
+            DB::table('lesssonquiz')
+            ->where('id', $request->get('id'))
+            ->update([
+                'sortid'   => $request->get('sortid')
+            ]);
+
+        }
+
+        
+    }
+
+
+
     public function deletebook(Request $request)
     {
         // return $request->all();

@@ -732,6 +732,71 @@ class StudentClassroomController extends Controller
         return array($request->get('postid'),$commentsarray);
     }
 
+    public function quizSummarry(Request $request){
+
+        $books = $request->get('selectedBook');
+
+        $ids = explode('-',$books);
+        $classroombookid = $ids[0];
+        $classroomid = $ids[1];
+        $bookid = $ids[2];
+
+        $quiz = Db::table('lesssonquiz')
+                        ->where('bookid', $bookid)
+                        ->select('id','title')
+                        ->where('deleted','0')
+                        ->orderBy('id')
+                        ->groupby('id')
+                        ->get();
+
+        $name = auth()->user()->name;
+
+        foreach($quiz as $item){
+
+
+            $record = Db::table('chapterquizrecords')
+                        ->where('chapterquizid', $item->id)
+                        ->where('deleted','0')
+                        ->where('checked','1')
+                        ->where('submittedby',auth()->user()->id)
+                        ->select('submitteddatetime', 'totalscore')
+                        ->latest('submitteddatetime')
+                        ->first();
+
+            $recordcount = Db::table('chapterquizrecords')
+                        ->where('chapterquizid', $item->id)
+                        ->where('deleted','0')
+                        ->where('submittedby',auth()->user()->id)
+                        ->count();
+
+            $maxpoints = DB::table('lessonquizquestions')
+                ->where('quizid', $item->id)
+                ->where('deleted', 0)
+                ->where('typeofquiz', '!=', 4)
+                ->where('typeofquiz', '!=', 9)
+                ->sum('points');
+
+            if(isset($record)){
+
+                $item->date = $record->submitteddatetime;
+                $item->score = $record->totalscore;
+                $item->attempt = $recordcount;
+
+            }
+
+
+            $item->maxpoints = $maxpoints;
+
+
+            
+
+        }
+
+
+
+        return $quiz;    
+    }
+
     public function studentfeed(Request $request){
 
 
@@ -1066,6 +1131,7 @@ class StudentClassroomController extends Controller
                 ->where('quizid', $item->teacherquizid)
                 ->where('deleted', 0)
                 ->where('typeofquiz', '!=', 4)
+                ->where('typeofquiz', '!=', 9)
                 ->sum('points');
             
             if(isset($item->score)){

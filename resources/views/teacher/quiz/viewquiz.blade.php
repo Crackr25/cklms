@@ -49,6 +49,21 @@
         padding: 0 !important;
         display: inline !important;
     }
+
+    .circled-question-mark {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background-color: white;
+    color: black;
+    text-align: center;
+    line-height: 24px;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+
 </style>
 
 
@@ -78,6 +93,7 @@
                                     <th>Attempts</th>
                                     <th>Activated on</th>
                                     <th class="text-center align-middle ">Response</th>
+                                    <th ></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -90,7 +106,7 @@
     </div>
 </div>
 
-<div class="container-fluid classroom" data-id="{{$classroomid}}">
+<div class="container-fluid classroom" data-bookid= "{{$bookid}}" data-id="{{$classroomid}}">
     <div class="row justify-content-center">
         <div class="col-md-10">
             <div class="card">
@@ -98,58 +114,25 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <span>Quiz Table</span>
                         <div>
-                            <button class="btn btn-sm btn-default mr-2" type="button" data-toggle="collapse" data-target="#quizTable" aria-expanded="false" aria-controls="quizTable"><i class="fa fa-plus"></i></button>
+                            <button id="toggleButton" class="btn btn-sm btn-default mr-2" type="button" data-toggle="collapse" data-target="#quizTable" aria-expanded="false" aria-controls="quizTable"><i class="fa fa-plus"></i></button>
                         </div>
                     </div>
                 </div>
 
                 <div class="card-body">
                     <div class="collapse" id="quizTable">
-                        <table id="quizDataTable" class="table table-striped">
-                            <thead>
+                        <table id="quizDataTable" class="table table-striped" style="width : 100%">
+                            <thead class="thead-dark">
                                 <tr>
-                                    <th>Chapter</th>
-                                    <th>Lesson</th>
-                                    <th>Title</th>
-                                    <th>Description</th>
-                                    <th>Allowed Students</th>
-                                    <th>Activation</th>
+                                    <th width = "15%">Chapter</th>
+                                    <th width = "15%">Lesson</th>
+                                    <th width = "20%">Title</th>
+                                    <th width = "20%">Description</th>
+                                    <th width = "20%">Allowed Students</th>
+                                    <th width = "10%">Activation</th>
                                 </tr>
-                            </thead>
+                            </thead>                            
                             <tbody>
-                            @foreach ($quizzes as $quiz)
-                            <tr>
-                                <td>{{ $quiz->chapter }}</td>
-                                <td>{{ $quiz->coverage }}</td>
-                                <td>{{ $quiz->title }}</td>
-                                <td>{{ strip_tags($quiz->description) }}</td>
-                                <td>
-                                    <ul class="allowed-students" data-id="{{ $quiz->id }}">
-                                        @if (!empty($quiz->allowed_students))
-                                            @foreach ($quiz->allowed_students as $student)
-                                                <li data-allowed-student="{{ $student->id }}">{{ $student->name }}</li>
-                                            @endforeach
-                                        @endif
-                                    </ul>                                    
-                                </td>
-                                <td>
-                                    @if (empty($quiz->isactivated))
-                                        <button type="button" class="btn btn-success" data-id="{{ $quiz->id }}" id="activate-quiz">
-                                            Activate
-                                        </button>
-                                    @elseif ($quiz->isactivated == 0)
-                                        <button type="button" class="btn btn-warning" data-id="{{ $quiz->id }}" id="ongoing-quiz">
-                                            Ongoing
-                                        </button>
-                                    @elseif ($quiz->isactivated == 1)
-                                        <button type="button" class="btn btn-primary" data-id="{{ $quiz->id }}" id="reactivate-quiz">
-                                            Reactivate
-                                        </button>
-                                    @endif
-                                </td>
-                            </tr>
-                            @endforeach
-                            
                             </tbody>
                         </table>
                     </div>
@@ -171,6 +154,10 @@
         </button>
         </div>
         <div class="modal-body">
+        <a href="#" class="btn btn-link mb-4 analytics">View Analytics
+            <span aria-hidden="true" class="circled-question-mark">&#x2753;</span>
+        </a>
+
         <table class="table">
             <thead>
             <tr>
@@ -290,16 +277,19 @@
 <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
 
 <script>
+
+
+    
     $(document).ready(function() {
 
 
-        
-
-
-        // globals
+           // globals
         var CLASSROOM_ID;
+        var BOOK_ID;
         var QUIZ_RESPONSES;
+        var QUIZ_ID;
         var activequiz;
+        var quizTable;
         var selectedQuizId;
         var selectedQuizData;
         var allowedStudentIds = [];
@@ -313,16 +303,46 @@
         });
 
 
+        function quizDataTable() {
+            var classroomid = $('.container-fluid.classroom').data('id');
+            var bookid = $('.container-fluid.classroom').data('bookid');
+            CLASSROOM_ID = classroomid;
+            var bookid = $('.container-fluid.classroom').data('bookid');
+            console.log(typeof(bookid));
+
+            $.ajax({
+                type:'GET',
+                url: '/quizTable',
+                data:{
+                    classroomid: CLASSROOM_ID,
+                    bookid:    bookid
+                },
+                success: function(data) {
+                    console.log(data);
+                    quizTable = data
+                    renderQuizDataTable1();
+                }
+            })
+
+        }
+
+        
+
+
         // helper functions
         function getActiveQuiz() {
+            var bookid = $('.container-fluid.classroom').data('bookid');
+            console.log(typeof(bookid));
 
             $.ajax({
                 type:'GET',
                 url: '/getactivequiz',
                 data:{
-                    classroomid: CLASSROOM_ID
+                    classroomid: CLASSROOM_ID,
+                    bookid:    bookid
                 },
                 success: function(data) {
+                    console.log(data);
                     activequiz = data
                 }
             })
@@ -330,11 +350,13 @@
         }
 
         function updateAllowedList() {
+            var bookid = $('.container-fluid.classroom').data('bookid');
             return $.ajax({
                 type:'GET',
                 url: '/getactivequiz',
                 data:{
-                    classroomid: CLASSROOM_ID
+                    classroomid: CLASSROOM_ID,
+                    bookid:    bookid
                 },
                 success: function(data) {
                     activequiz = data
@@ -356,18 +378,22 @@
         function fetchQuizDataTable(){
 
             var classroomid = $('.container-fluid.classroom').data('id');
-            CLASSROOM_ID = classroomid
+            var bookid = $('.container-fluid.classroom').data('bookid');
+            CLASSROOM_ID = classroomid;
+            BOOK_ID = bookid;
 
             $.ajax({
                 type:'GET',
                 url: '/getactivequiz',
                 data:{
-                    classroomid: classroomid
+                    classroomid: classroomid,
+                    bookid:    bookid
                 },
 
                 success:function(data) {
                     activequiz = data
                     renderQuizDataTable()
+                    
                 }
             })
         }
@@ -387,11 +413,13 @@
             $("#quizDataTable2").DataTable({
                 responsive: true,
                 destroy: true,
+                scrollX: true,
                 data:activequiz,
                 order: [[0, 'asc']],
                 lengthChange: false,
                 ordering: false,
                 columns: [
+                    { "data": null},
                     { "data": null},
                     { "data": null},
                     { "data": null},
@@ -486,6 +514,137 @@
                             $(td).addClass('text-center')
                             $(td).addClass('align-middle')
                         }
+                    },
+                    {
+                        'targets': 6,
+                        'orderable': true, 
+                        'createdCell':  function (td, cellData, rowData, row, col) {
+
+                            var buttons;
+
+                            if(rowData.status != 1){
+
+                                buttons = `<button type="button" class="btn btn-danger" data-id="${rowData.schedid}" id="end-quiz">
+                                                    End Quiz
+                                                </button>`;            
+                            }else{
+
+                                buttons = `<button type="button" class="btn btn-dark">
+                                                    End Quiz
+                                                </button>`      
+
+
+                            }
+
+
+                            $(td)[0].innerHTML =  buttons
+
+                            $(td).addClass('text-center')
+                            $(td).addClass('align-middle')
+                        }
+                    }
+                ]
+            });
+        }
+
+
+        function renderQuizDataTable1(){
+            $("#quizDataTable").DataTable({
+                responsive: false,
+                autowidth: false,
+                destroy: true,
+                //scrollX: true,
+                data:quizTable,
+                order: [[0, 'asc']],
+                lengthChange: false,
+                ordering: false,
+                columns: [
+                    { "data": null},
+                    { "data": null},
+                    { "data": null},
+                    { "data": null},
+                    { "data": null},
+                    { "data": "search"}
+                ],
+                columnDefs: [
+                    {
+                        'targets': 0,
+                        'orderable': false, 
+                        'createdCell':  function (td, cellData, rowData, row, col) {
+                                var text = '<a class="mb-0">'+rowData.chapter+'</a>'
+                                $(td)[0].innerHTML =  text
+                                $(td).addClass('text-center')
+                                $(td).addClass('align-middle')
+                        }
+                    },
+                
+                
+                    {
+                        'targets': 1,
+                        'orderable': false, 
+                        'createdCell':  function (td, cellData, rowData, row, col) {
+                                var text = '<a class="mb-0">'+rowData.coverage +'</a>'
+                                $(td)[0].innerHTML =  text
+                                $(td).addClass('text-center')
+                                $(td).addClass('align-middle')
+                        }
+                    },
+                    {
+                        'targets': 2,
+                        'orderable': false, 
+                        'createdCell':  function (td, cellData, rowData, row, col) {
+                            var text = '<a class="mb-0">'+rowData.title+'</a>'
+                            $(td)[0].innerHTML =  text
+                        }
+                    },
+                    {
+                        'targets': 3,
+                        'orderable': false, 
+                        'createdCell':  function (td, cellData, rowData, row, col) {
+                            var text = '<a class="mb-0">'+ rowData.description +'</a>'
+                            $(td)[0].innerHTML =  text
+                            $(td).addClass('text-center')
+                            $(td).addClass('align-middle')
+                        }
+                    },
+                    {
+                        'targets': 4,
+                        'orderable': false, 
+                        'createdCell':  function (td, cellData, rowData, row, col) {
+                            var text = '<a class="mb-0">'+(rowData.allowed_students ? rowData.allowed_students : 'All')+'</a>'
+                            $(td)[0].innerHTML =  text
+                        }
+                    },
+                    {
+                        'targets': 5,
+                        'orderable': false, 
+                        'createdCell':  function (td, cellData, rowData, row, col) {
+
+                                    // var buttons = `<button type="button" class="btn btn-success" data-id="${rowData.id}" id="activate-quiz">
+                                    //                     Activate
+                                    //                 </button>`;
+                                
+                                    if (rowData.isactivated == 3) {
+                                    var buttons = `<button type="button" class="btn btn-success" data-id="${rowData.id}" id="activate-quiz">
+                                                        Activate
+                                                    </button>`;
+                                    } 
+                                    else if (rowData.isactivated == 0) {
+                                    var buttons = `<button type="button" class="btn btn-warning" data-id="${rowData.id}" id="ongoing-quiz">
+                                                        Ongoing
+                                                    </button>`;
+                                    } else if (rowData.isactivated == 1) {
+                                    var buttons = `<button type="button" class="btn btn-primary" data-id="${rowData.id}" id="reactivate-quiz">
+                                                        Reactivate
+                                                    </button>`;
+                                    }
+
+
+                            $(td)[0].innerHTML =  buttons
+
+                            $(td).addClass('text-center')
+                            $(td).addClass('align-middle')
+                        }
                     }
                 ]
             });
@@ -516,9 +675,12 @@
 
 
         // init
-        fetchQuizDataTable()
-        getActiveQuiz()
-        renderSelect2Students()
+        quizDataTable(); 
+        fetchQuizDataTable();
+        //getActiveQuiz();
+        renderSelect2Students();
+    
+        
 
         // event handlers
         $("button[type='submit']").click(function(event) {
@@ -573,6 +735,7 @@
 
                     // enable back the save button
                     $(".activate").prop('disabled', false)
+                    fetchQuizDataTable();
 
                     if (saveType == 'reactivate') {
                         // update chapterquizsched status 0 for 'ongoing'
@@ -610,6 +773,14 @@
 
 
         });
+
+
+        $("#toggleButton").click(function() {
+            // Toggle the plus and minus icons
+            $(this).find("i").toggleClass("fa-plus fa-minus");
+        });
+
+
 
         $('.select-students').on('select2:unselect', function (e) {
             var data = e.params.data;
@@ -704,6 +875,75 @@
                 }
             }
         });
+
+        $(document).on('click', '#end-quiz', function() {
+
+            // get the quiz id from data-id
+            var id = $(this).data('id');
+            console.log(id);
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, end the quiz!'
+                }).then((result) => {
+                    console.log(result);
+
+
+                if (result.value == true) {
+
+                    console.log('Hello');
+
+
+                    $.ajax({
+                        type:'GET',
+                        url: '/endquiz',
+                        data:{
+                            id: id
+                        },
+                        success: function(data) {
+                            fetchQuizDataTable()
+                            quizDataTable()
+                            
+                            // show notification
+                            Toast.fire({
+                                    type: 'success',
+                                    title: 'Quiz ended successfully',
+                                    timer: 2000,
+                                })
+
+                        }
+                    })
+
+                
+                }
+            })
+
+        });
+
+        $(document).on('click', '.analytics', function() {
+
+            // get the quiz id from data-id
+            console.log(QUIZ_ID);
+            console.log('QUIZ_ID');
+
+
+            var classroomid = $('.container-fluid.classroom').data('id');
+            var bookid = $('.container-fluid.classroom').data('bookid');
+
+            var url = `/viewquizanalytics/${QUIZ_ID}/${classroomid}/${bookid}`;
+
+            window.open(url, '_blank');
+
+        
+
+        });
+
+
 
         $(document).on('click', '#activate-quiz', function() {
 
@@ -869,7 +1109,12 @@
         $(document).on('click', '.response', function() {
 
             var chapterquizid = $(this).data('id')
+            
             var studentEntryHtml;
+
+
+            //Set quizid for view Analytics
+            QUIZ_ID = chapterquizid;
 
             $('#quizResponseDetails').empty()
 
@@ -913,7 +1158,7 @@
                         <td class="tooltip-td clickable" data-quiz-id="${filteredQuiz[0].id}" data-student-id="${entry.submittedby}"  data-toggle="tooltip" title="View All Student Responses">
                             <button type="button" class="btn btn-link">${data.length} / ${filteredQuiz[0].noofattempts}</button>
                         </td>
-                        <td>${entry.totalscore ? entry.totalscore : 'Not yet scored.'} / ${entry.maxpoints}</td>
+                        <td>${entry.totalscore !== null && entry.totalscore !== undefined ? entry.totalscore : 'Not yet scored.'} / ${entry.maxpoints}</td>
                         <td><button class="btn btn-primary view-response" data-quiz-id="${filteredQuiz[0].id}" data-record-id="${entry.id}" data-classroom-id="${entry.classroomid}">View Response</button></td>
                         </tr>
                     `;

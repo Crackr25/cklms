@@ -302,12 +302,74 @@ class ViewBookController extends Controller
         $classroombookid = $ids[0];
         $classroomid = $ids[1];
         $bookid = $ids[2];
+        // $quiz = DB::table('lesssonquiz')
+        //     ->where('bookid',$bookid)
+        //     ->where("deleted", 0)
+        //     ->get();
+
+        // foreach ($quiz as $item) {
+
+        //     $item->chapter = DB::table('chapters')->where('id',$item->chapterid)->value('title');
+
+        //     if(empty($item->coverage)){
+        //         $item->coverage = "Coverage not defined";
+        //     }
+
+        //     $quizsched = DB::table('chapterquizsched')
+        //         ->where('classroomid',$classroomid)
+        //         ->where('chapterquizid',$item->id)
+        //         ->get();
+
+        //     if(count($quizsched) != 0){
+
+        //         $item->isactivated = $quizsched[0]->status; 
+
+        //         $allowed_students = DB::table('allowed_student_quiz')
+        //             ->join('users', 'allowed_student_quiz.studentid', '=', 'users.id')
+        //             ->where('allowed_student_quiz.chapterquizschedid', $quizsched[0]->id)
+        //             ->where('allowed_student_quiz.deleted', 0)
+        //             ->select(
+        //                 'users.id',
+        //                 'allowed_student_quiz.chapterquizschedid',
+        //                 'users.name')
+        //             ->get();
+
+        //         if(count($allowed_students) == 0) {
+        //             $item->allowed_students = null;
+        //         } else {
+        //             $item->allowed_students = $allowed_students;
+        //         }
+
+        //     } else {
+        //         $item->allowed_students = null;
+        //         $item->isactivated = null; 
+        //     }
+
+        // }
+
+        // dd($quiz);
+
+        return view('teacher.quiz.viewquiz')
+            ->with('bookid', $bookid)
+            ->with('classroomid', $classroomid);
+    }
+
+    public function quizTable(Request $request)
+    {
+
+
+        $classroomid = $request->query->get('classroomid');
+        $bookid = $request->get('bookid');
+
+
         $quiz = DB::table('lesssonquiz')
             ->where('bookid',$bookid)
             ->where("deleted", 0)
             ->get();
 
         foreach ($quiz as $item) {
+
+            
 
             $item->chapter = DB::table('chapters')->where('id',$item->chapterid)->value('title');
 
@@ -337,45 +399,53 @@ class ViewBookController extends Controller
                 if(count($allowed_students) == 0) {
                     $item->allowed_students = null;
                 } else {
-                    $item->allowed_students = $allowed_students;
+                    $item->allowed_students = $student_names = $allowed_students->pluck('name')->implode(', ');;
                 }
 
             } else {
                 $item->allowed_students = null;
-                $item->isactivated = null; 
+                $item->isactivated = 3; 
             }
+
+            $item->search = $item->description.' '.$item->allowed_students.', '.$item->coverage.' '.$item->createddatetime.' '.$item->title.' '.$item->chapter;
 
         }
 
-        // dd($quiz);
 
-        return view('teacher.quiz.viewquiz')
-            ->with('quizzes', $quiz)
-            ->with('classroomid', $classroomid);
+    
+        return($quiz);
+
+
     }
 
     public function getActiveQuiz(Request $request)
     {
+        $bookid = $request->get('bookid');
         $quiz = DB::table('chapterquizsched')
             ->where('chapterquizsched.deleted', 0)
             ->where('classroomid', $request->get('classroomid'))
-            ->join('lesssonquiz',function($join){
-                                $join->on('chapterquizsched.chapterquizid','=','lesssonquiz.id');
-                            })
+            ->join('lesssonquiz', function($join) use ($bookid) {
+                $join->on('chapterquizsched.chapterquizid', '=', 'lesssonquiz.id')
+                    ->where('lesssonquiz.bookid', '=', $bookid);
+            })
+            ->where('lesssonquiz.deleted', 0)
             ->select(
-                                'lesssonquiz.title',
-                                'lesssonquiz.id',
-                                'datefrom',
-                                'timefrom',
-                                'dateto',
-                                'timeto',
-                                'noofattempts',
-                                'chapterquizsched.createddatetime',
-                                'chapterquizsched.updateddatetime'
-                    )
+                'lesssonquiz.title',
+                'lesssonquiz.id',
+                'datefrom',
+                'timefrom',
+                'dateto',
+                'timeto',
+                'noofattempts',
+                'chapterquizsched.id as schedid',
+                'chapterquizsched.status',
+                'chapterquizsched.createddatetime',
+                'chapterquizsched.updateddatetime'
+            )
             ->orderBy('createddatetime', 'desc')
             ->orderBy('updateddatetime', 'desc')
             ->get();
+
 
 
         foreach($quiz as $item){
@@ -387,10 +457,24 @@ class ViewBookController extends Controller
             }
         }
 
-        
-        
         return $quiz;
     }
+
+
+    public function endQuiz(Request $request)
+    {
+        $id = $request->get('id');
+
+        DB::table('chapterquizsched')
+            ->where('id', $id)
+            ->update([
+                'status'    => '1'
+            ]);
+
+        return 1;
+        
+    }
+
 
     public function quizresponses(Request $request)
         {
@@ -411,6 +495,7 @@ class ViewBookController extends Controller
                 ->where('deleted', 0)
                 ->where('typeofquiz', '!=', null)
                 ->where('typeofquiz', '!=', 4)
+                ->where('typeofquiz', '!=', 9)
                 ->sum('points');
 
             foreach ($responses as $response) {
@@ -419,6 +504,43 @@ class ViewBookController extends Controller
 
             return $responses;
         }
+
+
+    public function viewquizanalytics($quizid, $classroomid, $bookid, Request $request)
+    {
+
+
+        $quizInfo = DB::table('lesssonquiz')
+                        ->where('id',$quizid)
+                        ->select('id','title', 'coverage', 'description' )
+                        ->first();
+
+        $quizQuestions = DB::table('lessonquizquestions')
+                    ->where('lessonquizquestions.deleted','0')
+                    ->where('quizid', $quizid)
+                    ->where('typeofquiz', '!=', null)
+                    ->where('typeofquiz', '=', 1)
+                    ->select(
+                        'lessonquizquestions.id',
+                        'lessonquizquestions.question',
+                        'lessonquizquestions.typeofquiz',
+                        'lessonquizquestions.item',
+                        'lessonquizquestions.points',
+                        'lessonquizquestions.ordered',
+                        'lessonquizquestions.picurl'
+                    )
+                    ->get();  
+                    
+                    
+
+
+        return view('teacher.quiz.viewquizanalytics')
+        ->with('quizQuestions', $quizQuestions);
+
+    
+
+    }
+
 
 
     public function viewquizresponse($classroomId, $quizId, $recordId, Request $request)
@@ -449,7 +571,8 @@ class ViewBookController extends Controller
                         'lessonquizquestions.typeofquiz',
                         'lessonquizquestions.item',
                         'lessonquizquestions.points',
-                        'lessonquizquestions.ordered'
+                        'lessonquizquestions.ordered',
+                        'lessonquizquestions.picurl'
                     )
                     ->get();
 
@@ -743,6 +866,19 @@ class ViewBookController extends Controller
                         $item->detailsid = -1;
                         $item->pointsgiven = 0;
                     }
+                }
+
+                if($item->typeofquiz == 9 ){
+
+                    $protocol = $request->getScheme();
+                    $host = $request->getHost();
+
+                    $rootDomain = $protocol . '://' . $host;
+
+        
+                    $item->image = $rootDomain.'/'.$item->picurl;
+
+                    
                 }
 
 

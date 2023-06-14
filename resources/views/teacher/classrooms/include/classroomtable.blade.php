@@ -5,7 +5,11 @@
                 <a href="/teacherclassroomview?classroomview={{$classroom->id}}">
                     <div class="course-card">
                         <div class="course-card-thumbnail ">
-                            <img src="{{asset('assets/images/elearning6.png')}}">
+                            @if(isset($classroom->picurl))
+                                <img src="{{$classroom->picurl}}" alt="Preview" style="max-width: 100%; max-height: 100%;">
+                            @else
+                                <img src="{{asset('assets/images/elearning6.png')}}">
+                            @endif
                             <span class="play-button-trigger"></span>
                         </div>
                         <div class="course-card-body">

@@ -34,9 +34,9 @@
                                         </td>
                                         <td>
                                             @if($user->isDefault == 1)
-                                                <button type="button" class="btn btn-success">Default</button>
+                                                <button type="button" id = "resetpassword" data-id="{{$user->userid}}" class="btn btn-success">Default</button>
                                             @else
-                                                <button type="button" class="btn btn-warning">RESET</button>
+                                                <button type="button" id = "resetpassword" data-id="{{$user->userid}}" class="btn btn-warning">RESET</button>
                                             @endif
                                         </td>
                                     </tr>
@@ -78,9 +78,9 @@
                                         </td>
                                         <td>
                                             @if($user->isDefault == 1)
-                                                <button type="button" class="btn btn-success">Default</button>
+                                                <button type="button" id = "resetpassword" class="btn btn-success">Default</button>
                                             @else
-                                                <button type="button" class="btn btn-warning">RESET</button>
+                                                <button type="button" id = "resetpassword" class="btn btn-warning">RESET</button>
                                             @endif
                                         </td>
                                     </tr>

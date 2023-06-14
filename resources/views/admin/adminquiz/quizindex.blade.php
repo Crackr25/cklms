@@ -1,6 +1,25 @@
 @extends('admin.layouts.app')
 
+
+@section('breadcrumbs')
+
+<nav id="breadcrumbs">
+    <ul>
+        <li><a href="/home"> <i class="uil-home-alt"></i> </a></li>
+        <li><a href="/adminviewbook/index?id={{$quiz->bookid}}">Books</a></li>
+        <li>Quiz</li>
+    </ul>
+</nav>
+@endsection
+
+
 @section('content')
+
+
+
+
+
+
 <meta name="csrf-token" content="{{ csrf_token() }}" />
 
 <link rel="stylesheet" href="{{asset('plugins/select2/css/select2.min.css')}}">
@@ -133,7 +152,10 @@
                                         <div class="btn-group-verticals">
                                             <a class="btn btn-sm text-white gfg_tooltip newrow" style="background-color: #3175c2; border: 3px solid #1d62b7;">
                                                 <i class="fas fa-plus m-0"></i><span class="gfg_text">Add Question</span>
-                                            </a>                                            
+                                            </a>
+                                            <a class="btn btn-sm text-white gfg_tooltip addimage" contenttype="image" style="background-color: #3175c2; border: 3px solid #1d62b7;">
+                                                <i class="fa fa-image m-0"></i><span class="gfg_text">Image</span>
+                                            </a>                                       
                                         </div>
                                     </div>
                     
@@ -193,7 +215,7 @@
 
 
                                             {{-- Multiple choice --}}
-                                        @switch($question->typeofquiz )
+                                        @switch($question->typeofquiz)
                                             @case(1)
                                             <div id={{$question->id}} class="row p-4 dragrow{{$question->id}}">
                                                 <div class="col-lg-1 col-2 rowhidden buttonholder{{$question->id}} d-flex align-items-center">
@@ -478,6 +500,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            @break
 
                                                     
                                         
@@ -519,6 +542,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            @break
 
                                     
 
@@ -599,6 +623,7 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            @break
                                             
                         
 
@@ -687,6 +712,41 @@
                                                 </div>
                                             </div>
                                             @break
+
+                                            @case(9)
+                                            <div id={{$question->id}} class="row p-4 dragrow{{$question->id}}">
+                                                <div class="col-lg-1 col-2 rowhidden buttonholder{{$question->id}} d-flex align-items-center">
+                                                </div>
+                                                <div id={{$question->id}} class="col-lg-11 col-10 editcontent col-content identifier{{$question->id}}">
+                                                    <div class="card mt-5 shadow-none border-0">
+                                                        <div class="card-header">
+                                                            <div class="row justify-content-end">
+                                                                <div class="col-6 mr-1 quizarea">
+                                                                    <select class="form-control quiztype" data-id="{{$question->id}}" id="quiztype{{$question->id}}" disabled>
+                                                                    <option value="enumeration">Add Image</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-12 m-2" id="quiztioncontent{{$question->id}}">
+                                                                    <div class="row">
+                                                                        <div class="col-12 m-2">
+                                                                            <p class="question" data-question-type="9">
+                                                                            <div class="form-group">
+                                                                                <input class="answer-field form-control-file imageInput" data-question-type="9" data-question-id="{{$question->id}}" type="file" accept="image/*" onchange="previewImage(event, {{$question->id}})">
+                                                                                <div id="preview{{$question->id}}" class= "mt-2">
+                                                                                    <a id="preview-link" href="{{$question->image}}" target="_blank">
+                                                                                        <img id="preview" src="{{$question->image}}" alt="Preview" style="max-width: 100%; max-height: 100%;">
+                                                                                    </a>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @break
                                         @endswitch
                                     @endforeach
                                 @endif
@@ -702,18 +762,33 @@
     <script src="{{asset('templatefiles/jquery-3.3.1.min.js')}}"></script>
 <script>
 
-    $(function () {
-            //Initialize Select2 Elements
-            $('.select2').select2()
-            $('.select').select2()
-        
-            //Initialize Select2 Elements
-            $('.select2bs4').select2({
-                theme: 'bootstrap4'
-            })
-
+        $(function () {
+                //Initialize Select2 Elements
+                $('.select2').select2()
+                $('.select').select2()
             
-    })
+                //Initialize Select2 Elements
+                $('.select2bs4').select2({
+                    theme: 'bootstrap4'
+                })
+
+                
+        })
+
+
+        function previewImage(event, addrow) {
+                        var reader = new FileReader();
+                        reader.onload = function() {
+                            var preview = document.getElementById('preview' + addrow);
+                            var image = document.createElement('img');
+                            image.src = reader.result;
+                            image.classList.add('preview-image');
+                            preview.innerHTML = '';
+                            preview.appendChild(image);
+                        }
+                        reader.readAsDataURL(event.target.files[0]);
+                    
+        }
 
 
         
@@ -1015,7 +1090,8 @@
                                 var textareaValue = $('#image_item' + last_id).val();
                                 console.log("Question: ", textareaValue);
                                 console.log("Quiztype: ", last_quiz_type);
-                                if (points !== '' && points !== undefined && textareaValue.length != 0) {
+                                var points = 2;
+                                if (textareaValue.length != 0) {
                                     $.ajax({
                                         type: "get",
                                         dataType: 'json',
@@ -1240,10 +1316,15 @@
                                         '<i class="fas fa-trash m-0"></i><span class="gfg_text">Delete</span>' + '</a>' + 
                                         '<a class="btn btn-sm text-white gfg_tooltip newrow" style="background-color: #3175c2; border: 3px solid #1d62b7;">' +
                                         '<i class="fas fa-plus m-0"></i><span class="gfg_text">Add Question</span>' +
+                                        '</a>'+
+                                        '<a class="btn btn-sm text-white gfg_tooltip addimage" contenttype="image" style="background-color: #3175c2; border: 3px solid #1d62b7;">' +
+                                        '<i class="fa fa-image m-0"></i><span class="gfg_text">Image</span>' +
                                         '</a>' +                                      
                                     '</div>' +
                                     '</div>'
                             );
+
+                        
                         
                             
                             // console.log(click)
@@ -1305,7 +1386,10 @@
                                                     '</a>' + 
                                                     '<a class="btn btn-sm text-white gfg_tooltip newrow" style="background-color: #3175c2; border: 3px solid #1d62b7;">' +
                                                     '<i class="fas fa-plus m-0"></i><span class="gfg_text">Add Question</span>' +
-                                                    '</a>' +                                      
+                                                    '</a>' +  
+                                                    '<a class="btn btn-sm text-white gfg_tooltip addimage" contenttype="image" style="background-color: #3175c2; border: 3px solid #1d62b7;">' +
+                                                    '<i class="fa fa-image m-0"></i><span class="gfg_text">Image</span>' +
+                                                    '</a>' +                                          
                                                 '</div>' +
                                                 '</div>' +
                                                 '<div id="'+addrow+'" class="col-lg-11 col-10 editcontent col-content identifier'+addrow+'">' +
@@ -1328,7 +1412,7 @@
                                                         '<div id="quiztioncontent'+addrow+'">'+
                                                             '<div class="row">' +  
                                                                 '<div class="col-12 m-2">'+
-                                                                    '<textarea class="form-control question" placeholder="Untitled question" data-id ="'+addrow+'" data-question-type ="1" style="height: 20px !important;" id="multiplechoice'+addrow+'" ></textarea>'+
+                                                                    '<textarea class="form-control question multiplechoice" placeholder="Untitled question" data-id ="'+addrow+'" data-question-type ="1" style="height: 20px !important;" id="multiplechoice'+addrow+'" ></textarea>'+
                                                                 '</div>'+
                                                                 '<div class="col-12"  id="list_option'+addrow+'">' +
                                                                     '<input class="form-check-input ml-2" type="radio" name="option1" value="1">'+
@@ -1349,6 +1433,21 @@
                                             '</div>');
 
 
+
+                                    // $('.multiplechoice').summernote({
+                                    //         height: 200,
+                                    //         toolbar: [
+                                    //                 // [groupName, [list of button]]
+                                    //                 ['style', ['bold', 'italic', 'underline', 'clear']],
+                                    //                 // ['font', ['strikethrough', 'superscript', 'subscript']],
+                                    //                 ['fontsize', ['fontsize']],
+                                    //                 ['color', ['color']],
+                                    //                 ['para', ['ul', 'ol', 'paragraph']],
+                                    //                 // ['height', ['height']]
+                                    //                         ]
+                                    // });
+
+
                                         
                                     },
                                     error: function(xhr) {
@@ -1363,6 +1462,135 @@
 
 
                     });
+                    
+
+
+
+                    $(document).on('click', '.addimage', function(){
+                        var addrow;
+                        var quizId = $('#quiz-info').data('quizid');
+                    
+                        console.log("Click on image");
+                        $.ajax({
+                                    type: "get",
+                                    dataType: 'json',
+                                    url: "/adminviewbook/addquestion",
+                                    data: { 
+                                        quizid : quizId,
+                                            },
+                                    success: function(response) {
+
+                                        addrow = response;
+                                        console.log("Row ID: ", typeof addrow);
+                        
+                        
+                                        $('.ui-helper-hidden-accessible').remove();
+                                        option= 1;
+                                        $('.btn-group-vertical').remove();
+                                        $(this).closest('.row').find('.rowhidden').empty()
+                                        $('.contentcontainer').append(
+                                            '<div id="'+addrow+'" class="row p-4 dragrow'+addrow+'">' +
+                                                '<div class="col-lg-1 col-2 rowhidden d-flex align-items-center buttonholder'+addrow+'">' + 
+                                                '<div class="btn-group-vertical">' +
+                                                    '<a class="btn btn-sm text-white gfg_tooltip delrow" id="'+addrow+'" style="background-color: #3175c2; border: 3px solid #1d62b7;">' +
+                                                    '<i class="fas fa-trash m-0"></i><span class="gfg_text">Delete</span>' +
+                                                    '</a>' + 
+                                                    '<a class="btn btn-sm text-white gfg_tooltip newrow" style="background-color: #3175c2; border: 3px solid #1d62b7;">' +
+                                                    '<i class="fas fa-plus m-0"></i><span class="gfg_text">Add Question</span>' +
+                                                    '</a>' +                                      
+                                                '</div>' +
+                                                '</div>' +
+                                                '<div id="'+addrow+'" class="col-lg-11 col-10 editcontent col-content identifier'+addrow+'">' +
+                                                '<div class="card mt-5 shadow-none border-0">' +
+                                                '<div class="card-header">' +
+                                                    '<div class="row ml-2 justify-content-end">' +
+                                                        '<div class="col-sm-6 col-md-10 col-lg-6 mr-1 quizarea">' +
+                                                            '<select class="form-control quiztype" data-id="'+addrow+'" id="quiztype'+addrow+'" disabled>' +
+                                                            '<option value="add_image">Add Image</option>' +
+                                                            '</select>' +
+                                                        '</div>' +
+                                                        '<div class="col-12">'+
+                                                        '<div id="quiztioncontent'+addrow+'">'+
+                                                            '<div class="row">' +  
+                                                                '<div class="col-12 m-2">'+
+                                                                    '<p class="question" data-question-type="9">' +
+                                                                    '<div class="form-group">' +
+                                                                        '<input class="answer-field form-control-file imageInput" data-question-type="9" data-question-id="'+addrow+'" type="file" accept="image/*" onchange="previewImage(event, '+addrow+')"">'+
+                                                                        '<div id="preview'+addrow+'" class= "mt-2"></div>'+
+                                                                    '</div>'+
+                                                                '</div>' +
+                                                            '</div>' +
+                                                        '</div>' +
+                                                    '</div>' +
+                                                '</div>' +
+                                                '</div>' +
+                                                '</div>' +
+                                            '</div>');
+                                        
+                                    },
+                                    error: function(xhr) {
+                                    // Handle error here
+                                        Toast.fire({
+                                            type: 'error',
+                                            title: 'Something went wrong'
+                                        })
+
+                                    }
+                        });
+
+
+                    });
+
+
+
+                    $(document).on('change', '.imageInput', function(){
+                    // Get the answer data
+                            var quizId = $('#quiz-info').data('quizid');
+                            var questionId = $(this).data('question-id');
+                            var questionType = 9;
+
+                            console.log(questionId, questionType)
+
+                            // Get the file input element
+                            var fileInput = $(this)[0];
+                            var file = fileInput.files[0];
+
+                            // Create a FormData object to store the file data
+                            var formData = new FormData();
+                            formData.append('chapterquizid', quizId);
+                            formData.append('answer', file);
+                            formData.append('questionType', questionType);
+                            formData.append('question_id', questionId);
+
+
+                            // Get the CSRF token value
+                            var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+                            // Set the CSRF token in the request headers
+                            $.ajaxSetup({
+                                headers: {
+                                    'X-CSRF-TOKEN': csrfToken
+                                }
+                            });
+
+                            // Send an AJAX request to save the answer data
+                            $.ajax({
+                                url: '/adminviewbook/save-image',
+                                method: 'POST', // Use POST method instead of GET
+                                data: formData,
+                                processData: false, // Prevent jQuery from processing the data
+                                contentType: false, // Prevent jQuery from setting content type
+                                success: function(response) {
+                                    if (response == 1) {
+                                        console.log("Answer inserted successfully");
+                                    } else {
+                                        console.log("Answer updated successfully");
+                                    }
+                                    // Handle the response from the server if needed
+                                }
+                            });
+
+                });
 
 
                     
@@ -1399,6 +1627,19 @@
                                     '<button class="btn btn-link btn-sm answer-key" id="' + parentId + '">Answer key</button>' +
                                     '</div>'
                                 );
+
+                                $('.multiplechoice').summernote({
+                                    height: 200,
+                                    toolbar: [
+                                            // [groupName, [list of button]]
+                                            ['style', ['bold', 'italic', 'underline', 'clear']],
+                                            // ['font', ['strikethrough', 'superscript', 'subscript']],
+                                            ['fontsize', ['fontsize']],
+                                            ['color', ['color']],
+                                            ['para', ['ul', 'ol', 'paragraph']],
+                                            // ['height', ['height']]
+                                                    ]
+                                });
                                 break;
 
                             case 'short_answer':

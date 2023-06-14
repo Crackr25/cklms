@@ -188,51 +188,57 @@
 
             
 
-         
-            $(document).on('click','#create_classroom',function(){
+            $(document).on('click', '#create_classroom', function() {
+                var validInput = true;
+                var selectedFile = $('input[name=classroomimage]')[0].files[0];
+                console.log(selectedFile);
 
-                var validInput = true
-
-                if($('input[name=classroomname]').val() == ''){
-
+                if ($('input[name=classroomname]').val() == '') {
                     UIkit.notification("<span uk-icon='icon: check'></span> Classroom name is required!", {status:'success', timeout: 1500 });
-
-                    validInput = false
-                    console.log('invalid')
+                    validInput = false;
+                    console.log('invalid');
                 }
-                
-                if(validInput){
+
+                if (validInput) {
+                    var formData = new FormData();
+                    formData.append('classroomname', $('input[name=classroomname]').val());
+                    formData.append('code', $('input[name=classroomcode]').val());
+                    formData.append('selectedFile', selectedFile);
+                    var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+
+                    $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken
+                            }
+                    });
 
                     $.ajax({
-                            url: '/teacherclassroom/create',
-                            type:"GET",
-                            data:{
-                                classroomname: $('input[name=classroomname]').val(),
-                                code: $('input[name=classroomcode]').val()
-                            },
-                            success: function(data){
-                                skip = null
-                                UIkit.notification("<span uk-icon='icon: check'></span> Created Successfully!", {status:'success', timeout: 1000 });
+                    url: '/teacherclassroom/create/rooms',
+                    type: "POST", // Change the type to POST
+                    data: formData, // Use formData instead of an object
+                    contentType: false, // Set contentType to false
+                    processData: false, // Set processData to false
+                    success: function(data) {
 
-                                $('.uk-modal').removeClass('uk-open')
-                                $('.uk-modal').removeAttr('style')
-                                $('input[name=classroomname]').val('')
-                                $('input[name=classroomcode]').val('')
-                                $('#classroom_table_holder').empty()
-                                $('.uk-modal-page').removeClass('uk-modal-page')
-                                $('#create_classroom').addClass('disabled')
-                                loadClassroom()
-                                $('#create_classroom').addClass('uk-modal-close')
+                        skip = null
+                        UIkit.notification("<span uk-icon='icon: check'></span> Created Successfully!", {status:'success', timeout: 1000 });
 
-                                
-
-                                
-                            }
-                    })
-
+                        $('.uk-modal').removeClass('uk-open')
+                        $('.uk-modal').removeAttr('style')
+                        $('input[name=classroomname]').val('')
+                        $('input[name=classroomcode]').val('')
+                        $('#classroom_table_holder').empty()
+                        $('.uk-modal-page').removeClass('uk-modal-page')
+                        $('#create_classroom').addClass('disabled')
+                        loadClassroom()
+                        $('#create_classroom').addClass('uk-modal-close')
+                        // Rest of your success callback code
+                    }
+                    });
                 }
+                });
 
-            })
    
 
           

@@ -186,10 +186,10 @@
                         <!-- User menu -->
 
                         <ul class="dropdown-user-menu">
-                            <li>
+                            {{-- <li>
                                 <a href="/messages">
                                     <i class="icon-feather-message-square"></i>Chat</a>
-                            </li>
+                            </li> --}}
                             {{-- <li><a href="http://demo.foxthemes.net/courseplusv3.3/default/courses.html#">
                                     <i class="icon-feather-bookmark"></i> Bookmark </a>
                             </li>

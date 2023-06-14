@@ -173,7 +173,7 @@
 
                             <div class="circle-points" >
                                 <input type="checkbox" id="menu_opener_id_{{$item->id}}" class="menu_opener">
-                                <label for="menu_opener_id_{{$item->id}}" data-detailsid = "{{$item->detailsid}}" data-maxpoint="{{isset($item->points)}}" data-points-edit="{{$item->id}}" class="menu_opener_label student-score">{{$item->pointsgiven}}</label>
+                                <label for="menu_opener_id_{{$item->id}}" data-detailsid = "{{$item->detailsid}}" data-maxpoint="{{$item->points}}" data-points-edit="{{$item->id}}" class="menu_opener_label student-score">{{$item->pointsgiven}}</label>
 
                                 <div class="link_one" data-detailsid = "{{$item->detailsid}}" data-question-id="{{$item->id}}">
                                     <div class="link_general">

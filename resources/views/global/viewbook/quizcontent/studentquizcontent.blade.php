@@ -304,6 +304,30 @@
                         @endif
 
 
+                        @if($item->typeofquiz == 9)
+                            
+                                
+
+                                <div class="card mt-5 editcontent">
+                                    <div class="card-body">
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="points student-score">
+                                                    {{$key+=1}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                                <a id="preview-links" href="{{$item->image}}" target="_blank">
+                                                    <img id="previews" src="{{$item->image}}" alt="Preview" style="width: 100%; height: 100%;">
+                                                </a>
+
+                                    </div>
+                                </div>
+                        @endif
+
+
                         @endforeach
 
                         <div class="save mb-5">

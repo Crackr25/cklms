@@ -375,6 +375,18 @@
     <script src="{{asset('dist/js/adminlte.js')}}"></script>
     <script>
         $(document).ready(function(){
+
+            $('#newlessontitle').on('keyup', function() {
+                var text = "This is a sample text: with a colon.";
+
+                if (text.indexOf(":") !== -1) {
+                console.log("The text contains a colon.");
+                } else {
+                console.log("The text does not contain a colon.");
+                }
+
+                // You can perform further actions with the captured inputText here
+            });
             @if(count($book->parts) == 0)
                 var clickedpart = 0;
             @else
@@ -435,7 +447,7 @@
                                     success: function(response) {
 
                                         const id = response;
-                                        window.location.href = `/adminviewbook/addquiz/${id}`;
+                                        window.open(`/adminviewbook/addquiz/${id}`, '_blank');
                                         
                                     },
                                     error: function(xhr) {
@@ -444,7 +456,7 @@
                             });
 
                         }else{
-
+                            var quizType = $('input[name="createquiz"]:checked').val();
                             window.open(`/adminviewbook/addquiz/${quizType}`, '_blank');
 
                         
@@ -533,7 +545,7 @@
                         $.each(data, function(key, value){
                             $('#ulpart'+id).append(
                                 '<li id="'+value.id+'"  contenttype="chapter" class="lichapter">'+
-                                    '<span class="right badge badge-warning">'+value.sortid+'</span><span class="box boxchapter'+value.id+' boxchapter" >Chapter: '+value.title+'</span>'+
+                                    '<span class="right badge badge-warning"  contenteditable="true">'+value.sortid+'</span><span class="box boxchapter'+value.id+' boxchapter" >Chapter: '+value.title+'</span>'+
                                     '<ul class="nested active ulchapter" id="ulchapter'+value.id+'"></ul>'+
                                 '</li>'
                             )
@@ -550,6 +562,31 @@
                     }
                 })
             })
+
+
+            $(document).on('input', '#lessonsortid', function() {
+                    var sortid = $(this).text();
+                    var type = $(this).data('span');
+                    var id = $(this).data('id');
+
+
+
+                    console.log("Sort: " ,sortid, "Type: " , type ,"ID: " , id);
+
+                    $.ajax({
+                                type: "GET",
+                                url: "/adminviewbook/updatesort",
+                                data: { 
+                                    sortid : sortid,
+                                    type : type,
+                                    id      : id
+                                        }
+                        });
+
+
+            });
+
+                
             $(document).on('click', '.boxchapter', function(){
                 var id = $(this).closest('li').attr('id');
                 clickedchapter = id;
@@ -572,7 +609,7 @@
                             {
                                 $('#ulchapter'+id).append(
                                     '<li id="'+value.id+'"  contenttype="lesson" class="lilesson">'+
-                                        '<span class="right badge badge-info">'+value.sortid+'</span><span class="box boxlesson'+value.id+' boxlesson" >Lesson: '+value.title+' <i class="fa fa-times ml-2 removeitem"></i></span>'+
+                                        '<span class="right badge badge-info" id ="lessonsortid" data-id="'+value.id+'" data-span="lesson" contenteditable="true" >'+value.sortid+'</span><span class="box boxlesson'+value.id+' boxlesson">Lesson: '+value.title+' <i class="fa fa-times ml-2 removeitem"></i></span>'+
                                         '<ul class="nested active ullesson" id="lesson'+value.id+'"></ul>'+
                                     '</li>'
                                 )
@@ -580,7 +617,7 @@
                             else if(value.type == 'q'){
                                 $('#ulchapter'+id).append(
                                     '<li id="'+value.id+'"  contenttype="quiz" class="liquiz">'+
-                                        '<span class="right badge badge-info">'+value.sortid+'</span><span class="box boxquiz'+value.id+' boxquiz" >Quiz: '+value.title+' <i class="fa fa-times ml-2 removeitem"></i></span>'+
+                                        '<span class="right badge badge-info" id ="lessonsortid" data-id="'+value.id+'" data-span="quiz" contenteditable="true">'+value.sortid+'</span><span class="box boxquiz'+value.id+' boxquiz">Quiz: '+value.title+' <i class="fa fa-times ml-2 removeitem"></i></span>'+
                                         '<ul class="nested active ulquiz" id="quiz'+value.id+'"></ul>'+
                                     '</li>'
                                 )

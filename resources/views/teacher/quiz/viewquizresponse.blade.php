@@ -331,7 +331,7 @@
 
                             <p>{!! $item->question !!}</p>
                             <div class="form-group">
-                                <input class="answer-field form-control-file imageInput" data-question-type="{{$item->typeofquiz}}" data-question-id="{{$item->id}}" id="{{$questioninfo->id}}" type="file" accept="image/*">
+                                <input class="answer-field form-control-file imageInput" data-question-type="{{$item->typeofquiz}}" data-question-id="{{$item->id}}" type="file" accept="image/*">
                                 @if($item->picurl != '')
                                     <a id="preview-link" href="{{$item->picurl}}" target="_blank">
                                         <img id="preview" src="{{$item->picurl}}" alt="Preview" style="max-width: 250px; max-height: 250px;">
@@ -435,6 +435,16 @@
                         </div>
                     @endif
 
+                    @if($item->typeofquiz == 9)
+                    <div class="card mt-5 ml-3 editcontent">
+                        <div class="card-body">
+                            <a id="preview-links" href="{{$item->image}}" target="_blank">
+                                        <img id="previews" src="{{$item->image}}" alt="Preview" style="width: 100%; height: 100%;">
+                            </a>
+                        </div>
+                    </div>
+                    @endif
+
 
             @endforeach
 
@@ -479,7 +489,7 @@
             var score = element.find('.link_general').text().trim();
             questionId = element.data('question-id');
             var detailsid = element.data('detailsid')
-            var number = parseInt(score);
+            var number = parseFloat(score);
 
 
             $.ajax({
@@ -581,7 +591,7 @@
                     timer: 3000,
                 })
             } else {
-                var number = parseInt(updatedText);
+                var number = parseFloat(updatedText);
                 var maxpoints = $(this).data('maxpoint')
                 var detailsid = $(this).data('detailsid')
 

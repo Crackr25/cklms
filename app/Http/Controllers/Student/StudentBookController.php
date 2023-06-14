@@ -41,9 +41,11 @@ class StudentBookController extends Controller
                         'lessonquizquestions.question',
                         'lessonquizquestions.typeofquiz',
                         'lessonquizquestions.item',
+                        'lessonquizquestions.picurl',
                         'lessonquizquestions.points'
                     )
-                    ->inRandomOrder()
+                    // ->inRandomOrder()
+                    ->orderBy('lessonquizquestions.id')
                     ->get();
 
         $isAnswered = false;
@@ -196,6 +198,19 @@ class StudentBookController extends Controller
                     }
                 }
 
+                if($item->typeofquiz == 9 ){
+
+                    $protocol = $request->getScheme();
+                    $host = $request->getHost();
+
+                    $rootDomain = $protocol . '://' . $host;
+
+
+                    $item->image = $rootDomain.'/'.$item->picurl;
+                }
+
+                
+
 
                 if($item->typeofquiz == 8){
                 
@@ -323,22 +338,28 @@ class StudentBookController extends Controller
     {
 
             $chapterquizsched = DB::table('chapterquizsched')
-                ->where('chapterquizid',$quizid)
-                ->where('classroomid',$clasroomid)
-                ->select(
-                    'classroomid',
-                    'datefrom',
-                    'dateto',
-                    'timefrom',
-                    'timeto',
-                    'noofattempts',
-                    'status',
-                    'createddatetime',
-                    'updateddatetime',
-                    'id'
-                )
-                ->where('deleted',0)
-                ->first();
+                            ->where('chapterquizid',$quizid)
+                            ->join('lesssonquiz',function($join){
+                                    $join->on('lesssonquiz.id','=','chapterquizsched.chapterquizid');
+                                });
+                            $chapterquizsched = $chapterquizsched->where('classroomid',$clasroomid)
+                            ->select(
+                                'chapterquizsched.classroomid',
+                                'chapterquizsched.datefrom',
+                                'chapterquizsched.dateto',
+                                'chapterquizsched.timefrom',
+                                'chapterquizsched.timeto',
+                                'chapterquizsched.noofattempts',
+                                'chapterquizsched.status',
+                                'chapterquizsched.createddatetime',
+                                'chapterquizsched.updateddatetime',
+                                'lesssonquiz.title',
+                                'lesssonquiz.coverage',
+                                'chapterquizsched.id'
+                            )
+                            ->where('chapterquizsched.deleted',0)
+                            ->first();
+
 
             $allowedstudents = null;
             if(isset($chapterquizsched)){
@@ -406,6 +427,7 @@ class StudentBookController extends Controller
                 ->where('quizid', $quizid)
                 ->where('deleted', 0)
                 ->where('typeofquiz', '!=', 4)
+                ->where('typeofquiz', '!=', 9)
                 ->sum('points');
             
             if(isset($score)){
