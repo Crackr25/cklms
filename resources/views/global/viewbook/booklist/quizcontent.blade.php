@@ -1,205 +1,384 @@
-<div class="bg-grey uk-light uk-padding pb-0">
-    <h2>{{$quizInfo->title}}</h2>
-    <p>Status: @if(isset($chapterquizsched->datefrom)) ACTIVATED @endif</p>
-    <input type="hidden" name="quiz_id" id="quiz_id" value="{{$quizInfo->id}}">
-    <ul class="uk-tab" uk-switcher="connect: #component-tab-left; animation: uk-animation-slide-left-medium, uk-animation-slide-right-medium">
-        <li class="uk-active" data-value="teacher"><a href="#" aria-expanded="true"> <i class="icon-feather-home mr-2"></i>Content</a>
-        </li>
-        <li class=""  data-value="teacher"><a href="#" aria-expanded="false"> <i class="icon-feather-message-square mr-2"></i>Scoreboard</a>
-        </li>
-        <li class=""  data-value="teacher"><a href="#" aria-expanded="false"> <i class="icon-feather-settings mr-2"></i>Schedule</a></li>
-        <li class="" id="student_answer_tab"  data-value="teacher"><a href="#" aria-expanded="false"> <i class="icon-feather-settings mr-2"></i>Check Answer</a></li>
-    </ul>
-</div>
-<ul class="uk-switcher uk-margin p-3" id="component-tab-left" style="touch-action: pan-y pinch-zoom;">
-    <!-- tab 1 -->
-    <li class="uk-active" data-value="teacher">
-        
-        <table class="uk-table uk-table-divider"> 
-            @foreach ($quizQuestions as $key=>$item)
-                <tr class="bg-info">
-                    <th class=" text-white">{{$key+1}}. {{$item->question}}
-                        <em><span class="uk-text-emphasis">(@if($item->type == 1)
-                           Multiple Choice
-                        @elseif($item->type == 2)
-                            Identification
-                        @elseif($item->type == 3)
-                            Essay
-                        @endif)</span></em>
-                    </th>
+<style>
+
+
+    .points {
+        width: 60px;
+        height: 60px;
+        background-color: #4d4d99;
+        border-radius: 50%;
+        position: relative;
+        top: -50px;
+        left: -50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        padding: 0;
+        margin: 0;
+        font-size: 15pt;
+        font-weight: 600;
+    }
+
+
+</style>
+
+<div class="container quizcontent" style="background-color: #fff !important;">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+
+                    <div class="card mt-5 editcontents" data-quizid= "{{$quizInfo->id}}" id="quiz-info">
+                                <div class="card-body">
+                                    <h1 class="card-title">
+                                        {{$quizInfo->title}}
+                                    </h1>
+
+                            <div class="pb-4 inline-block">
+                                @if(isset($chapterquisched))
+                                    <h4>Status: {{$chapterquizsched->status}} </h4>
+                                @endif
+                                    <h4>Status: Quiz Not Activated </h4>
+                                    <a href="/quiz/167-63-{{$bookid}}" target="_blank" type="button" class="btn btn-info uk-first-column" id="modal_view_quiz_button">Click here to Activate</a>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="card mt-5 editcontents" data-quizid= "{{$quizInfo->id}}" id="quiz-info">
+                                <div class="card-body">
+                                    <h1 class="card-title">
+                                        {{$quizInfo->title}}
+                                    </h1>
+
+                            <div class="lessons pb-4">
+                                <h4>Coverage: </h4>
+                                @if(!empty($quizInfo->coverage))
+                                @php
+                                    $lessons = explode(", ", $quizInfo->coverage);
+                                @endphp
+
+                                @foreach ($lessons as $lesson)
+                                <div class="btn bg-primary text-white m-1">{{$lesson}}</div>
+                                @endforeach
+                                @endif
+
+                            </div>
+
+                            <p class="card-text">{{$quizInfo->description}}</p>       
+                        </div>
+                    </div>
                 
-                </tr>
-                @if($item->type == 1)
-                    @foreach ($item->choices as $questionitem)
-                        <tr class="{{$questionitem->answer == 1?'bg-success text-white':''}}">
-                        
-                            <td class="pl-5">
-                                {{$questionitem->description}}
-                                    {{-- <li class="{{$questionitem->answer == 1?'uk-text-success':''}}">
-                                        {{$questionitem->description}} {{$questionitem->answer == 1?'- Answer':''}}
-                                    </li> --}}
-                            </td>
-                            {{-- <td>
-                                {{$questionitem->answer == 1?'Answer':''}}
-                            </td> --}}
-                        
-                        </tr>
-                    @endforeach
-                @endif
-            @endforeach
-           
-                {{-- @if($item->type == 1)
-                    <p class="mb-4 uk-text-large">{{$key+1}}. {{$item->question}}</p>
-                    <ul class="uk-list uk-list-bullet mb-4">
-                        @foreach ($item->choices as $questionitem)
-                            <li class="{{$questionitem->answer == 1?'uk-text-success':''}}">
-                            {{$questionitem->description}} {{$questionitem->answer == 1?'- Answer':''}}
-                            </li>
-                        @endforeach
-                    </ul>
-                @elseif($item->type == 2)
-                    <p class="mb-4 uk-text-large">{{$key+1}}. {{$item->question}} <i class="text-info uk-text-small">Identification</i></p> 
-                @elseif($item->type == 3)
-                    <p class="mb-4 uk-text-large">{{$key+1}}. {{$item->question}} <i class="text-info uk-text-small">Essay</i></p>
-                @endif --}}
-            {{-- @endforeach --}}
-        </table>
-    </li>
+                    @foreach($quizQuestions as $key=>$item)
+                        @if($item->typeofquiz == 1)
 
-    <!-- tab 2 -->
-    <li class="" style="" data-value="teacher">
-        <div class="uk-overflow-auto">
-            <table class="uk-table uk-table-divider"> 
-                <thead> 
-                    <tr> 
-                        <th width="40%">Student</th> 
-                        <th width="20%">Status</th> 
-                        <th width="15%">Score</th> 
-                        <th width="25%"></th> 
-                    </tr> 
-                </thead> 
-                <tbody> 
-                    @foreach ($students as $item)
-                        @if($item->quizstatus == 0)
-                            <tr  class="bg-info text-white"> 
-                                <td class="align-middle">{{$item->lastname.', '.$item->firstname}} </td> 
-                                <td class="align-middle">ANSWERED</td> 
-                                <td class="align-middle"> 0 / {{$totalPoints}}</td> 
-                                <td class="align-middle">
-                                    <button type="button" class="btn btn-icon-label btn-warning" id="view_answers" data-id="{{$item->userid}}">
-                                        <span class="btn-inner--icon">
-                                            <i class="icon-feather-check"></i>
+                                <!-- multiple choice -->
+                                
+                                    <div class="card mt-5 editcontent" id="quiz-question-{{$item->id}}">
+                                        <div class="card-body ">
+
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="points student-score">
+                                                        {{$key+=1}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                            
+                                                    
+                                                    <p class="question" data-question-type="{{$item->typeofquiz}}">{{$item->question}}</p>
+
+                                                    @foreach ($item->choices as $questioninfo)
+                                                    <div class="form-check mt-2">
+                                                        <input data-question-type="{{$item->typeofquiz}}" data-question-id="{{  $item->id }}" id="{{ $questioninfo->id}}" class="answer-field form-check-input" type="radio" name="{{ $item->id }}" value="{{ $questioninfo->id}}">
+                                                        <label for="{{ $item->id }}" class="form-check-label">
+                                                            {{$questioninfo->description}}
+                                                        </label>
+                                                    </div>
+                                                    @endforeach
+                                
+                                            
+                                        </div>
+                                    </div>
+                            @endif
+                        
+
+                            @if($item->typeofquiz == 2)
+                                <div class="card mt-5 editcontent">
+                                    <div class="card-body">
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="points student-score">
+                                                    {{$key+=1}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                                <p class="question" data-question-type="{{$item->typeofquiz}}"> <b> Points. </b> {{$item->points}}</p>
+                                                <p class="question" data-question-type="{{$item->typeofquiz}}"> {{$item->question}}</p>
+                                                <input type="text" data-question-type="{{$item->typeofquiz}}" data-question-id="{{ $item->id}}" class="answer-field form-control mt-2" placeholder="Answer here" >
+
+                                    </div>
+                                </div>
+                            @endif
+
+
+                            @if($item->typeofquiz == 3)
+                                <div class="card mt-5 editcontent">
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="points student-score">
+                                                    {{$key+=1}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                                <p class="question" data-question-type="{{$item->typeofquiz}}"> <b> Points. </b> {{$item->points}}</p>
+                                                <p class="question" data-question-type="{{$item->typeofquiz}}"> {{$item->question}}</p>
+                                                <textarea data-question-type="{{$item->typeofquiz}}" data-question-id="{{ $item->id}}" class="answer-field form-control mt-2"type="text"></textarea>
+
+                                    </div>
+                                </div>
+                            @endif
+
+
+                            @if($item->typeofquiz == 4)
+                            
+                                
+
+                                <div class="card mt-5 editcontent">
+                                    <div class="card-body">
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="points student-score">
+                                                    {{$key+=1}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                                <p>Instruction. {!! $item->question !!}</p>
+
+                                    </div>
+                                </div>
+                            @endif
+
+                        
+
+
+                            @if($item->typeofquiz == 5)
+                                <!-- drag and drop -->
+                                
+
+                                <div class="card mt-5 editcontent">
+                                    <div class="card-body">
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="points student-score">
+                                                    {{$key+=1}}
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                        <p class="question" data-question-type="{{$item->typeofquiz}}">
+                                            Drag the correct option and drop it onto the corresponding box. 
+                                        </p>
+
+                                        <div class="options p-3 mt-2" style="border:3px solid #3e416d;border-radius:6px;">
+                                            @foreach ($item->drag as $questioninfo)
+                                                <div class="drag-option btn bg-primary text-white m-1" data-target="drag-1">{{$questioninfo->description}}</div>
+                                            @endforeach
+                                        </div>
+
+                                            @foreach($item->drop as $items)
+                                        
+                                                <p>
+
+                                                    {{$items->sortid}}. {!! $items->question !!}
+
+                                                </p>
+                                            @endforeach
+
+                                        </div>
+                                    </div>
+                            @endif
+
+                            @if($item->typeofquiz == 6)
+                                <!-- upload image -->
+                                <div class="card mt-5 editcontent">
+                                    <div class="card-body">
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="points student-score">
+                                                    {{$key+=1}}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <p class="question" data-question-type="{{$item->typeofquiz}}"> <b> Points. </b> {{$item->points}}</p>
+                                        <p>{!! $item->question !!}</p>
+                                        <div class="form-group">
+                                            <input class="answer-field form-control-file imageInput" data-question-type="{{$item->typeofquiz}}" data-question-id="{{$item->id}}" type="file" accept="image/*">
+                                            <a id="preview-link" href="{{$item->picurl}}" target="_blank">
+                                                <img id="preview" src="#" alt="Preview" style="max-width: 250px; max-height: 250px;display:none;">
+                                            </a>
+                                    
+
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if($item->typeofquiz == 7)
+                                <div class="card mt-5 editcontent">
+                                    <div class="card-body">
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="points student-score">
+                                                    {{$key+=1}}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <span style="font-weight:600;font-size:1.0pc">
+                                            Fill in the blanks
                                         </span>
-                                        <span class="btn-inner--text">VIEW ANSWERS</span>
-                                    </button>
-                            </td> 
-                            </tr>
-                        @elseif($item->quizstatus == 1)
-                            <tr  class="bg-success text-white"> 
-                                <td class="align-middle">{{$item->lastname.', '.$item->firstname}} </td> 
-                                <td class="align-middle">GRADED</td> 
-                                <td class="align-middle">{{$item->points}} / {{$totalPoints}}</td> 
-                                <td class="align-middle"><button type="button" class="btn btn-icon-label btn-warning" id="view_answers" data-id="{{$item->userid}}">
-                                    <span class="btn-inner--icon">
-                                        <i class="icon-feather-check"></i>
-                                    </span>
-                                    <span class="btn-inner--text">VIEW ANSWERS</span>
-                                </button></td> 
-                            </tr>
-                        @elseif( $item->quizstatus == 2)
-                            <tr  class="bg-success text-white"> 
-                                <td class="align-middle">{{$item->lastname.', '.$item->firstname}} </td> 
-                                <td class="align-middle">NOT ANSWERED</td> 
-                                <td class="align-middle"> 0 / {{$totalPoints}}</td> 
-                                <td class="align-middle"></td> 
-                            </tr>
+
+                                        
+
+                                        @foreach($item->fill as $items)
+                                        
+                                                <p>
+                                                    {{$items->sortid}}. {!! $items->question !!}
+
+                                                </p>
+                                            @endforeach
+
+                                    </div>
+                                </div>
                         @endif
-                    @endforeach
-                </tbody> 
-            </table>
-        </div>
-    </li>
 
-    <!-- tab 3 -->
-    <li class="" style="" data-value="teacher">
-        @if(isset($chapterquizsched->datefrom))
-            @if($chapterquizsched->status == 1)
-                <div class="pricing-plans-container">
-                    <div class="pricing-plan">
-                        <div class="recommended-badge">Quiz Overdue </div>
-                        <h3>Quiz Ended last {{\Carbon\Carbon::create($chapterquizsched->updateddatetime)->isoFormat('MMMM DD, YYYY hh:mm A')}}</h3>
-                        <a id="update_quiz_sched" uk-toggle="target: #sched_modal" id="update_quiz_sched" data-quiz_sched_id="{{$chapterquizsched->id}}" class="btns" >Re-open Quiz</a>
-                    </div>
-                </div>
-            @elseif(\Carbon\Carbon::create($chapterquizsched->dateto.' '.$chapterquizsched->timeto) <= \Carbon\Carbon::now('Asia/Manila')->isoFormat('YYYY-MM-DD HH:MM:SS'))
-                <div class="pricing-plans-container">
-                    <div class="pricing-plan">
-                        <div class="recommended-badge">Quiz Overdue </div>
-                        <h3>Quiz Ended last {{\Carbon\Carbon::create($chapterquizsched->dateto.' '.$chapterquizsched->timeto)->isoFormat('MMMM DD, YYYY hh:mm A')}}</h3>
-                        {{-- <button type="button" class="btn btn-success" uk-toggle="target: #sched_modal" id="update_quiz_sched" data-quiz_sched_id="{{$chapterquizsched->id}}">
-                            Reo Quiz Schedule
-                        </button> --}}
 
-                        <a id="update_quiz_sched" uk-toggle="target: #sched_modal" id="update_quiz_sched" data-quiz_sched_id="{{$chapterquizsched->id}}" class="btns" >Re-open Quiz</a>
-                    </div>
-                </div>
-            @else
-                <div class="uk-margin">
-                        <label for="">Date Start</label>
-                        <input class="uk-input" type="date" value="{{$chapterquizsched->datefrom}}" disabled id="d_date_start"> 
-                </div>
-                <div class="uk-margin">
-                    <label for="">Start time</label>
-                    <input class="uk-input" type="time" value="{{$chapterquizsched->timefrom}}" disabled id="d_time_start"> 
-                </div>
-                <div class="uk-margin">
-                    <label for="">Date End</label>
-                    <input class="uk-input" type="date" value="{{$chapterquizsched->dateto}}" disabled id="d_date_end"> 
-                </div>
-                <div class="uk-margin">
-                        <label for="">End time</label>
-                        <input class="uk-input" type="time" value="{{$chapterquizsched->timeto}}" disabled id="d_time_end"> 
-                </div>
-                <div class="uk-margin">Number of attempts</label>
-                    <input class="uk-input" type="text" value="{{$chapterquizsched->noofattempts}}" disabled id="d_attempts"> 
-                </div>
-                <div class="uk-margin">
-                    <button type="button" class="btn btn-danger float-right" id="end_quiz" data-id="{{$chapterquizsched->id}}">
-                        End Quiz
-                    </button>
-                    <button type="button" class="btn btn-success btns" uk-toggle="target: #sched_modal" id="update_quiz_sched" data-quiz_sched_id="{{$chapterquizsched->id}}">
-                        Update Quiz Schedule
-                    </button>
-                </div>
-            @endif
-        @else
-            <p>Please set schedule to activate quiz. </p>
-            <div class="uk-margin">
-                <a href="#" class="btn btn-default uk-visible@s" id="addclassroom" uk-toggle="target: #sched_modal"> <i class="uil-plus"></i> Set Quiz Schedule</a>
-            </div>
-            
-        @endif
-    </li>
+                        @if($item->typeofquiz == 8)
+                                <div class="card mt-5 editcontent">
+                                    <div class="card-body">
 
-    <!-- tab 4 -->
-    <li id="student_answer" data-value="teacher">
-        <div id="no_selected_student">
-            <div class="uk-card uk-card-primary uk-card-body bg-info">
-                <h4 class="uk-card-title">NO STUDENT SELECTED!</h4>
-                <p>Please select student from the Scoreboard</p>
-            </div>
-        </div>
-    </li>
-</ul>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="points student-score">
+                                                    {{$key+=1}}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <span style="font-weight:600;font-size:1.0pc">
+                                            Enumeration
+                                        </span>
+
+                                        <ol class="list-group list-group-numbered p-3" type="A">
+                                        <li>
+                                            <p>{{$item->question}}</p>
+                                        <ol>
+
+                                        @php
+
+                                            $numberOfTimes = $item->item
+
+                                        @endphp
+                                        
+                                        @for ($i = 0; $i < $numberOfTimes; $i++)
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <li>
+                                                    <p><input data-question-id="{{ $item->id }}" data-sortid={{ $i+1 }} data-question-type="8" class="answer-field d-inline form-control q-input" type="text"></p>
+                                                </li>
+                                            </div>
+                                        </div>
+                                        
+                                        @endfor
+                                        
+                                        </ol>
+                                        
+                                        </li>
+                                    </ol>
+                                        
+
+                                    </div>
+                                </div>
+                        @endif
+
+
+                        @if($item->typeofquiz == 9)
+                            
+                                
+
+                                <div class="card mt-5 editcontent">
+                                    <div class="card-body">
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="points student-score">
+                                                    {{$key+=1}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                                <a id="preview-links" href="{{$item->image}}" target="_blank">
+                                                    <img id="previews" src="{{$item->image}}" alt="Preview" style="width: 100%; height: 100%;">
+                                                </a>
+
+                                    </div>
+                                </div>
+                        @endif
+
+
+                        @endforeach
+                    
+                    <button id="scroll-to-bottom" class="btn btn-dark btn-lg mb-3 mr-3" style= "
+
+                        position: fixed;
+                        bottom: 0px;
+                        left: 10px;
+                        padding: 9px 15px 9px 15px !important;
+                    }"><i class="fas fa-arrow-circle-down"></i></button>
+        </div> 
+        </div> 
+        
+        </div> 
 
 <script>
-    $(document).ready(function(){
-        $(document).on('change','#date_start',function(){
-            $('#date_end').val($(this).val())
-        })
-        $(document).on('change','#time_start',function(){
-            $('#time_end').val($(this).val())
-        })
+
+
+    $(document).ready(function() {
+
+        $(window).scroll(function() {
+            if ($(this).scrollTop() > 700) {
+                $('#scroll-to-bottom').fadeIn();
+            } else {
+                $('#scroll-to-bottom').fadeOut();
+            }
+        });
+        
+        // scroll to the bottom of the page when the button is clicked
+        $('#scroll-to-bottom').click(function() {
+            $('html, body').animate({
+                scrollTop: $(document).height(),
+            }, 'slow', function() {
+                $('#scroll-to-bottom').fadeOut();
+            });
+            return false;
+        });
+
+        //initial state
+        $('input').prop("disabled", true);
+        
+
     })
-  
 </script>
+
+

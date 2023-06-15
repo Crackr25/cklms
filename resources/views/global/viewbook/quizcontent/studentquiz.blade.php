@@ -7,13 +7,13 @@
                             border-radius: 10px  !important;" id="quiz-info">
                 <div class="card-header">
                     <h1 class="card-title">
-                    {{$chapterquizsched->title}} {{$allowedstudents == ''}}
+                    {{$title}} {{$allowedstudents == ''}}
                     </h1>
                 </div>
                 <div class="card-body">
                     <h4><span>Status: </span> <b>Inactive</b> </h4>
                     @if(isset($chapterquizsched))
-                                <h4><span> Coverage: </span> <b> {{$chapterquizsched->coverage}}</b> </h4>
+                                <h4><span> Coverage: </span> <b> {{$coverage}}</b> </h4>
                                 @else
                                 <h4><span> Coverage: </span> <b> Coverage Not Defined</b> </h4>
                                 @endif
@@ -36,7 +36,7 @@
                             border-radius: 10px  !important;" id="quiz-info">
                                     <div class="card-header">
                                         <h1 class="card-title">
-                                            {{$chapterquizsched->title}}
+                                            {{$title}}
                                         </h1>
                                     </div>
                                     
@@ -44,7 +44,7 @@
                                 <div class="card-body">
                                     <h4><span> Status: </span> <b>Overdue</b> </h4>
                                     @if(isset($chapterquizsched))
-                                    <h4><span> Coverage: </span> <b> {{$chapterquizsched->coverage}}</b> </h4>
+                                    <h4><span> Coverage: </span> <b> {{$coverage}}</b> </h4>
                                     @else
                                     <h4><span> Coverage: </span> <b> Coverage Not Defined</b> </h4>
                                     @endif
@@ -75,14 +75,14 @@
                         border-radius: 10px  !important;" id="quiz-info">
                                 <div class="card-header">
                                     <h1 class="card-title">
-                                        {{$chapterquizsched->title}}
+                                        {{$title}}
                                     </h1>
                                 </div>
 
                             <div class="card-body">
                                 <h4><span> Status: </span> <b>Active</b> </h4>
                                 @if(isset($chapterquizsched))
-                                <h4><span> Coverage: </span> <b> {{$chapterquizsched->coverage}}</b> </h4>
+                                <h4><span> Coverage: </span> <b> {{$coverage}}</b> </h4>
                                 @else
                                 <h4><span> Coverage: </span> <b> Coverage Not Defined</b> </h4>
                                 @endif

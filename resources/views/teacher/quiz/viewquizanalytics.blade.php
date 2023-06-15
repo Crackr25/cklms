@@ -84,6 +84,11 @@
         z-index: -1;
     }
 
+    .chart{
+
+        max-height: 75%
+    }
+
     
 </style>
 
@@ -110,280 +115,28 @@
                             <p class="question" data-question-type="{{$item->typeofquiz}}">
                                 {{$key+=1}}. {{$item->question}}
                             </p>
+                            <canvas id="myChart{{$item->id}}" class= "chart"></canvas>
 
                         </div>
                     </div>
                 @endif
 
-                {{-- @if($item->typeofquiz == 2)
-                    <div class="card mt-5 ml-3 editcontent">
+            @endforeach
+
+            @foreach($quizQuestions as $key=>$item)
+                @if($item->typeofquiz == 2)
+                    <!-- multiple choice -->
+                    <div class="card mt-5 ml-3 editcontent" id="quiz-question-{{$item->id}}">
                         <div class="card-body">
-
-                            <div class="circle-points" >
-                                <input type="checkbox" id="menu_opener_id_{{$item->id}}" class="menu_opener">
-                                <label for="menu_opener_id_{{$item->id}}" data-detailsid = "{{ $item->detailsid }}" data-maxpoint="{{$item->points }}" data-points-edit="{{$item->id}}" class="menu_opener_label student-score">{{$item->pointsgiven}}</label>
-
-                                <div class="link_one" data-detailsid = "{{ $item->detailsid  }}"  data-question-id="{{$item->id}}">
-                                    <div class="link_general">
-                                        0
-                                    </div>
-                                </div>
-
-                                <div class="link_two" data-detailsid = "{{ $item->detailsid }}"  data-question-id="{{$item->id}}">
-                                    <div class="link_general">
-                                        {{$item->points /2}}
-                                    </div>
-                                </div>
-
-                                <div class="link_three" data-detailsid = "{{ $item->detailsid }}"  data-question-id="{{$item->id}}">
-                                    <div class="link_general">
-                                        {{$item->points}}
-                                    </div>
-                                </div>
-
-                                <div class="link_four" data-question-id="{{$item->id}}">
-                                    <div class="link_general">
-                                        <i class="fa fa-plus"></i>
-                                    </div>
-                                </div>
-                            </div>
 
                             <p class="question" data-question-type="{{$item->typeofquiz}}">
                                 {{$key+=1}}. {{$item->question}}
                             </p>
-                            <input type="text" data-question-type="{{$item->typeofquiz}}" data-question-id="{{$item->id}}" id="{{$questioninfo->id}}" class="answer-field form-control mt-2" placeholder="Answer here" value="{{$item->answer}}">
+                            <canvas id="barChart{{$item->id}}" class= "chart"></canvas>
+
                         </div>
                     </div>
                 @endif
-
-                @if($item->typeofquiz == 3)
-                    <div class="card mt-5 ml-3 editcontent">
-                        <div class="card-body">
-
-                            <div class="circle-points" >
-                                <input type="checkbox" id="menu_opener_id_{{$item->id}}" class="menu_opener">
-                                <label for="menu_opener_id_{{$item->id}}" data-maxpoint="{{$item->points}}" data-detailsid = "{{ $item->detailsid }}" data-points-edit="{{$item->id}}" class="menu_opener_label student-score">{{$item->pointsgiven}}</label>
-
-                                <div class="link_one" data-detailsid = "{{ $item->detailsid }}"  data-question-id="{{$item->id}}">
-                                    <div class="link_general">
-                                        0
-                                    </div>
-                                </div>
-
-                                <div class="link_two" data-detailsid = "{{ $item->detailsid }}"  data-question-id="{{$item->id}}">
-                                    <div class="link_general">
-                                        {{$item->points /2}}
-                                    </div>
-                                </div>
-
-                                <div class="link_three" data-detailsid = "{{ $item->detailsid }}"  data-question-id="{{$item->id}}">
-                                    <div class="link_general">
-                                        {{$item->points}}
-                                    </div>
-                                </div>
-
-                                <div class="link_four" data-question-id="{{$item->id}}">
-                                    <div class="link_general">
-                                        <i class="fa fa-plus"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <p class="question" data-question-type="{{$item->typeofquiz}}">
-                                {{$key+=1}}. {{$item->question}}
-                            </p>
-                            <textarea data-question-type="{{$item->typeofquiz}}" data-question-id="{{$item->id}}" data-detailsid = "{{ $item->detailsid }}"  id="{{$questioninfo->id}}" class="answer-field form-control mt-2" type="text" value="{{$item->answer}}">{{$item->answer}}</textarea>
-                        </div>
-                    </div>
-                @endif
-
-                @if($item->typeofquiz == 4)
-                    <div class="card mt-5 ml-3 editcontent">
-                        <div class="card-body">
-                            <p>Instruction. {!! $item->question !!}</p>
-                        </div>
-                    </div>
-                @endif
-
-                @if($item->typeofquiz == 5)
-                    <!-- drag and drop -->
-                    <div class="card mt-5 ml-3 editcontent">
-                        <div class="card-body">
-
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="points student-score">
-                                        {{$item->score}}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <p class="question" data-question-type="{{$item->typeofquiz}}">
-                                Drag the correct option and drop it onto the corresponding box.
-                            </p>
-                            <div class="options p-3 mt-2" style="border:3px solid #3e416d;border-radius:6px;">
-                                @foreach ($item->drag as $questioninfo)
-                                    <div class="drag-option btn bg-primary text-white m-1" data-target="drag-1">{{$questioninfo->description}}</div>
-                                @endforeach
-                            </div>
-                            @foreach($item->drop as $items)
-                                <p>
-                                    {{$items->sortid}}. {!! $items->question !!}
-                                </p>
-                            @endforeach
-                        </div>
-                    </div>
-                @endif
-
-                @if($item->typeofquiz == 6)
-                    <!-- upload image -->
-                    <div class="card mt-5 ml-3 editcontent">
-                        <div class="card-body">
-                            <div class="circle-points" >
-                                <input type="checkbox" id="menu_opener_id_{{$item->id}}" class="menu_opener">
-                                <label for="menu_opener_id_{{$item->id}}" data-maxpoint="{{$item->points}}" data-detailsid = "{{ $item->detailsid }}" data-points-edit="{{$item->id}}" class="menu_opener_label student-score">{{$item->pointsgiven}}</label>
-
-                                <div class="link_one" data-detailsid = "{{ $item->detailsid }}"  data-question-id="{{$item->id}}">
-                                    <div class="link_general">
-                                        0
-                                    </div>
-                                </div>
-
-                                <div class="link_two" data-detailsid = "{{ $item->detailsid }}"  data-question-id="{{$item->id}}">
-                                    <div class="link_general">
-                                        {{$item->points /2}}
-                                    </div>
-                                </div>
-
-                                <div class="link_three" data-detailsid = "{{ $item->detailsid }}"  data-question-id="{{$item->id}}">
-                                    <div class="link_general">
-                                        {{$item->points}}
-                                    </div>
-                                </div>
-
-                                <div class="link_four" data-question-id="{{$item->id}}">
-                                    <div class="link_general">
-                                        <i class="fa fa-plus"></i>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <p>{!! $item->question !!}</p>
-                            <div class="form-group">
-                                <input class="answer-field form-control-file imageInput" data-question-type="{{$item->typeofquiz}}" data-question-id="{{$item->id}}" type="file" accept="image/*">
-                                @if($item->picurl != '')
-                                    <a id="preview-link" href="{{$item->picurl}}" target="_blank">
-                                        <img id="preview" src="{{$item->picurl}}" alt="Preview" style="max-width: 250px; max-height: 250px;">
-                                    </a>
-                                @else
-                                    <a id="preview-link" href="#" target="_blank">
-                                        <img id="preview" src="#" alt="Preview" style="max-width: 250px; max-height: 250px;display:none;">
-                                    </a>
-                                @endif
-                            </div>
-                        </div>
-                    </div>
-                @endif
-
-                @if($item->typeofquiz == 7)
-                    <div class="card mt-5 ml-3 editcontent">
-                        <div class="card-body">
-
-
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="points student-score">
-                                        {{$item->score}}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <span style="font-weight:600;font-size:1.0pc">
-                                Fill in the blanks
-                            </span>
-    
-                            @foreach($item->fill as $items)
-                                    <p>
-                                        {{$items->sortid}}. {!! $items->question !!}
-    
-                                    </p>
-                            @endforeach
-    
-                        </div>
-                    </div>
-                @endif
-
-                @if($item->typeofquiz == 8)
-                        <div class="card mt-5 ml-3 editcontent">
-                            <div class="card-body">
-
-
-
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="points student-score">
-                                        {{$item->score}}
-                                    </div>
-                                </div>
-                            </div>
-
-                                <span style="font-weight:600;font-size:1.0pc">
-                                    Enumeration
-                                </span>
-        
-                                <ol class="list-group list-group-numbered p-3" type="A">
-                                    <li>
-                                        <p>{{$item->question}}</p>
-                                    <ol>
-        
-                                    @php
-            
-                                        $numberOfTimes = $item->item
-            
-                                    @endphp
-                                    
-                                    @for ($i = 0; $i < $numberOfTimes; $i++)
-            
-                                    <div class="row">
-                                        <div class="col-md-12">
-                                            <li>
-                                                <div class="input-group mt-2">
-                                                    <input data-question-id="{{ $item->id }}" data-sortid="{{ $i+1 }}" data-question-type="8" class="answer-field d-inline form-control q-input" value="{{$item->answer[$i]}}" type="text">
-                                                    <div class="input-group-append">
-                                                        <span class="input-group-text">
-                                                        @if($item->check[$i] == 1)
-                                                            <span><i class="fa fa-check" style="color:rgb(7, 255, 7)" aria-hidden="true"></i></span>
-                                                        @endif
-                                                        
-                                                        @if($item->check[$i] == 0)
-                                                            <span><i class="fa fa-times" style="color: red;" aria-hidden="true"></i></span>
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                            </li>
-                                        </div>
-                                    </div>
-                                @endfor
-                                
-                                </ol>
-                                </li>
-                            </ol>
-                                
-        
-                            </div>
-                        </div>
-                    @endif
-
-                    @if($item->typeofquiz == 9)
-                    <div class="card mt-5 ml-3 editcontent">
-                        <div class="card-body">
-                            <a id="preview-link" href="{{$item->image}}" target="_blank">
-                                        <img id="preview" src="{{$item->image}}" alt="Preview" style="width: 100%; height: 100%;">
-                            </a>
-                        </div>
-                    </div>
-                    @endif --}}
-
 
             @endforeach
 
@@ -393,10 +146,12 @@
 
 
 <script src="{{asset('plugins/jquery/jquery.min.js')}}"></script>
-<script src="{{asset('plugins/flot/jquery.flot.js')}}"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
 
 <script>
-    var dataFromBlade = {!! json_encode($quizQuestions) !!};
+   // var dataFromBlade = {!! json_encode($quizQuestions) !!};
 </script>
 
 
@@ -407,15 +162,191 @@
 <script>
 
     $(document).ready(function() {
-    // Access the data passed from Blade
-        var myData = dataFromBlade;
+        
 
-        // Use the data in your jQuery logic
-        // For example, log the data to the console
-        console.log(myData);
 
-        // You can perform other operations with the data here
+
+        var dataFromBlade = {!! json_encode($quizQuestions) !!};
+        var classroomidFromBlade = {!! json_encode($classroomid) !!};
+        var quizidFromBlade = {!! json_encode($quizid) !!};
+
+        console.log(dataFromBlade)
+
+
+        var type1quiz = dataFromBlade.filter(function(obj) {
+                        return obj.typeofquiz === 1;
+        });
+
+        $.each(type1quiz, function(index, row) {
+        // Access each row's properties
+            // Make an AJAX request to fetch the data
+                $.ajax({
+                    url: '/analytics/get-answer',
+                    data: {
+                        id: row.id,
+                        classroomid: classroomidFromBlade,
+                        quizid: quizidFromBlade
+                    },
+                    method: 'GET',
+                    success: function(response) {
+                        var dataFromAjax = response;
+
+                        //console.log(dataFromAjax);
+                        var labels = [];
+                        var data = [];
+                        var backgroundColor = [];
+                        var borderColor = [];
+
+                        // Iterate over the data from the AJAX response
+                        $.each(dataFromAjax, function(index, row) {
+                            // Access each row's properties
+                            var label = row.description;
+                            var value = row.data; // Generate a random value
+
+
+                            if(row.answer == 1){
+                                label += '(Answer)';
+
+                            }
+                            // Add label and value to respective arrays
+                            labels.push(label);
+                            data.push(value);
+
+                            // Generate random colors for background and border
+                            var randomColor = 'rgba(' + Math.floor(Math.random() * 256) + ', ' + Math.floor(Math.random() * 256) + ', ' + Math.floor(Math.random() * 256) + ', 0.5)';
+                            backgroundColor.push(randomColor);
+                            borderColor.push(randomColor);
+                        });
+
+                        // Create the chart using Chart.js once the data is available
+                        var canvasId = 'myChart' + (row.id);
+                        var ctx = document.getElementById(canvasId).getContext('2d');
+                        var myChart = new Chart(ctx, {
+                            type: 'doughnut',
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: 'Data',
+                                    data: data,
+                                    backgroundColor: backgroundColor,
+                                    borderColor: borderColor,
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                cutout: '80%', // Adjust the size of the donut hole
+                                plugins: {
+                                    legend: {
+                                        position: 'bottom'
+                                    }
+                                }
+                            }
+                        });
+                    },
+                    error: function(error) {
+                        console.log('Error:', error);
+                    }
+                });
+
+
+
+        });
+
+
+
+        var type2quiz = dataFromBlade.filter(function(obj) {
+                        return obj.typeofquiz === 2;
+        });
+
+
+        $.each(type2quiz, function(index, row) {
+
+                var canvasId = 'barChart' + (row.id);
+                // Make an AJAX request to fetch the data
+                $.ajax({
+                    url: '/analytics/get-shortanswer',
+                    datatype: 'json',
+                    data: {
+                        id: row.id,
+                        classroomid: classroomidFromBlade,
+                        quizid: quizidFromBlade
+                    },
+                    method: 'GET',
+                    success: function(response) {
+                        var dataFromAjax = JSON.parse(response);
+                        console.log(typeof(dataFromAjax));
+                        var labels = [];
+                        var data = [];
+                        var backgroundColor = [];
+                        var borderColor = [];
+
+
+                        
+
+                        // Iterate over the data from the AJAX response
+                        $.each(dataFromAjax.answer, function(key, value) {
+                            var label = value;
+                            labels.push(label);
+
+                            var randomColor = 'rgba(' + Math.floor(Math.random() * 256) + ', ' + Math.floor(Math.random() * 256) + ', ' + Math.floor(Math.random() * 256) + ', 0.5)';
+                            backgroundColor.push(randomColor);
+                            borderColor.push(randomColor);
+                        
+                        });
+
+
+                        $.each(dataFromAjax.count, function(key, value) {
+                            var value = value; // Generate a random valuue
+                            // Add label and value to respective arrays
+                            data.push(value);
+
+                        
+                        
+                        });
+
+
+                        // Create the chart using Chart.js once the data is available
+                        
+                        var ctx = document.getElementById(canvasId).getContext('2d');
+                        var myChart = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: 'Data',
+                                    data: data,
+                                    backgroundColor: backgroundColor,
+                                    borderColor: borderColor,
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                scales: {
+                                    y: {
+                                        beginAtZero: true
+                                    }
+                                },
+                                plugins: {
+                                    legend: {
+                                        position: 'bottom'
+                                    }
+                                }
+                            }
+                        });
+                    },
+                    error: function(error) {
+                        console.log('Error:', error);
+                    }
+                });
+
+        });
+
     });
+
+
+
 
 
 

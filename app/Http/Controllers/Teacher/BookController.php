@@ -162,12 +162,16 @@ class BookController extends Controller
 
     }
 
-    public function quizContent($quizid, $clasroomid){
+    public function quizContent($quizid, $clasroomid, Request $request){
 
-        $quizInfo = DB::table('chapterquiz')
+        $quizInfo = DB::table('lesssonquiz')
                         ->where('id',$quizid)
-                        ->select('id','title')
+                        ->select('id','title', 'description', 'coverage')
                         ->first();
+
+
+        $bookid = $request->get('bookid');
+
 
         
 
@@ -190,93 +194,157 @@ class BookController extends Controller
                             ->where('deleted',0)
                             ->first();
 
-            $quizQuestions = DB::table('chapterquizquestions')
-                        ->where('chapterquizquestions.deleted','0')
-                        ->where('headerid', $quizInfo->id)
-                        ->select(
-                            'chapterquizquestions.id',
-                            'chapterquizquestions.points',
-                            // 'chapterquizchoices.answer',
-                            'chapterquizquestions.question',
-                            // 'chapterquizchoices.description',
-                            'chapterquizquestions.type'
-                        )
-                        ->get();
+        if(isset($chapterquizsched)){
+
+
+            if($chapterquizsched->status == 1){
+
+                $chapterquizsched->status = 'The quiz has Ended';
+
+
+            }else if(\Carbon\Carbon::create($chapterquizsched->dateto.' '.$chapterquizsched->timeto) <= \Carbon\Carbon::now('Asia/Manila')->isoFormat('YYYY-MM-DD HH:MM:SS')){
+
+
+                $chapterquizsched->status = 'The quiz has not started';
+
+            }else if(\Carbon\Carbon::create($chapterquizsched->datefrom.' '.$chapterquizsched->timefrom) > \Carbon\Carbon::now('Asia/Manila')->isoFormat('YYYY-MM-DD HH:MM:SS')){
+
+                $chapterquizsched->status = 'Overdue';
+
+            }else{
+
+                $chapterquizsched->status = 'Active';
+
+
+            }
+        }
+
+            $quizQuestions = DB::table('lessonquizquestions')
+                    ->where('lessonquizquestions.deleted','0')
+                    ->where('quizid', $quizInfo->id)
+                    ->where('typeofquiz', '!=', null)
+                    ->select(
+                        'lessonquizquestions.id',
+                        'lessonquizquestions.question',
+                        'lessonquizquestions.typeofquiz',
+                        'lessonquizquestions.item',
+                        'lessonquizquestions.picurl',
+                        'lessonquizquestions.points'
+                    )
+                    // ->inRandomOrder()
+                    ->orderBy('lessonquizquestions.id')
+                    ->get();
 
             foreach($quizQuestions as $item){
 
-                if($item->type == 1){
+                if($item->typeofquiz == 1){
 
-                    $choices = DB::table('chapterquizchoices')
+                    $choices = DB::table('lessonquizchoices')
                                     ->where('questionid',$item->id)
                                     ->where('deleted',0)
-                                    ->select('description','answer')
+                                    ->select('description','id','answer', 'sortid')
+                                    ->orderBy('sortid')
                                     ->get();
 
                     $item->choices = $choices;
 
+
+
+                }
+
+
+                if($item->typeofquiz == 7 ){
+
+
+                    $fillquestions = DB::table('lesson_fill_question')
+                                                ->where('questionid', $item->id)
+                                                ->orderBy('sortid')
+                                                ->get();
+
+                    $item->fill = $fillquestions;
+
+
+                    foreach ($item->fill as $index => $fillItem) {
+                            $questionWithInputs = preg_replace_callback('/~input/', function ($matches) use ($fillItem, &$inputCounter, &$key) {
+                                $inputField = '<input class="answer-field d-inline form-control q-input" data-question-type="7" data-sortid="' . ++$inputCounter . '" data-question-id="' . $fillItem->id . '" style="width: 200px; margin: 10px; border-color:black" type="text" id="input-' . $fillItem->id . '">';
+                                return $inputField;
+                            }, $fillItem->question);
+                            $inputCounter = 0;
+
+                            $fillItem->question = $questionWithInputs;
+                    }
+
+                                            
+
+                }
+
+                if($item->typeofquiz == 9 ){
+
+                    $protocol = $request->getScheme();
+                    $host = $request->getHost();
+
+                    $rootDomain = $protocol . '://' . $host;
+
+
+                    $item->image = $rootDomain.'/'.$item->picurl;
+                }
+
+                
+
+
+
+                if($item->typeofquiz == 5){
+
+                    $dragoption = DB::table('lesson_quiz_drag_option')
+                                    ->where('questionid',$item->id)
+                                    ->where('deleted',0)
+                                    ->select('description','id')
+                                    ->get();
+
+                    $item->drag = $dragoption;
+
+                    $dropquestions = DB::table('lesson_quiz_drop_question')
+                                                ->where('questionid', $item->id)
+                                                ->orderBy('sortid')
+                                                ->get();
+
+                    $item->drop = $dropquestions;
+
+                    
+                    foreach($dropquestions as $index => $item){
+
+                        $key = 0;
+
+
+                            $questionWithInputs = preg_replace_callback('/~input/', function($matches) use ($item, &$inputCounter, &$key) {
+                            $inputField = '<input class="d-inline form-control q-input drop-option q-input ui-droppable answer-field" data-question-type="5" data-sortid="'.++$inputCounter.'" data-question-id="'.$item->id.'" style="width: 200px; margin: 10px; border-color:black" type="text" id="input-'.$item->id.'" disabled>';
+                            return $inputField;
+                            }, $item->question);
+                            $inputCounter = 0;
+
+                            $item->question = $questionWithInputs;
+
+                    }
+
+
                 }
 
             }
+            
 
 
-            $students = DB::table('classroomstudents')
-                            ->where('classroomid',$clasroomid)
-                            ->where('classroomstudents.deleted',0)
-                            ->join('students',function($join){
-                                $join->on('classroomstudents.studentid','=','students.id');
-                                $join->where('students.deleted',0);
-                            })
-                            ->select('students.id','students.firstname','students.lastname','students.userid')
-                            ->get();
-
-            foreach($students as $student){
-
-                $checkIfExist = DB::table('chapterquizrecords')
-                                    ->where('chapterquizid',$quizInfo->id)
-                                    ->where('submittedby',$student->userid)
-                                    ->where('classroomid',$clasroomid)
-                                    ->where('chapterquizrecords.deleted',0)
-                                    ->select('quizstatus','updateddatetime','submitteddatetime','id')
-                                    ->first();
-
-                if(isset($checkIfExist->quizstatus)){
-
-                    $student->quizstatus = $checkIfExist->quizstatus;
-                    $student->updateddatetime = $checkIfExist->updateddatetime;
-                    $student->submitteddatetime = $checkIfExist->submitteddatetime;
-                   
-                    $totalPoints = DB::table('chapterquizrecordsdetail')
-                                    ->where('headerid', $checkIfExist->id)
-                                    ->where('deleted',0)
-                                    ->sum('points');
-
-                    $student->points = $totalPoints;
-
-                }else{
-
-                    $student->quizstatus = 2;
-                    $student->updateddatetime = false;
-                    $student->submitteddatetime = false;
-                    $student->points = 0;
-                }
-
-            }   
-
-            $totalPoints = collect($quizQuestions)->sum('points');
 
             return view('global.viewbook.booklist.quizcontent')
-                         ->with('quizInfo',$quizInfo)
-                         ->with('students',$students)
-                         ->with('chapterquizsched',$chapterquizsched)
-                         ->with('totalPoints',$totalPoints)
-                         ->with('quizQuestions',$quizQuestions);
+                        ->with('quizInfo',$quizInfo)
+                        ->with('chapterquizsched',$chapterquizsched)
+                        ->with('bookid',$bookid)
+                        ->with('quizQuestions',$quizQuestions);
 
         }
 
         
 
-       
+    
 
     }
 

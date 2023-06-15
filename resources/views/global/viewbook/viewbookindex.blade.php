@@ -263,7 +263,6 @@
                 <div id="contentdesktopview">
                     &nbsp;
                 </div>
-                  
                 <div class="uk-width-1-4@m uk-overflow-hidden vidlist-3-container">
                     <div uk-sticky="" class="uk-sticky uk-sticky-fixed" style="position: fixed; top: 0px; width: 298px;">
                         <h5 class="bg-gradient-grey text-white py-4 p-3 mb-0"> {{$bookinfo->title}}</h5>
@@ -424,14 +423,22 @@
 
             @if(auth()->user()->type == 2)
 
-                //student
+                //teacher
+
+                
                 function loadQuizContent(){
 
+                    $('#lesson_content_holder').css('background-image', 'none');
                     $.ajax({
                         url: '/quizContent/'+selectedQuiz+'/'+'{{$classroomid}}',
                         type:"GET",
+                        data:{
+
+                            bookid: '{{$bookinfo->id}}' 
+                        },
                         success: function(data){
-                            console.log(data)
+                            $('#contentdesktopview').remove();
+                            $('#lesson_content_holder').empty()
                             $('#lesson_content_holder').append(data)
                         }
                     })

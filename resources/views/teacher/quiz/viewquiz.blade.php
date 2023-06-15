@@ -64,6 +64,9 @@
 }
 
 
+
+
+
 </style>
 
 
@@ -342,6 +345,7 @@
                     bookid:    bookid
                 },
                 success: function(data) {
+                    console.log("This");
                     console.log(data);
                     activequiz = data
                 }
@@ -392,6 +396,8 @@
 
                 success:function(data) {
                     activequiz = data
+                    console.log("This");
+                    console.log(data);
                     renderQuizDataTable()
                     
                 }
@@ -492,6 +498,9 @@
                         'orderable': false, 
                         'createdCell':  function (td, cellData, rowData, row, col) {
                             getQuizResponses(rowData.id).then(function(data) {
+
+                                console.log("Now This");
+                                console.log(data);
 
                                 var latestEntries = {}
 
@@ -1140,6 +1149,18 @@
                     let formattedDate = datetime.toLocaleDateString('en-US', options);
 
 
+
+
+                    var filteredEntries = data.filter(function(obj) {
+                        return obj.submittedby === entry.submittedby;
+                    });
+
+                    console.log('filteredEntries')
+                    console.log(filteredEntries)
+
+
+
+
                     // Calculate no. of attempts
                     var filteredQuiz = activequiz.filter(function(quiz) {
                         if (quiz.id == chapterquizid) {
@@ -1156,7 +1177,7 @@
                         <td>${entry.name}</td>
                         <td>${formattedDate}</td>
                         <td class="tooltip-td clickable" data-quiz-id="${filteredQuiz[0].id}" data-student-id="${entry.submittedby}"  data-toggle="tooltip" title="View All Student Responses">
-                            <button type="button" class="btn btn-link">${data.length} / ${filteredQuiz[0].noofattempts}</button>
+                            <button type="button" class="btn btn-link">${filteredEntries.length} / ${filteredQuiz[0].noofattempts}</button>
                         </td>
                         <td>${entry.totalscore !== null && entry.totalscore !== undefined ? entry.totalscore : 'Not yet scored.'} / ${entry.maxpoints}</td>
                         <td><button class="btn btn-primary view-response" data-quiz-id="${filteredQuiz[0].id}" data-record-id="${entry.id}" data-classroom-id="${entry.classroomid}">View Response</button></td>
@@ -1175,6 +1196,7 @@
 
 
         $(document).on('click', '.clickable', function() {
+            
 
                 var studentid = $(this).data('student-id');
                 var quizid = $(this).data('quiz-id');
@@ -1185,27 +1207,28 @@
 
                 $('#quizResponseDetailstudent').empty();
 
+
+                $(".clickable").prop('disabled', true)
                 getQuizResponses(quizid).then(function(data) {
                     // Create an object to store the filtered entries for each submittedby
-                    const filteredEntries = {};
+                    var filteredEntries = {};
 
                     // Iterate through the data and filter the entries for each submittedby
-                    data.forEach(entry => {
-                        modalTitle.text(entry.name);
-                        const submittedby = entry.submittedby;
+                    const submittedby = studentid;
 
-                        if (!filteredEntries[submittedby]) {
-                            filteredEntries[submittedby] = [];
-                        }
-
-                        filteredEntries[submittedby].push(entry);
+                    filteredEntries = data.filter(function(obj) {
+                        return obj.submittedby === submittedby;
                     });
 
-                    // Create the HTML for the filtered entries
+
+                    modalTitle.text(filteredEntries[0].name);
+
                     let filteredEntriesHtml = '';
 
-                    Object.entries(filteredEntries).forEach(([submittedby, entries]) => {
-                        const entriesHtml = entries.map(entry => {
+
+                    console.log(filteredEntries);
+
+                        const entriesHtml = filteredEntries.map(entry => {
                             let options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
                             let formattedDate = new Date(entry.submitteddatetime).toLocaleDateString('en-US', options);
 
@@ -1220,12 +1243,12 @@
                         }).join('');
 
                         filteredEntriesHtml += entriesHtml;
-                    });
 
                     $(filteredEntriesHtml).appendTo('#quizResponseDetailstudent');
                 });
 
                 $('#responseModalstudent').modal();
+                $(".clickable").prop('disabled', false);
         });
 
         $(document).on('click', '.view-response', function() {

@@ -131,7 +131,7 @@
                     <div class="card mt-5 ml-3 editcontent" id="quiz-question-{{$item->id}}">
                         <div class="card-body">
 
-                            <div class="row">
+                            {{-- <div class="row">
                                 <div class="col-md-12">
                                     <div class="points student-score">
                                         @if($item->check == 1)
@@ -141,6 +141,33 @@
                                         @endif
                                     </div>
                                 </div>
+                            </div> --}}
+
+                            <div class="circle-points" >
+                                <input type="checkbox" id="menu_opener_id_{{$item->id}}" class="menu_opener">
+                                <label for="menu_opener_id_{{$item->id}}" data-detailsid = "{{ $item->detailsid  }}" data-maxpoint="{{$item->points }}" data-points-edit="{{$item->id}}" class="menu_opener_label student-score">
+                                    
+                                    @if($item->check == 1)
+                                            1
+                                    @else
+                                            0
+                                    @endif
+                                
+                                
+                                </label>
+
+                                <div class="link_one" data-detailsid = "{{ $item->detailsid  }}"   data-question-id="{{$item->id}}">
+                                    <div class="link_general">
+                                        0
+                                    </div>
+                                </div>
+
+                                <div class="link_three" data-detailsid = "{{ $item->detailsid  }}"   data-question-id="{{$item->id}}">
+                                    <div class="link_general">
+                                        {{$item->points}}
+                                    </div>
+                                </div>
+
                             </div>
 
                             
@@ -438,8 +465,8 @@
                     @if($item->typeofquiz == 9)
                     <div class="card mt-5 ml-3 editcontent">
                         <div class="card-body">
-                            <a id="preview-links" href="{{$item->image}}" target="_blank">
-                                        <img id="previews" src="{{$item->image}}" alt="Preview" style="width: 100%; height: 100%;">
+                            <a id="preview-link" href="{{$item->image}}" target="_blank">
+                                        <img id="preview" src="{{$item->image}}" alt="Preview" style="width: 100%; height: 100%;">
                             </a>
                         </div>
                     </div>

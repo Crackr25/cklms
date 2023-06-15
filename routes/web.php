@@ -431,7 +431,12 @@ Route::group(['middleware' => ['auth', 'web']], function() {
     Route::get('/removeallowedstudent', 'GlobalController\ViewBookController@removeallowedstudent');
 
     //View Book    
-    Route::get('/viewbook/{ids}', 'GlobalController\ViewBookController@viewbook');     
+    Route::get('/viewbook/{ids}', 'GlobalController\ViewBookController@viewbook'); 
+    
+    
+    //View analytics
+    Route::get('/analytics/get-answer', 'GlobalController\ViewBookController@getChoices'); 
+    Route::get('/analytics/get-shortanswer', 'GlobalController\ViewBookController@getShort'); 
 
     Route::get('/viewbookchaptertestavailability', 'GlobalController\ViewBookController@chaptertestavailability');
     Route::get('/quizTable', 'GlobalController\ViewBookController@quizTable');

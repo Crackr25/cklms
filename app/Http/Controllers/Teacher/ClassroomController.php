@@ -1076,11 +1076,6 @@ class ClassroomController extends Controller
                 });
 
             }
-            // else if($request->get('search') == null && $request->has('search')){
-
-            //     $books =  $books->where('books.id',0);
-
-            // }
         
             if($request->get('classroomid') != null && $request->has('classroomid')){
 
@@ -1091,6 +1086,8 @@ class ClassroomController extends Controller
                                 });
 
             }
+
+
             
 
             if($request->get('bookid') != null && $request->has('bookid')){
@@ -1197,6 +1194,7 @@ class ClassroomController extends Controller
                     $lessons = DB::table('lessons')
                                 ->where('chapterid',$request->get('chapterid'))
                                 ->where('lessons.deleted',0)
+                                ->orderby('sortid')
                                 ->get();
 
 

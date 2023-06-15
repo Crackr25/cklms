@@ -339,10 +339,6 @@ class StudentBookController extends Controller
 
             $chapterquizsched = DB::table('chapterquizsched')
                             ->where('chapterquizid',$quizid)
-                            ->join('lesssonquiz',function($join){
-                                    $join->on('lesssonquiz.id','=','chapterquizsched.chapterquizid');
-                                });
-                            $chapterquizsched = $chapterquizsched->where('classroomid',$clasroomid)
                             ->select(
                                 'chapterquizsched.classroomid',
                                 'chapterquizsched.datefrom',
@@ -353,12 +349,27 @@ class StudentBookController extends Controller
                                 'chapterquizsched.status',
                                 'chapterquizsched.createddatetime',
                                 'chapterquizsched.updateddatetime',
-                                'lesssonquiz.title',
-                                'lesssonquiz.coverage',
                                 'chapterquizsched.id'
                             )
                             ->where('chapterquizsched.deleted',0)
                             ->first();
+
+            
+
+
+            $title = DB::table('lesssonquiz')
+                            ->where('id',$quizid)
+                            ->where('deleted',0)
+                            ->value('title');
+
+            
+            $coverage = DB::table('lesssonquiz')
+                            ->where('id',$quizid)
+                            ->where('deleted',0)
+                            ->value('coverage');
+
+
+
 
 
             $allowedstudents = null;
@@ -444,7 +455,8 @@ class StudentBookController extends Controller
                         ->with('continuequiz',$continuequiz)
                         ->with('attemptsLeft',$attemptsLeft)
                         ->with('lastattempt',$lastattempt)
-                        ->with('score',$score)
+                        ->with('coverage',$coverage)
+                        ->with('title',$title)
                         ->with('maxpoints',$maxpoints);
     
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\GlobalController;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use DB;
+use stdClass;
 class ViewBookController extends Controller
 {
     
@@ -519,7 +520,7 @@ class ViewBookController extends Controller
                     ->where('lessonquizquestions.deleted','0')
                     ->where('quizid', $quizid)
                     ->where('typeofquiz', '!=', null)
-                    ->where('typeofquiz', '=', 1)
+                    //->where('typeofquiz', '=', 1)
                     ->select(
                         'lessonquizquestions.id',
                         'lessonquizquestions.question',
@@ -535,7 +536,111 @@ class ViewBookController extends Controller
 
 
         return view('teacher.quiz.viewquizanalytics')
-        ->with('quizQuestions', $quizQuestions);
+        ->with('quizQuestions', $quizQuestions)
+        ->with('classroomid', $classroomid)
+        ->with('quizid', $quizid);
+
+    
+
+    }
+
+
+
+    
+
+    public function getChoices(Request $request)
+    {      
+
+        $id =  $request->get('id');
+        $classroomid =  $request->get('classroomid');
+        $quizid =  $request->get('quizid');
+
+        $lessonchoices = DB::table('lessonquizchoices')
+                    ->where('questionid', $id)
+                    ->where('deleted', '0')
+                    ->select(
+                        'id',
+                        'description',
+                        'answer'
+                    )
+                    ->orderBy('sortid')
+                    ->get();  
+        
+        $quizrecord = DB::table('chapterquizrecords')
+                    ->where('classroomid', $classroomid)
+                    ->where('chapterquizid', $quizid)
+                    ->where('quizstatus', '1')
+                    ->select('id')
+                    ->groupBy('submittedby')
+                    ->get();
+
+        
+
+                foreach ($lessonchoices as $choice) {
+                        $choice->data = DB::table('chapterquizrecordsdetail')
+                            ->where('choiceid', $choice->id)
+                            ->whereIn('headerid', $quizrecord->pluck('id')->toArray()) // Use the 'id' from $quizrecord
+                            ->count();
+                }
+
+
+
+
+
+        return $lessonchoices;
+
+    
+
+    }
+
+
+    public function getShort(Request $request)
+    {      
+
+        $id =  $request->get('id');
+        $classroomid =  $request->get('classroomid');
+        $quizid =  $request->get('quizid');
+        
+        $quizrecord = DB::table('chapterquizrecords')
+                    ->where('classroomid', $classroomid)
+                    ->where('chapterquizid', $quizid)
+                    ->where('quizstatus', '1')
+                    ->select('id')
+                    ->groupBy('submittedby')
+                    ->get();
+
+        
+
+        $data = DB::table('chapterquizrecordsdetail')
+            ->whereIn('headerid', $quizrecord->pluck('id')->toArray())
+            ->where('typeofquestion', '=', '2')
+            ->select('stringanswer')
+            ->groupBy('stringanswer')
+            ->get();
+
+
+        $dataObject = new stdClass();
+        $dataObject->answer = [];
+        $dataObject->count = [];
+
+        foreach ($data as $item) {
+            $answer = $item->stringanswer;
+            $count = DB::table('chapterquizrecordsdetail')
+                ->whereIn('headerid', $quizrecord->pluck('id')->toArray())
+                ->where('typeofquestion', '=', '2')
+                ->where('stringanswer', '=', $answer)
+                ->count();
+
+            $dataObject->answer[] = $answer;
+            $dataObject->count[] = $count;
+        }
+
+
+
+
+
+
+        return json_encode($dataObject);
 
     
 
@@ -608,17 +713,17 @@ class ViewBookController extends Controller
 
                     if(isset($answer)){
                         $item->answer = $answer;
-                        if($check == 1){
-
-
-                            $item->check = 1;
-
-                            $chapterdetailsid = DB::table('chapterquizrecordsdetail')
+                        $chapterdetailsid = DB::table('chapterquizrecordsdetail')
                                     ->where('questionid',$item->id)
                                     ->where('headerid', $recordid)
                                     ->where('deleted',0)
                                     ->value('id');
+                            
+                        $item->detailsid = $chapterdetailsid;
+                        if($check == 1){
 
+
+                            $item->check = 1;
                             //update points value
                             DB::table('chapterquizrecordsdetail')
 
@@ -688,6 +793,14 @@ class ViewBookController extends Controller
                 }
 
                 if($item->typeofquiz == 7 ){
+
+                    $chapterdetailsid = DB::table('chapterquizrecordsdetail')
+                                    ->where('questionid',$item->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('deleted',0)
+                                    ->value('id');
+                            
+                    $item->detailsid = $chapterdetailsid;
 
 
                     $fillquestions = DB::table('lesson_fill_question')
@@ -883,6 +996,15 @@ class ViewBookController extends Controller
 
 
                 if($item->typeofquiz == 8){
+
+
+                    $chapterdetailsid = DB::table('chapterquizrecordsdetail')
+                                    ->where('questionid',$item->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('deleted',0)
+                                    ->value('id');
+                            
+                    $item->detailsid = $chapterdetailsid;
                 
 
                     $numberOfTimes = $item->item;
@@ -983,6 +1105,14 @@ class ViewBookController extends Controller
                 }
 
                 if($item->typeofquiz == 5){
+
+                    $chapterdetailsid = DB::table('chapterquizrecordsdetail')
+                                    ->where('questionid',$item->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('deleted',0)
+                                    ->value('id');
+                            
+                    $item->detailsid = $chapterdetailsid;
 
                     $dragoption = DB::table('lesson_quiz_drag_option')
                                     ->where('questionid',$item->id)
@@ -1090,6 +1220,8 @@ class ViewBookController extends Controller
 
 
             }
+
+
             
 
             return view('teacher.quiz.viewquizresponse')
