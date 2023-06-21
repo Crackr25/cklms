@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="{{asset('templatefiles/framework.css')}}">
     <link rel="stylesheet" href="{{asset('templatefiles/bootstrap.css')}}">
 
+    <link rel="stylesheet" href="{{asset('plugins/fontawesome-free/css/fontawesome.css')}}">
     <link rel="stylesheet" href="{{asset('plugins/fontawesome-free/css/all.min.css')}}">
     <!-- SweetAlert2 -->
     <!-- summernote -->

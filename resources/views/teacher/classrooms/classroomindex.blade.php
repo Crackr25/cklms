@@ -104,19 +104,27 @@
                     {{-- <a href="#" class="btn bs-placeholder btn-default" id="addclassroom" uk-toggle="target: #modal-close-default"> <i class="uil-plus"></i> Add classroom</a> --}}
                 </div>
                 <div class="section-header-right">
+                    <form class="form-inline">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="search-input" placeholder="Search" aria-label="Search" aria-describedby="search-button">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" id="search-button"><i class="fas fa-search"></i></button>
+                            </div>
+                        </div>
+                    </form>
                     <a href="#" class="btn bs-placeholder btn-default" id="addclassroom" uk-toggle="target: #modal-close-default"> <i class="uil-plus"></i> Add classroom</a>
                 </div>
+
             </div>
             <div class="section-small" id="classroom_table_holder">
-              
+
+                    {{-- Classroom Table will appear here  --}}
+                    
             </div>
             
         
-            {{-- <div class="footer">
-                @include('admin.inc.footer')
-            </div> --}}
+        
         </div>
-    {{-- </div> --}}
     <script src="{{asset('plugins/jquery/jquery.min.js')}}"></script>
 
     <script>
@@ -168,6 +176,29 @@
                 })
 
             })
+
+            $('#search-input').on('input', function() {
+                var searchText = $(this).val();
+                
+                // Perform your search logic or update the UI based on the search text
+                console.log('Search Text:', searchText);
+
+                searchVal = searchText;
+
+                $.ajax({
+                    url: '/teacherclassrooms?table=table'+'&search='+searchVal+'&skip='+skip,
+                    type:"GET",
+                    success: function(data){
+                        $('#classroom_table_holder').empty();
+                        $('#classroom_table_holder').append(data)
+                        //console.log(data);
+                
+                    }
+                })
+
+
+
+            });
 
             $(document).on('change','#general_search',function(){
                 skip = null

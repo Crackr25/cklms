@@ -172,6 +172,9 @@ class BookController extends Controller
 
         $bookid = $request->get('bookid');
 
+        $classroomid = $clasroomid;
+
+
 
         
 
@@ -338,6 +341,7 @@ class BookController extends Controller
                         ->with('quizInfo',$quizInfo)
                         ->with('chapterquizsched',$chapterquizsched)
                         ->with('bookid',$bookid)
+                        ->with('classroomid',$classroomid)
                         ->with('quizQuestions',$quizQuestions);
 
         }

@@ -72,7 +72,7 @@
         <div class="d-flex">
             <nav id="breadcrumbs" class="mb-3">
                 <ul>
-                    <li><a href="/admindashboard"> <i class="uil-home-alt"></i> </a></li>
+                    <li><a href="/home"> <i class="uil-home-alt"></i> </a></li>
                     <li><a href="/adminbooks/{{Crypt::encrypt('index')}}">Books</a></li>
                 </ul>
             </nav>
@@ -377,14 +377,16 @@
         $(document).ready(function(){
 
             $('#newlessontitle').on('keyup', function() {
+                var inputText = $(this).val();
+                console.log(inputText);
+
                 var text = "This is a sample text: with a colon.";
 
-                if (text.indexOf(":") !== -1) {
+                if (inputText.indexOf(":") !== -1) {
                 console.log("The text contains a colon.");
                 } else {
                 console.log("The text does not contain a colon.");
                 }
-
                 // You can perform further actions with the captured inputText here
             });
             @if(count($book->parts) == 0)
@@ -670,23 +672,23 @@
                                         '<div class="form-group newquizselection">'+
                                         '<label for="blank-quiz" class="uk-flex uk-flex-middle">'+
                                             '<input type="radio" name="createquiz" id="blank-quiz" value="blank-quiz" class="uk-radio uk-margin-small-right quizcreate">'+ 
-                                            '<i class="fa fa-file-word mr-2" style="font-size: 24px; color: gray "></i><span>Blank Quiz</span>'+
+                                            '<i class="fa fa-file-word mr-2" style="font-size: 24px; color: gray "></i><span>Create New Quiz</span>'+
                                         '</label>' +
                                         '</div>');
 
                                         // Loop through the response and append quiz selections to the modal body
-                                        for (var i = 0; i < response.length; i++) {
-                                        var quiz = response[i];
-                                        var quizHtml = '<div class="form-group newquizselection">'+
-                                            '<label for="quiz-'+ quiz.id +'">'+
-                                            '<input type="radio" name="createquiz" id="quiz-'+ quiz.id +'" value="'+ quiz.id +'" class="uk-radio uk-margin-small-right">' +
-                                            '<i class="fa fa-file-word mr-2" style="font-size: 24px; color: gray "></i>'+
-                                            '<span style="font-size: 18px; color: black">'+ quiz.title +'</span><br/>' +
-                                            '<span style="padding-left: 55px; padding-top:-5px; color: gray ">'+ quiz.description +'</span>' +
-                                            '</label>'+
-                                            '</div>';
-                                        $('#modalviewquiz .uk-modal-body').append(quizHtml);
-                                        }
+                                        // for (var i = 0; i < response.length; i++) {
+                                        // var quiz = response[i];
+                                        // var quizHtml = '<div class="form-group newquizselection">'+
+                                        //     '<label for="quiz-'+ quiz.id +'">'+
+                                        //     '<input type="radio" name="createquiz" id="quiz-'+ quiz.id +'" value="'+ quiz.id +'" class="uk-radio uk-margin-small-right">' +
+                                        //     '<i class="fa fa-file-word mr-2" style="font-size: 24px; color: gray "></i>'+
+                                        //     '<span style="font-size: 18px; color: black">'+ quiz.title +'</span><br/>' +
+                                        //     '<span style="padding-left: 55px; padding-top:-5px; color: gray ">'+ quiz.description +'</span>' +
+                                        //     '</label>'+
+                                        //     '</div>';
+                                        // $('#modalviewquiz .uk-modal-body').append(quizHtml);
+                                        // }
                                     },
                                     error: function(xhr) {
                                         // Handle error here

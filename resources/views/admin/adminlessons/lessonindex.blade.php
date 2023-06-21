@@ -1,5 +1,18 @@
 @extends('admin.layouts.app')
 
+{{-- @section('breadcrumbs')
+
+<nav id="breadcrumbs">
+    <ul>
+        <li><a href="/home"> <i class="uil-home-alt"></i> </a></li>
+        //<li><a href="/adminviewbook/index?id={{$quiz->bookid}}">Books</a></li>
+        <li>Lesson Content</li>
+    </ul>
+</nav>
+@endsection --}}
+
+
+
 @section('content')
 <meta name="csrf-token" content="{{ csrf_token() }}" />
 <!-- Font Awesome -->

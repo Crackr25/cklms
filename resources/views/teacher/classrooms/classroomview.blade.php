@@ -20,20 +20,40 @@
         }
     </style>
 
-<div id="modal-close-default" uk-modal> 
-    <div class="uk-modal-dialog uk-modal-body"> 
-        <button class="uk-modal-close-default" type="button" uk-close></button> 
-        <h2 class="uk-modal-title">Add Student</h2> 
-        <div class="uk-margin">
-            <label class="uk-form-label" for="form-horizontal-text">Student Name</label>
-            <div class="uk-form-controls">
-                <input class="uk-input" name="student" type="text" placeholder="Student Name" autocomplete="off">
+
+
+    <div class="modal fade" id="modalviewupdate" tabindex="-1" role="dialog" aria-labelledby="modalviewupdateLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="modalviewupdateLabel">Title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <form>
+            <input type="hidden" id="updateid">
+            <input type="hidden" id="updatetype">
+            <div class="form-group">
+                <label for="updatetitle">Title</label>
+                <input type="text" class="form-control" id="updatetitle">
             </div>
+            <div class="form-group">
+                <label for="updatedescription">Choose classroom cover photo</label>
+                <input type="file" class="form-control-file" id="updatedescription" accept="image/*">
+            </div>
+
+            </form>
         </div>
-        <div class="uk-margin" id="student_list_holder">
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" id="updateinfo">Update</button>
         </div>
-    </div> 
-</div>
+        </div>
+    </div>
+    </div>
+
 
 
 <div id="modal-book-list" uk-modal> 
@@ -136,8 +156,7 @@
             <div class="uk-width-2-3@m uk-first-column">
 
                 <div class="course-details">
-                    <h1> {{$classroominfo->classroomname}}</h1>
-                  
+                    <h1> {{$classroominfo->classroomname}}<i class="fas fa-pencil-alt ml-2"></i> </h1>
 
                     <div class="course-details-info">
 
@@ -145,13 +164,6 @@
                             <li> Created by <a href="#"> {{auth()->user()->name}}</a> </li>
                             <li> Created last {{\Carbon\Carbon::create($classroominfo->createddatetime)->isoFormat('MM/DD/YYYY')}}</li>
                         </ul>
-                         {{--<button type="button" class="btn btn-twitter btn-icon-label mt-2 call" id="{{$classroominfo->id}}">
-                            <span class="btn-inner--icon">
-                                <i class="icon-feather-video"></i>
-                            </span>
-                            <span class="btn-inner--text">Start a call</span>
-                          </button> 
-                        <button type="button" class="btn btn-sm btn-light active"> </button> --}}
 
                     </div>
                 </div>
@@ -166,6 +178,12 @@
         </div>
     </div>
 </div>
+
+
+
+
+
+
 
 <div class="container">
 
@@ -645,6 +663,15 @@
                             $('.commentscontainerautodisplay[postid='+postid+']').append(poststring)
                         }
                     })
+                
+            })
+
+
+            $(document).on('click','.course-details', function(){
+
+                    console.log(" Classroom Clicked")
+
+                    $('#modalviewupdate').modal('show');
                 
             })
 

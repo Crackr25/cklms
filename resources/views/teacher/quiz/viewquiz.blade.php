@@ -15,8 +15,8 @@
 
 @section('content')
 
-
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="{{asset('plugins/select2/select2.min.css')}}">
+{{-- <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" /> --}}
 
 
 <!-- Styles -->
@@ -77,7 +77,7 @@
             <div class="card">
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
-                        <span>Active Quiz</span>
+                        <h5>Active Quiz</h5>
                         <div>
                             {{-- <button class="btn btn-sm btn-default mr-2" type="button" data-toggle="collapse" data-target="#quizTable2" aria-expanded="false" aria-controls="quizTable2"><i class="fa fa-plus text-white"></i></button> --}}
                             <button class="btn btn-sm btn-default refresh_table">Refresh</button>
@@ -115,16 +115,12 @@
             <div class="card">
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
-                        <span>Quiz Table</span>
-                        <div>
-                            <button id="toggleButton" class="btn btn-sm btn-default mr-2" type="button" data-toggle="collapse" data-target="#quizTable" aria-expanded="false" aria-controls="quizTable"><i class="fa fa-plus"></i></button>
-                        </div>
+                        <h5> Quiz Table <span class="badge badge-dark ml-2">Activate Quiz Here</span> </h5>
                     </div>
                 </div>
-
-                <div class="card-body">
-                    <div class="collapse" id="quizTable">
-                        <table id="quizDataTable" class="table table-striped" style="width : 100%">
+                <div class="card-body" >
+                    <div id="quizTable">
+                        <table id="quizDataTable" class="table table-striped" style="width : 100%;">
                             <thead class="thead-dark">
                                 <tr>
                                     <th width = "15%">Chapter</th>
@@ -276,9 +272,8 @@
 <script src="{{asset('plugins/sweetalert2/sweetalert2.all.min.js')}}"></script>
 <script src="{{asset('plugins/datatables/jquery.dataTables.js')}}"></script>
 <script src="{{asset('plugins/datatables-bs4/js/dataTables.bootstrap4.js')}}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
-
+<script src="{{asset('plugins/select2/select2.min.js')}}"></script>
+<script src="{{asset('plugins/datatables/jquery.dataTables.min.js')}}"></script>
 <script>
 
 

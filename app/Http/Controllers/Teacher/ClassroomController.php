@@ -1143,14 +1143,14 @@ class ClassroomController extends Controller
                                         $join->where('chapters.deleted',0);
                                     });
 
-                    $books = $bookChapter->select('chapters.*')->get();
+                    $books = $bookChapter->select('chapters.*')->orderby('sortid')->get();
 
                 }
                 else{
 
                     $type = 1;
 
-                    $bookParts = $books->select('parts.*')->get();
+                    $bookParts = $books->select('parts.*')->orderby('sortid')->get();
 
                     $books = $bookParts ;
                 }

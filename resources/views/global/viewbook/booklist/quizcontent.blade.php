@@ -37,7 +37,7 @@
                                     <h4>Status: {{$chapterquizsched->status}} </h4>
                                 @endif
                                     <h4>Status: Quiz Not Activated </h4>
-                                    <a href="/quiz/167-63-{{$bookid}}" target="_blank" type="button" class="btn btn-info uk-first-column" id="modal_view_quiz_button">Click here to Activate</a>
+                                    <a href="/quiz/167-{{$classroomid}}-{{$bookid}}" target="_blank" type="button" class="btn btn-info uk-first-column" id="modal_view_quiz_button">Click here to Activate</a>
 
                             </div>
                         </div>
@@ -47,11 +47,12 @@
 
                     <div class="card mt-5 editcontents" data-quizid= "{{$quizInfo->id}}" id="quiz-info">
                                 <div class="card-body">
-                                    <h1 class="card-title">
+                                    {{-- <h1 class="card-title">
                                         {{$quizInfo->title}}
-                                    </h1>
+                                    </h1> --}}
 
                             <div class="lessons pb-4">
+                                <h3>Answer Key</h3>   
                                 <h4>Coverage: </h4>
                                 @if(!empty($quizInfo->coverage))
                                 @php
@@ -65,7 +66,11 @@
 
                             </div>
 
-                            <p class="card-text">{{$quizInfo->description}}</p>       
+                                
+
+
+                            <p class="card-text">{{$quizInfo->description}}</p>    
+                            
                         </div>
                     </div>
                 
@@ -90,7 +95,17 @@
 
                                                     @foreach ($item->choices as $questioninfo)
                                                     <div class="form-check mt-2">
+                                                        @if($questioninfo->answer == 1)
+
+                                                        <input data-question-type="{{$item->typeofquiz}}" data-question-id="{{  $item->id }}" id="{{ $questioninfo->id}}" class="answer-field form-check-input" type="radio" name="{{ $item->id }}" value="{{ $questioninfo->id}}" checked>
+                                                        
+
+                                                        @else
+
+
                                                         <input data-question-type="{{$item->typeofquiz}}" data-question-id="{{  $item->id }}" id="{{ $questioninfo->id}}" class="answer-field form-check-input" type="radio" name="{{ $item->id }}" value="{{ $questioninfo->id}}">
+                                                        
+                                                        @endif
                                                         <label for="{{ $item->id }}" class="form-check-label">
                                                             {{$questioninfo->description}}
                                                         </label>
@@ -293,12 +308,16 @@
                                         @for ($i = 0; $i < $numberOfTimes; $i++)
 
                                         <div class="row">
+
                                             <div class="col-md-12">
                                                 <li>
                                                     <p><input data-question-id="{{ $item->id }}" data-sortid={{ $i+1 }} data-question-type="8" class="answer-field d-inline form-control q-input" type="text"></p>
                                                 </li>
                                             </div>
+                                        
+                                        
                                         </div>
+
                                         
                                         @endfor
                                         

@@ -80,11 +80,11 @@
             </div>
         </div>
         <div class="uk-margin">
-            <a href="#" target="_blank" type="button" class="btn btn-info uk-first-column" id="modal_view_book_button">
+            <a href="#" target="_blank" type="button" class="btn btn-info mt-2 uk-first-column" id="modal_view_book_button">
                 <i class="icon-feather-book-open mr-2h mr-2"></i>View Book
             </a>
-            <a href="#" type="button" class="btn btn-info uk-first-column" id="modal_view_quiz_button">
-                <i class="icon-feather-book-open mr-2h mr-2"></i>View Quiz Summarry
+            <a href="#" type="button" class="btn btn-info uk-first-column mt-2" id="modal_view_quiz_button">
+                <i class="icon-feather-book-open mr-2h mr-2"></i>Quiz Summarry
             </a>
         </div>
     </div> 
@@ -155,20 +155,22 @@
         <div class="uk-modal-body">
                 <h5 class="grades"></h5>
                 <h5 class="percentage"></h5>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Quiz Title</th>
-                        <th>Date &amp; Time Submitted</th>
-                        <th>No. of Attempts</th>
-                        <th>Score</th>
-                        <th>Percentage</th>
-                    </tr>
-                </thead>
-                <tbody id="quizResponseDetails">
-                    <!-- Table rows go here -->
-                </tbody>
-            </table>
+            <div style="overflow-x: auto;">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Quiz Title</th>
+                            <th>Date &amp; Time Submitted</th>
+                            <th>No. of Attempts</th>
+                            <th>Score</th>
+                            <th>Percentage</th>
+                        </tr>
+                    </thead>
+                    <tbody id="quizResponseDetails">
+                        <!-- Table rows go here -->
+                    </tbody>
+                </table>
+            </div>
         </div>
         <div class="uk-modal-footer">
             <button class="uk-button uk-button-default uk-modal-close" type="button">Close</button>

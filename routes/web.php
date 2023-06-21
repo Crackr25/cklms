@@ -96,8 +96,16 @@ Route::middleware(['auth', 'isAdministrator','isDefaultPass'])->group(function (
     
         return view('admin.admincreatecourse');
         
-    });         
+    });   
     
+
+    //Truncate the table
+    Route::get('/truncate/quizrecord' , 'Admin\Truncatecontroller@trunceQuizrecord');
+    Route::get('/truncate' , 'Admin\Truncatecontroller@index');
+
+
+
+
     Route::get('/admingeneratestudaccounts', 'Admin\GenerateAccountsController@index');  
     Route::get('/adminexportstudaccounts', 'Admin\GenerateAccountsController@export');  
     Route::get('/adminsubjects', 'Admin\SubjectController@index');  
@@ -292,6 +300,16 @@ Route::middleware(['auth', 'isTeacher','isDefaultPass'])->group(function () {
     Route::get('/teacherbooks/{id}', 'Teacher\BookController@index');      
     Route::get('/teacherviewbook/{id}', 'Teacher\BookController@viewbook');  
     Route::get('/teachermessages', 'Teacher\BookController@messages');
+
+
+    //viewQuiz
+
+    Route::get('/quiz/{ids}', 'GlobalController\ViewBookController@viewquiz');
+    Route::get('/quizresponses', 'GlobalController\ViewBookController@quizresponses');
+    Route::get('/viewquizresponse/{classroomId}/{quizId}/{recordId}', 'GlobalController\ViewBookController@viewquizresponse');
+    Route::get('/viewquizanalytics/{quizid}/{classroomid}/{bookid}', 'GlobalController\ViewBookController@viewquizanalytics');
+    Route::get('/updatescore', 'GlobalController\ViewBookController@updatescore');
+    Route::get('/donecheck', 'GlobalController\ViewBookController@doneCheck');
     
     //teacherquizsched
     Route::get('/teachertestavailability', 'Teacher\Teacherquizcontroller@chaptertestavailability');
@@ -421,12 +439,7 @@ Route::group(['middleware' => ['auth', 'web']], function() {
         return view('jitsimeet');
     });
     //View quiz
-    Route::get('/quiz/{ids}', 'GlobalController\ViewBookController@viewquiz');
-    Route::get('/quizresponses', 'GlobalController\ViewBookController@quizresponses');
-    Route::get('/viewquizresponse/{classroomId}/{quizId}/{recordId}', 'GlobalController\ViewBookController@viewquizresponse');
-    Route::get('/viewquizanalytics/{quizid}/{classroomid}/{bookid}', 'GlobalController\ViewBookController@viewquizanalytics');
-    Route::get('/updatescore', 'GlobalController\ViewBookController@updatescore');
-    Route::get('/donecheck', 'GlobalController\ViewBookController@doneCheck');
+
     Route::get('/getclassroomstudents', 'GlobalController\ViewBookController@getclassroomstudents');
     Route::get('/removeallowedstudent', 'GlobalController\ViewBookController@removeallowedstudent');
 

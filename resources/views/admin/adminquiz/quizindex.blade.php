@@ -137,6 +137,27 @@
             }
 
 
+            body {
+                overflow: auto;
+            }
+
+            /* Customize the scrollbar appearance */
+            body::-webkit-scrollbar {
+                width: 8px;
+                background-color: #f5f5f5;
+            }
+
+            body::-webkit-scrollbar-thumb {
+                background-color: #888;
+                border-radius: 4px;
+            }
+
+            body::-webkit-scrollbar-thumb:hover {
+                background-color: #555;
+            }
+
+
+
 
 
 
@@ -175,23 +196,22 @@
                                                     </div>
                                                 @else
                                                     <div class="row justify-content-center">
-                                                            <div class="d-flex flex-row" data-quiz="{{ $quiz->coverage }}">
+                                                            <div class="lessons pb-4" data-quiz="{{ $quiz->coverage }}">
                                                                 @php
                                                                     $lessons = explode(", ", $quiz->coverage);
                                                                 @endphp
                                                                 
                                                                 @foreach ($lessons as $lesson)
-                                                                    <div class="card m-2">
-                                                                        <div class="card-body">
-                                                                            <h5 class="card-title">{{ $lesson }}</h5>
-                                                                        </div>
-                                                                    </div>
+                                                                    <div class="btn bg-primary text-white m-1">{{$lesson}}</div>
                                                                 @endforeach
+                                                                    <div class="btn bg-danger text-white m-1" id="my-card" data-toggle="tooltip" data-placement="top" title="Delete Coverage Lesson">X</div>
+
+{{--                                                                 
                                                                     <div class="card m-2" id="my-card" data-toggle="tooltip" data-placement="top" title="Delete Coverage Lesson">
                                                                         <div class="card-body">
                                                                             <h5 class="card-title" id="lessoncardtitle">X</h5>
                                                                         </div>
-                                                                    </div>
+                                                                    </div> --}}
                                                             </div>
                                                     </div>
                                                 @endif
@@ -490,7 +510,7 @@
                                                                                 <button class="btn btn-success add_drag_question" id="{{$question->id}}">Add drop question</button>
                                                                             </div>
                                                                             <div class="col-12">
-                                                                                <button class="btn btn-primary btn-sm answer-key" id="{{$question->id}}">Answer key</button>
+                                                                                <button class="btn btn-primary btn-sm answer-key-drag" id="{{$question->id}}">Answer key</button>
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -1741,7 +1761,7 @@
                                     '<button class="btn btn-success add_drag_question"  id="' + parentId + '">Add drop question</button>' +
                                     '</div>' +
                                     '<div class="col-12">' +
-                                    '<button class="btn btn-primary btn-sm answer-key" id="' + parentId + '">Answer key</button>' +
+                                    '<button class="btn btn-primary btn-sm answer-key-drag" id="' + parentId + '">Answer key</button>' +
                                     '</div>' +
                                     '</div>' +
                                     '</div>'

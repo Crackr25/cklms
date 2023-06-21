@@ -30,30 +30,12 @@
 <!-- include libraries(jQuery, bootstrap) -->
     <link rel="stylesheet" href="{{asset('plugins/select2/css/select2.min.css')}}">
     <link rel="stylesheet" href="{{asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css')}}">
-
-
-<!-- include summernote css/js -->
-<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+    
 
     <!-- icons
     ================================================== -->
     <link rel="stylesheet" href="{{asset('templatefiles/icons.css')}}">
 
-    <!-- Import SweetAlert CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.css">
-
-    <!-- Import SweetAlert and Toast libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.19/dist/sweetalert2.all.min.js"></script>
     
     <style>
         .gutter,
@@ -81,7 +63,7 @@
             }
             .vidlist-3-container {
                 z-index: 999 !important;
-                height: 400px !important;
+                height: 100% !important;
                 overflow-y: auto !important;
             }
             #contentdesktopview {
@@ -96,41 +78,43 @@
 
             .swal-wide{
             width:850px !important;
-        }
-        iframe {
-            width: 100%;
-            height: 100%;
-        }
-        .options {
-            position: relative;
-            z-index: 1;
-        }
-        .drop-option {
-            position: relative;
-            z-index: 0;
-        }
-        .instruction {
-            font-weight:600;
-            font-size:1.0pc;
-        }
-        .q-input {
-            border:1px solid #b6b6b6 !important;
-            border-radius:6px !important;
-            width:200px !important;
-        }
-        .error-input {
-            border-color: #dc3545 !important;
-        }
-        #scroll-to-bottom {
-            position: fixed;
-            bottom: 0px;
-            right: 0px;
-            padding: 9px 15px 9px 15px !important;
-        }
-        .list-group li {
-            padding-top: 10px;
-            padding-bottom: 10px;
-        }
+            }
+
+            
+            iframe {
+                width: 100%;
+                height: 100%;
+            }
+            .options {
+                position: relative;
+                z-index: 1;
+            }
+            .drop-option {
+                position: relative;
+                z-index: 0;
+            }
+            .instruction {
+                font-weight:600;
+                font-size:1.0pc;
+            }
+            .q-input {
+                border:1px solid #b6b6b6 !important;
+                border-radius:6px !important;
+                width:200px !important;
+            }
+            .error-input {
+                border-color: #dc3545 !important;
+            }
+            #scroll-to-bottom {
+                position: fixed;
+                bottom: 0px;
+                right: 0px;
+                padding: 9px 15px 9px 15px !important;
+            }
+            .list-group li {
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
         
         }
         
@@ -203,6 +187,7 @@
             background-repeat: repeat-y;
             background-size:contain;
             background-position: center;
+            background-color: white !important;
             /* transition: opacity 0.6s ease; */
         }
 
@@ -221,39 +206,6 @@
 <body style="">
 
     <div id="wrapper">
-        @if(auth()->user()->type == 2)
-            <div id="sched_modal" uk-modal> 
-                <div class="uk-modal-dialog uk-modal-body"> 
-                    <button class="uk-modal-close-default" type="button" uk-close></button> 
-                    <div class="uk-margin">
-                            <label for="">Date Start</label>
-                            <input class="uk-input" type="date" placeholder="Input" id="date_start" name="date_start"> 
-                    </div>
-                    <div class="uk-margin">
-                        <label for="">Date End</label>
-                        <input class="uk-input" type="date" placeholder="Input" id="date_end" name="date_end"> 
-                    </div>
-
-                    <div class="uk-margin">
-                            <label for="">Start time</label>
-                            <input class="uk-input" type="time" placeholder="Input" id="time_start" name="time_start"> 
-                    </div>
-                    <div class="uk-margin">
-                            <label for="">End time</label>
-                            <input class="uk-input" type="time" placeholder="Input" id="time_end" name="time_end"> 
-                    </div>
-                    <div class="uk-margin">Number of attempts</label>
-                        <input class="uk-input" type="text" placeholder="Input" id="nubmer_of_attempts" name="nubmer_of_attempts" placeholder="Number of attempts"> 
-                    </div>
-                    <div class="uk-margin">
-                        <button type="button" class="btn btn-success" id="submit_classsched">
-                            Create Quiz Schedule
-                        </button>
-                    </div>
-                </div> 
-            </div>
-        @endif
-
         {{-- <div class="page-content"> --}}
             <div class="uk-grid-collapse uk-grid" uk-grid="">
                 <div class="uk-width-3-4@m bg-white uk-first-column" id="lesson_content_holder">
@@ -316,10 +268,6 @@
         <script src="{{asset('plugins/jquery/jquery.min.js')}}"></script>
         <script src="{{asset('templatefiles/framework.js')}}"></script>
         <script src="{{asset('templatefiles/jquery-3.3.1.min.js')}}"></script>
-
-        <script src="{{asset('templatefiles/chart.min.js')}}"></script>
-        {{-- <script type="text/javascript" src="{{asset('plugins/jquery-ui/jquery-ui.min.js')}}"></script> --}}
-        <script src="{{asset('templatefiles/chart-custom.js')}}"></script>
         <script src="{{asset('plugins/jquery-ui/jquery-ui.min.js')}}"></script>
         <!-- Select2 -->
         <!-- SweetAlert2 -->
