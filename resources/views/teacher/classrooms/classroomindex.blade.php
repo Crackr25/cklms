@@ -149,7 +149,9 @@
             
             loadClassroom()
 
+
             function loadClassroom(){
+
 
                 $.ajax({
                     url: '/teacherclassrooms?table=table'+'&search='+searchVal+'&skip='+skip,
@@ -162,6 +164,9 @@
                 })
                 
             }
+
+
+
 
             $(document).on('click','#generate_random_code',function(){
 
@@ -176,6 +181,11 @@
                 })
 
             })
+
+           
+
+
+
 
             $('#search-input').on('input', function() {
                 var searchText = $(this).val();

@@ -166,10 +166,21 @@ class BookController extends Controller
 
         $quizInfo = DB::table('lesssonquiz')
                         ->where('id',$quizid)
-                        ->select('id','title', 'description', 'coverage')
+                        ->select('id','title', 'description', 'coverage' , 'picurl')
                         ->first();
 
+        // Make the complete path of image
+        $protocol = $request->getScheme();
+        $host = $request->getHost();
 
+        $rootDomain = $protocol . '://' . $host;
+
+
+        if(isset($quizInfo->picurl)){
+
+        $quizInfo->image = $rootDomain . '/' . $quizInfo->picurl;
+
+        }
         $bookid = $request->get('bookid');
 
         $classroomid = $clasroomid;
@@ -232,7 +243,8 @@ class BookController extends Controller
                         'lessonquizquestions.typeofquiz',
                         'lessonquizquestions.item',
                         'lessonquizquestions.picurl',
-                        'lessonquizquestions.points'
+                        'lessonquizquestions.points',
+                        'lessonquizquestions.quideanswer'
                     )
                     // ->inRandomOrder()
                     ->orderBy('lessonquizquestions.id')

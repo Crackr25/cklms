@@ -339,6 +339,28 @@
             </form>
         </div>
     </div>
+
+
+
+
+    <div id="modalviewupdatequiz" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body">
+            <form>
+                <input type="hidden" id="updateidquiz" >
+                <input type="hidden" id="updatetype" >
+                <h2 class="uk-modal-title">Title</h2>
+                <input type="text" id="updatetitlequiz">
+                <label>Description</label>
+                <textarea id="updatedescriptionquiz" class="form-control"></textarea>
+                <label>Quiz Cover</label>
+                <input type="file" name="editcoverphoto" class="form-control form-control-sm" accept="image/x-png,image/gif,image/jpeg" >
+                <p class="uk-text-right">
+                    <button class="uk-button uk-button-default uk-modal-close modalviewupdate" type="button">Cancel</button>
+                    <button class="uk-button uk-button-primary modalviewupdatequiz" type="button" id="updatequizinfo">Update</button>
+                </p>
+            </form>
+        </div>
+    </div>
     {{-- <div id="modallinks" uk-modal>
         <div class="uk-modal-dialog uk-modal-body">
             <form>
@@ -352,15 +374,15 @@
         </div>
     </div> --}}
 
-                        <div id="modalviewquiz" uk-modal>
-                                <div class="uk-modal-dialog uk-modal-body">
-                                    <label for="quiztype">Quiz</label> 
-                                </div>
-                                <div class="uk-modal-dialog uk-modal-footer uk-text-right">
-                                    <button class="uk-button uk-button-default uk-modal-close modalviewupdate" type="button">Cancel</button>
-                                    <button class="uk-button uk-button-primary modalviewupdate" type="button" id="proceedbtn">Proceed</button>
-                                </div>
-                                </div>
+    <div id="modalviewquiz" uk-modal>
+            <div class="uk-modal-dialog uk-modal-body">
+                <label for="quiztype">Quiz</label> 
+            </div>
+        <div class="uk-modal-dialog uk-modal-footer uk-text-right">
+                <button class="uk-button uk-button-default uk-modal-close modalviewupdate" type="button">Cancel</button>
+                <button class="uk-button uk-button-primary modalviewupdate" type="button" id="proceedbtn">Proceed</button>
+        </div>
+    </div>
 
 
 
@@ -375,6 +397,21 @@
     <script src="{{asset('dist/js/adminlte.js')}}"></script>
     <script>
         $(document).ready(function(){
+
+
+
+            // Get the input field and the button
+            var inputField = document.getElementById("updatetitle");
+            var button = document.getElementById("updateinfo");
+
+            // Execute a function when the Enter key is pressed
+            inputField.addEventListener("keyup", function(event) {
+                // Check if the Enter key (key code 13) is pressed
+                if (event.keyCode === 13) {
+                // Trigger the button click event
+                button.click();
+                }
+            });
 
             $('#newlessontitle').on('keyup', function() {
                 var inputText = $(this).val();
@@ -704,7 +741,7 @@
                 $('.boxquiz'+id).css('background-color','#ffcce6')
                 $('.btn-group-horizontal').empty();
                 $('.btn-group-horizontal').append(
-                    '<button type="button" class="btn btn-sm btn-info mr-2 viewinfo" id="viewquizinfo" uk-toggle="target: #modalviewupdate" quizid="'+id+'" ><i class="fa fa-question"></i> View info</button>'+
+                    '<button type="button" class="btn btn-sm btn-info mr-2 viewinfoquiz" id="viewquizinfo" uk-toggle="target: #modalviewupdatequiz" quizid="'+id+'" ><i class="fa fa-question"></i> View info</button>'+
                     '<a href="/adminviewbook/addquiz/'+id+'" type="button" class="btn btn-sm btn-warning mr-2 viewinfo" target="_blank" id="viewlessoncontent" > View Contents</a>'
                 );
 
@@ -772,6 +809,16 @@
                 })
             })
             $(document).on('click', '#viewquizinfo', function(){
+
+
+
+
+                console.log('Hello World');
+
+                console.log(clickedquiz)
+
+
+
                 $.ajax({
                     url: '/adminviewbook/getquizinfo',
                     type: 'get',
@@ -781,22 +828,25 @@
                     },
                     success: function(data)
                     {
-                        $('#sortidcontainer').empty();
-                        $('#sortidcontainer').append(
-                            '<label for="updatesortid" class="col-sm-2 col-form-label">Sortid</label>'+
-                            '<div class="col-sm-5">'+
-                                '<input type="number" class="form-control" id="updatesortid" value="'+data.sortid+'" style="border: 1px solid #ddd"  id="updatesortid" >'+
-                            '</div>'
-                        )
-                        $('#modalviewupdate').removeClass('uk-modal-close')
-                        $('#updateid').val(data.id)
-                        $('#updatetype').val('quiz')
-                        $('#updatetitle').val(data.title)
+
+                        console.log(data);
+
+                        $('#modalviewupdatequiz').removeClass('uk-modal-close')
+                        $('#updateidquiz').val(data.id)
+                        $('#updatedescriptionquiz').val(data.description)
+                        $('#updatetitlequiz').val(data.title)
                         $('#updatedescription').val(data.description)
                     }
                 })
             })
+
+
+
             $(document).on('click', '#updateinfo', function(){
+
+
+
+
                 $.ajax({
                     url: '/adminviewbook/updateinfo',
                     type: 'get',
@@ -823,6 +873,59 @@
                     }
                 })
             })
+
+
+
+
+            $(document).on('click', '#updatequizinfo', function(){
+
+                var id = $('#updateidquiz').val()
+
+                console.log('id:');
+                console.log(id);
+                var selectedFile = $('input[name=editcoverphoto]')[0].files[0];
+                var title = $('#updatetitlequiz').val();
+                var description = $('#updatedescriptionquiz').val();
+
+
+                var formData = new FormData();
+                formData.append('selectedFile', selectedFile);
+                formData.append('id', id);
+                formData.append('title', title);
+                formData.append('description', description);
+                var csrfToken = $('meta[name="csrf-token"]').attr('content');
+                console.log(csrfToken);
+
+                    $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken
+                            }
+                    });
+
+
+                $.ajax({
+                    url: '/adminviewbook/quiz/updateinfo',
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function() {
+                        UIkit.notification("<span uk-icon='icon: check'></span> Updated Successfully!", { status: 'success', timeout: 1000 });
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle the error
+                        console.log(xhr.responseText); // Log the error response
+                        UIkit.notification("<span uk-icon='icon: warning'></span> Error occurred during update!", { status: 'danger', timeout: 1000 });
+                    }
+                });
+
+
+
+
+            })
+
+
+
             $(document).on('click','#submitnewpart', function(){
                 var newparttitle = $('#newparttitle').val();
                 $.ajax({

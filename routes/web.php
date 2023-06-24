@@ -12,7 +12,7 @@
 */
 // Route::get('/', function () {
 
-//     return view('login');
+//     return view('+in');
     
 // });
 Route::get('/comingsoon', function () {
@@ -76,13 +76,15 @@ Route::get('/tableofcontents3', function () {
     
 });
 
-                                                            //  =======================================================
 
-                                                            //  ========================== ADMIN ======================
 
-                                                            //  =======================================================
+//  =======================================================
 
-       
+//  ========================== ADMIN ======================
+
+//  =======================================================
+
+
 
 //Administrator
 
@@ -142,6 +144,7 @@ Route::middleware(['auth', 'isAdministrator','isDefaultPass'])->group(function (
     Route::get('/adminviewbook/getlessoninfo', 'Admin\BookController@getlessoninfo');
     Route::get('/adminviewbook/getquizinfo', 'Admin\BookController@getquizinfo');
     Route::get('/adminviewbook/updateinfo', 'Admin\BookController@updateinfo');
+    Route::post('/adminviewbook/quiz/updateinfo', 'Admin\BookController@updateQuiznfo');
 
     Route::get('/adminviewbook/addpart', 'Admin\BookController@addpart');  
     Route::get('/adminviewbook/addchapter', 'Admin\BookController@addchapter');  
@@ -179,6 +182,8 @@ Route::middleware(['auth', 'isAdministrator','isDefaultPass'])->group(function (
     Route::get('/adminviewbook/returneditquizfill', 'Admin\BookController@returnEditfill');
     Route::get('/adminviewbook/getenumquestion', 'Admin\BookController@getEnum');
     Route::get('/adminviewbook/returneditquizenum', 'Admin\BookController@returnEditenum');
+    Route::get('/adminviewbook/setbonus', 'Admin\BookController@setBonus');
+
     
 
     
@@ -287,9 +292,14 @@ Route::middleware(['auth', 'isTeacher','isDefaultPass'])->group(function () {
 
     Route::get('/teacherclassrooms', 'Teacher\ClassroomController@index');   
     Route::get('/teacherquizzes', 'Teacher\Teacherquizcontroller@index');   
-   // Route::post('/teacherclassroom/create', 'Teacher\ClassroomController@create'); 
+    // Route::post('/teacherclassroom/create', 'Teacher\ClassroomController@create'); 
     Route::post('/teacherclassroom/create/rooms', 'Teacher\ClassroomController@create');     
+    Route::post('/updateclassrooominfoupdate', 'Teacher\ClassroomController@updateClassrooominfo');     
+    //Route::match(['get', 'post'], '/updateclassrooominfoupdate', 'Teacher\ClassroomController@updateClassrooominfo');     
     Route::get('/teachergetavailablecode', 'Teacher\ClassroomController@getavailablecode');
+    
+    
+    
     Route::get('/teacherquiz/create', 'Teacher\Teacherquizcontroller@create'); 
     Route::get('/teacherquiz/delete', 'Teacher\Teacherquizcontroller@delete'); 
     Route::get('/teacherquiz/selectclassroom', 'Teacher\Teacherquizcontroller@classroomSelect')->name('classroomSelect');    

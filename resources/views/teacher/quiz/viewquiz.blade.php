@@ -70,6 +70,10 @@
 </style>
 
 
+
+
+
+
 <!-- Content -->
 <div class="container-fluid">
     <div class="row justify-content-center">
@@ -79,7 +83,7 @@
                     <div class="d-flex justify-content-between align-items-center">
                         <h5>Active Quiz</h5>
                         <div>
-                            {{-- <button class="btn btn-sm btn-default mr-2" type="button" data-toggle="collapse" data-target="#quizTable2" aria-expanded="false" aria-controls="quizTable2"><i class="fa fa-plus text-white"></i></button> --}}
+                
                             <button class="btn btn-sm btn-default refresh_table">Refresh</button>
                         </div>
                     </div>
@@ -210,15 +214,18 @@
     </div>
 </div>
 
+
+
+
 <div class="modal fade" id="activateQuizModal" tabindex="-1" aria-labelledby="quizModal" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-        <div class="modal-header">
-            <h5 class="modal-title" id="activateQuizModalLabel" style="color:white" >Activate Quiz</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
+            <div class="modal-header">
+                <h5 class="modal-title" id="activateQuizModalLabel" style="color:white" >Activate Quiz</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
         <div class="modal-body">
             <form class="was-validated">
                 <div class="form-group">
@@ -528,6 +535,7 @@
 
                             if(rowData.status != 1){
 
+                                
                                 buttons = `<button type="button" class="btn btn-danger" data-id="${rowData.schedid}" id="end-quiz">
                                                     End Quiz
                                                 </button>`;            
@@ -834,33 +842,6 @@
                                             })
                                         })
 
-                                        // $.ajax({
-                                        //     type:'GET',
-                                        //     url: '/getactivequiz',
-                                        //     data:{
-                                        //         classroomid: CLASSROOM_ID
-                                        //     },
-                                        //     success: function(data) {
-                                        //         activequiz = data
-                                        //         selectedQuizData = activequiz.filter(function(data) {
-                                        //             return data.id == selectedQuizId
-                                        //         })
-
-                                        //         $(`ul[data-id="${selectedQuizId}"`).empty();
-                                        //         selectedQuizData[0].allowed_students.forEach(function(data, index) {
-                                        //             $(`ul[data-id="${selectedQuizId}"`).prepend(`<li id="${data.id}">${data.name}</li>`)
-                                        //         })
-
-                                        //         // show notification
-                                        //         Toast.fire({
-                                        //                 icon: 'success',
-                                        //                 title: 'Student removed successfully',
-                                        //                 timer: 2000,
-                                        //             })
-
-                                        //     }
-                                        // })
-
                                     } else {
                                         Toast.fire({
                                             icon: 'warning',
@@ -980,17 +961,24 @@
 
             Promise.all([
 
+
                 // reset any input values entered
                 $("#date-from").val('').promise(),
                 $("#time-from").val('').promise(),
                 $("#date-to").val('').promise(),
                 $("#time-to").val('').promise(),
                 $("#attempts").val('').promise(),
+
+
                 // $(".select-students").val(allowedStudentIds).change().promise()
             ]).then(function() {
 
+
                 // show activate quiz modal
                 $('#activateQuizModal').modal();
+
+
+
             });
         });
 

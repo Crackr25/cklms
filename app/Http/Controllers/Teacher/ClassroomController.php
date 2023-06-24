@@ -113,6 +113,59 @@ class ClassroomController extends Controller
 
 
     }
+
+
+    public static function updateClassrooominfo(Request $request){
+
+        $imageFile = $request->file('selectedFile');
+
+
+
+        //dd($imageFile);
+
+
+        
+
+        // Save the image locally
+        $imageName = time() . '_' . $imageFile->getClientOriginalName();
+        $imageFile->move(public_path('bookcover'), $imageName);
+
+        // Store the image URL path
+        $data= 'bookcover/' . $imageName;
+
+        $createdby = DB::table('teachers')
+            ->where('userid', auth()->user()->id)
+            ->first()
+            ->id;
+
+
+
+
+        date_default_timezone_set('Asia/Manila');
+
+
+
+
+        DB::table('classrooms')
+            ->where('id', $request->get('classroomid'))
+            ->update([
+                'classroomname' => $request->get('classroomtitle'),
+                'createdby'     => $createdby,
+                'picurl'        => $data,
+                'createddatetime'   => date('Y-m-d H:i:s')
+            ]);
+
+
+
+        
+
+    }
+
+
+
+
+
+
     public static function getavailablecode(){
 
 

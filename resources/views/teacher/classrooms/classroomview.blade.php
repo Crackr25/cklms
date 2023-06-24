@@ -41,7 +41,7 @@
             </div>
             <div class="form-group">
                 <label for="updatedescription">Choose classroom cover photo</label>
-                <input type="file" class="form-control-file" id="updatedescription" accept="image/*">
+                <input type="file" class="form-control-file" name="classroomimage" id="updatedescription" accept="image/*">
             </div>
 
             </form>
@@ -542,9 +542,63 @@
 
             }
 
-            setInterval(loadfeed(), 500);
+            //setInterval(loadfeed(), 500);
 
-           
+
+
+
+            $(document).on('click','#updateinfo',function(){
+
+                var selectedFile = $('input[name=classroomimage]')[0].files[0];
+                var classroomtitle = $('#updatetitle').val();
+                var classroomid = '{{$classroominfo->id}}';
+
+                console.log(selectedFile);
+                console.log(classroomtitle);
+                console.log(classroomid);
+
+                var formData = new FormData();
+                formData.append('selectedFile', selectedFile);
+                formData.append('classroomid', classroomid);
+                formData.append('classroomtitle', classroomtitle);
+                var csrfToken = $('meta[name="csrf-token"]').attr('content');
+                console.log(csrfToken);
+
+                    $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken
+                            }
+                    });
+
+
+                $.ajax({
+                    url: '/updateclassrooominfoupdate',
+                    type: "POST",
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(data) {
+                        window.location.reload();
+                        $(".btn-secondary[data-dismiss='modal']").trigger("click");
+                        UIkit.notification("<span uk-icon='icon: check'></span> Updated Successfully!", { status: 'success', timeout: 1000 });
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle the error
+                        $(".btn-secondary[data-dismiss='modal']").trigger("click");
+                        console.log(xhr.responseText); // Log the error response
+                        UIkit.notification("<span uk-icon='icon: warning'></span> Error occurred during update!", { status: 'danger', timeout: 1000 });
+                    }
+                });
+
+
+                
+
+
+
+            })
+
+
+
 
 
             
@@ -670,6 +724,10 @@
             $(document).on('click','.course-details', function(){
 
                     console.log(" Classroom Clicked")
+
+                    $('#modalviewupdateLabel').text('{{$classroominfo->classroomname}}');
+                    $('#updatetitle').val('{{$classroominfo->classroomname}}')
+
 
                     $('#modalviewupdate').modal('show');
                 

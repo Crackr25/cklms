@@ -57,24 +57,42 @@ class LessonController extends Controller
             ->where('id', $request->get('formlessonid'))
             ->first();
 
+            
+
         $chapterinfo = Db::table('chapters')
             ->where('id', $lessoninfo->chapterid)
             ->first();
 
+
+
         $partinfo = Db::table('parts')
             ->where('id', $chapterinfo->partid)
             ->get();
+
+
             
         if(count($partinfo) == 0)
         {
+
+
+
             $bookinfo = Db::table('books')
                 ->where('id', $chapterinfo->bookid)
                 ->first();
+
+
+
         }else{
+
+
+
             $bookinfo = Db::table('books')
                 ->where('id', $partinfo[0]->bookid)
                 ->first();
+
+
         }
+
         // -----------------------------------------------------------------------------------------------------    
         $lessons = DB::table('lessons')
                 ->where('chapterid', $lessoninfo->chapterid)

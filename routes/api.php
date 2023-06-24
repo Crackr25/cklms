@@ -16,3 +16,9 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+
+
+Route::get('/viewbook', 'api\Bookscontroller@index'); 
+Route::get('/bookchapter/{id}', 'api\BooksController@bookChapter');
+Route::get('/bookchapter2', 'api\Bookscontroller@bookChapter2'); 

@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+  @extends('admin.layouts.app')
 
 @section('breadcrumbs')
 
@@ -168,7 +168,6 @@
                                 '<h6 class="m-0" style="height: 20px;"><i class="icon fas fa-exclamation-triangle"></i> No students yet!</h6>'+
                             '</div>'
                         );
-               
                     }else{
                         
                         var tabletodisplay ='<input type="text" id="searchclassroominput'+id+'" name="search" autofocus required placeholder="">';

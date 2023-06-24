@@ -45,6 +45,10 @@
 
 
 
+
+
+
+
                     <div class="card mt-5 editcontents" data-quizid= "{{$quizInfo->id}}" id="quiz-info">
                                 <div class="card-body">
                                     {{-- <h1 class="card-title">
@@ -73,6 +77,21 @@
                             
                         </div>
                     </div>
+
+
+
+                    @if(isset($quizInfo->image))
+
+                        <div class="card mt-5 editcontents" data-quizid="{{$quizInfo->id}}" id="quiz-info">
+                            <div class="card-body position-relative">
+                                <img src="{{$quizInfo->image}}" class="img-fluid w-100 h-100 rounded-top border-0 m-0" alt="Image">
+                            </div>
+                        </div>
+
+                    @endif
+
+
+
                 
                     @foreach($quizQuestions as $key=>$item)
                         @if($item->typeofquiz == 1)
@@ -131,6 +150,12 @@
                                         </div>
                                                 <p class="question" data-question-type="{{$item->typeofquiz}}"> <b> Points. </b> {{$item->points}}</p>
                                                 <p class="question" data-question-type="{{$item->typeofquiz}}"> {{$item->question}}</p>
+                                                <p class="question" data-question-type="{{$item->typeofquiz}}"> <b> Answer key : </b> </p>
+                                                @if(isset($item->quideanswer))
+                                                <p class="question" data-question-type="{{$item->typeofquiz}}"> {{ $item->quideanswer }} </p>
+                                                @else
+                                                <p class="question" data-question-type="{{$item->typeofquiz}}"> <b> Answer may vary. </b> </p>
+                                                @endif
                                                 <input type="text" data-question-type="{{$item->typeofquiz}}" data-question-id="{{ $item->id}}" class="answer-field form-control mt-2" placeholder="Answer here" >
 
                                     </div>
@@ -150,6 +175,13 @@
                                         </div>
                                                 <p class="question" data-question-type="{{$item->typeofquiz}}"> <b> Points. </b> {{$item->points}}</p>
                                                 <p class="question" data-question-type="{{$item->typeofquiz}}"> {{$item->question}}</p>
+                                                 <p class="question" data-question-type="{{$item->typeofquiz}}"> <b> Answer key:  </b></p>
+                                                @if(isset($item->quideanswer))
+                                                <p class="question" data-question-type="{{$item->typeofquiz}}">  {{ $item->quideanswer }} </p>
+                                                @else
+                                                <p class="question" data-question-type="{{$item->typeofquiz}}"> <b> Answer may vary. </b></p>
+                                                @endif
+                                                
                                                 <textarea data-question-type="{{$item->typeofquiz}}" data-question-id="{{ $item->id}}" class="answer-field form-control mt-2"type="text"></textarea>
 
                                     </div>

@@ -190,6 +190,7 @@
 
                                                         <div class="col-10 mt-2">
                                                             <select class="form-control-sm select2 pr-3" id="select-lesson" multiple="multiple">
+                                                            <option>All</option>
                                                             </select>
                                                         
                                                         </div>
@@ -494,8 +495,9 @@
                                                                                 $item->answer = $answerString;
                                                                             }
                                                                             @endphp
-                                                                            @foreach($dropquestions as $item)
                                                                             <div id="item_question{{$question->id}}">
+                                                                            @foreach($dropquestions as $item)
+                                                                            
                                                                                 <input type="text" class="form-control drop{{$question->id}}" style="margin-top: 10px; border: 2px solid dodgerblue; color: black;" placeholder="Item text" value="{{$item->question}}">
                                                                                 <span>Answer is 
                                                                                     @if(empty($item->answer))
@@ -504,8 +506,9 @@
                                                                                     <em>{{$item->answer}}</em>.
                                                                                     @endif
                                                                                 </span>
-                                                                            </div>
+                                                                            
                                                                             @endforeach
+                                                                            </div>
                                                                             <div class="row justify-content-end p-3 mt-2">
                                                                                 <button class="btn btn-success add_drag_question" id="{{$question->id}}">Add drop question</button>
                                                                             </div>
@@ -2016,6 +2019,7 @@
 
                                             html += `</div><div class="col-12 p-3 text-end">
                                                                         <button class="btn btn-primary btn-sm answerdone" id="${response.id}">Done</button>
+                                                                        <button class="btn btn-primary btn-sm setasBonus" id="${response.id}">Bonus</button>
                                                                     </div></div>`;
 
                                             $('#quiztioncontent' + parentId).empty().append(html);
@@ -2454,6 +2458,42 @@
                                                     </div>`;
 
                                             $('#quiztioncontent' + id).empty().append(html);
+                                        },
+                                    error: function(xhr) {
+                                        console.log("Error");
+                                        // Handle error here
+                                    }
+                            });
+
+                        
+
+
+
+                        });
+
+                        $(document).on('click', '.setasBonus', function(){
+
+                            var id = $(this).attr("id");
+                    
+
+
+                            $.ajax({
+                                    type: "get",
+                                    dataType: 'json',
+                                    url: "/adminviewbook/setbonus",
+                                    data: { 
+                                        id: id
+                                            },
+                                    success: function(response)  {
+                                            console.log(response);
+
+                                            Toast.fire({
+                                                icon: 'success',
+                                                title: 'The question set to bonus Succesfully'
+                                                
+                                            })
+
+
                                         },
                                     error: function(xhr) {
                                         console.log("Error");

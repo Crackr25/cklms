@@ -145,10 +145,16 @@ class BookController extends Controller
             }
             $book->chapters = $chapters;
         }
+
+
         else{
     
+
             $book->chapters = [];
+        
         }
+
+
         
         return view('admin.adminbooks.adminbookview')
             ->with('book', $book);
@@ -241,7 +247,7 @@ class BookController extends Controller
                             ->where('id', $lessonvalue->id)
                             ->update([
                                 'sortid' => $lessonkey+1
-                            ]);
+                        ]);
                     }
                     $lessonvalue->sortid = $lessonkey+1;
                 }else{
@@ -284,12 +290,15 @@ class BookController extends Controller
     }
     public function getquizinfo(Request $request)
     {
-        $quizinfo = Db::table('chapterquiz')
+        $quizinfo = Db::table('lesssonquiz')
             ->where('id', $request->get('id'))
             ->first();
 
         return collect($quizinfo);
     }
+
+
+
     public function updateinfo(Request $request)
     {
         
@@ -335,6 +344,28 @@ class BookController extends Controller
         }
         return $request->all();
     }
+
+
+    public function updateQuiznfo(Request $request)
+    {
+        
+        $imageFile = $request->file('selectedFile');
+
+        // Save the image locally
+        $imageName = time() . '_' . $imageFile->getClientOriginalName();
+        $imageFile->move(public_path('quizcover'), $imageName);
+
+            DB::table('lesssonquiz')
+                ->where('id', $request->get('id'))
+                ->update([
+                    'picurl' => 'quizcover/' . $imageName,
+                    'title' => $request->get('title'),
+                    'description' => $request->get('description')
+                ]);
+
+    }
+
+
     public function addpart(Request $request)
     {
         date_default_timezone_set('Asia/Manila');
@@ -452,6 +483,22 @@ class BookController extends Controller
 
         return $id;
     }
+
+
+    public function setBonus(Request $request)
+    {
+
+
+        date_default_timezone_set('Asia/Manila');
+        DB::table('lessonquizchoices')
+            ->where('questionid', $request->get('id'))
+            ->update([
+                'answer'         => 1
+                    ]);
+
+        return 1;
+    }
+
 
 
     public function saveImage(Request $request)
