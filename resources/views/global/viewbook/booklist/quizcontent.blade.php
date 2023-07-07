@@ -150,9 +150,9 @@
                                         </div>
                                                 <p class="question" data-question-type="{{$item->typeofquiz}}"> <b> Points. </b> {{$item->points}}</p>
                                                 <p class="question" data-question-type="{{$item->typeofquiz}}"> {{$item->question}}</p>
-                                                <p class="question" data-question-type="{{$item->typeofquiz}}"> <b> Answer key : </b> </p>
+                                                <p class="question" data-question-type="{{$item->typeofquiz}}"> <b> Explanation: </b> </p>
                                                 @if(isset($item->quideanswer))
-                                                <p class="question" data-question-type="{{$item->typeofquiz}}"> {{ $item->quideanswer }} </p>
+                                                <p class="question" data-question-type="{{$item->typeofquiz}}"> {!! $item->quideanswer !!} </p>
                                                 @else
                                                 <p class="question" data-question-type="{{$item->typeofquiz}}"> <b> Answer may vary. </b> </p>
                                                 @endif
@@ -175,9 +175,9 @@
                                         </div>
                                                 <p class="question" data-question-type="{{$item->typeofquiz}}"> <b> Points. </b> {{$item->points}}</p>
                                                 <p class="question" data-question-type="{{$item->typeofquiz}}"> {{$item->question}}</p>
-                                                 <p class="question" data-question-type="{{$item->typeofquiz}}"> <b> Answer key:  </b></p>
+                                                <p class="question" data-question-type="{{$item->typeofquiz}}"> <b> Explaination:  </b></p>
                                                 @if(isset($item->quideanswer))
-                                                <p class="question" data-question-type="{{$item->typeofquiz}}">  {{ $item->quideanswer }} </p>
+                                                <p class="question" data-question-type="{{$item->typeofquiz}}">  {!! $item->quideanswer !!} </p>
                                                 @else
                                                 <p class="question" data-question-type="{{$item->typeofquiz}}"> <b> Answer may vary. </b></p>
                                                 @endif
@@ -386,6 +386,71 @@
                                     </div>
                                 </div>
                         @endif
+
+                        @if($item->typeofquiz == 10)
+
+                                <!-- multiple choice -->
+                                
+                                    <div class="card mt-5 editcontent" id="quiz-question-{{$item->id}}">
+                                        <div class="card-body ">
+
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="points student-score">
+                                                        {{$key+=1}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                            
+                                                    
+                                                    <p >{!! $item->question !!} </p>
+
+                                                    @foreach ($item->choices as $questioninfo)
+                                                    <div class="form-check mt-2">
+                                                        @if($questioninfo->answer == 1)
+
+                                                        <input data-question-type="{{$item->typeofquiz}}" data-question-id="{{  $item->id }}" id="{{ $questioninfo->id}}" class="answer-field form-check-input" type="radio" name="{{ $item->id }}" value="{{ $questioninfo->id}}" checked>
+                                                        
+
+                                                        @else
+
+
+                                                        <input data-question-type="{{$item->typeofquiz}}" data-question-id="{{  $item->id }}" id="{{ $questioninfo->id}}" class="answer-field form-check-input" type="radio" name="{{ $item->id }}" value="{{ $questioninfo->id}}">
+                                                        
+                                                        @endif
+                                                        <label for="{{ $item->id }}" class="form-check-label">
+                                                            {{$questioninfo->description}}
+                                                        </label>
+                                                    </div>
+                                                    @endforeach
+                                
+                                            
+                                        </div>
+                                    </div>
+                            @endif
+
+                            @if($item->typeofquiz == 11)
+                                <!-- upload file -->
+                                <div class="card mt-5 editcontent">
+                                    <div class="card-body">
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="points student-score">
+                                                    {{$key+=1}}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <p class="question" data-question-type="{{$item->typeofquiz}}"> <b> Points. </b> {{$item->points}}</p>
+                                        <p>{!! $item->question !!}</p>
+                                        <div class="form-group">
+                                            <input class="answer-field form-control-file fileInput" data-question-type="{{$item->typeofquiz}}" data-question-id="{{$item->id}}" type="file">
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+
 
 
                         @endforeach

@@ -30,8 +30,8 @@
                         </div>
                     </div>
 
-                @elseif(\Carbon\Carbon::create($chapterquizsched->dateto.' '.$chapterquizsched->timeto) <= \Carbon\Carbon::now('Asia/Manila')->isoFormat('YYYY-MM-DD HH:MM:SS'))
-
+                @elseif(\Carbon\Carbon::create($chapterquizsched->dateto.' '.$chapterquizsched->timeto) <= $now)
+                    {{-- \Carbon\Carbon::now('Asia/Manila')->isoFormat('YYYY-MM-DD HH:MM:SS') --}}
                     <div class="card mt-5" style= "border-top: 10px solid #673AB7  !important;
                             border-radius: 10px  !important;" id="quiz-info">
                                     <div class="card-header">
@@ -60,10 +60,10 @@
                     </div> 
                 
 
-                @elseif(\Carbon\Carbon::create($chapterquizsched->datefrom.' '.$chapterquizsched->timefrom) > \Carbon\Carbon::now('Asia/Manila')->isoFormat('YYYY-MM-DD HH:MM:SS'))
-
+                @elseif(\Carbon\Carbon::create($chapterquizsched->datefrom.' '.$chapterquizsched->timefrom) > $now)
+                        
                     <div class="uk-card uk-card-primary uk-card-body bg-info">
-                        <h4 class="uk-card-title">QUIZ HAS NOT YET STARTED!</h4>
+                        <h4 class="uk-card-title">QUIZ HAS NOT YET STARTED!  </h4>
                         <p>This quiz will start on {{\Carbon\Carbon::create($chapterquizsched->datefrom.' '.$chapterquizsched->timefrom)->isoFormat('MMMM DD, YYYY hh:mm A')}}</p>
                     </div>
                 @else

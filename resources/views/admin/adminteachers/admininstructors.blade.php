@@ -44,7 +44,7 @@
         <div class="row">
             @if(count($teachers) > 0)
                 @foreach($teachers as $teacher)
-                    <div class="col-md-3 col-3 mb-2">
+                    <div class="col-md-3 col-3 mb-4">
                         <div class="card  h-100">
                             <div class="card-body text-center">
                                 <div class="avatar-parent-child">
@@ -98,19 +98,19 @@
                                                 <h2 class="uk-modal-title">Edit Teacher</h2>
                                                 <button class="uk-modal-close-default" type="button" uk-close></button>
                                                 <label>First Name</label>
-                                                <input type="text" id="firstname{{$teacher->teacherid}}"/>
+                                                <input type="text" class="teacherinput" id="firstname{{$teacher->teacherid}}"/>
                                                 <label>Middle Name</label>
-                                                <input type="text" id="middlename{{$teacher->teacherid}}"/>
+                                                <input type="text" class="teacherinput"   id="middlename{{$teacher->teacherid}}"/>
                                                 <label>Last Name</label>
-                                                <input type="text" id="lastname{{$teacher->teacherid}}"/>
+                                                <input type="text" class="teacherinput"  id="lastname{{$teacher->teacherid}}"/>
                                                 <label>Gender</label>
                                                 <select id="gender{{$teacher->teacherid}}">
                                                     <option value="male">MALE</option>
                                                     <option value="female">FEMALE</option>
                                                 </select>
                                                 <label>Username</label>
-                                                <input type="text" id="username{{$teacher->teacherid}}"/>
-                                                <button type="button" class="btn btn-warning uk-modal-close-default buttonupdateinfo" id="{{$teacher->teacherid}}">Update</button>
+                                                <input type="text" class="teacherinput"  id="username{{$teacher->teacherid}}"/>
+                                                <button type="button" class="btn btn-warning uk-modal-close-default buttonupdateinfo" id="{{$teacher->teacherid}}" disabled>Update</button>
                                             </div>
                                         </div>
                                         
@@ -123,12 +123,8 @@
                                             <div class="uk-grid-collapse uk-child-width-1-1@s uk-flex-middle" uk-grid>
                                                 <div class="uk-background-cover uk-padding-large" uk-height-viewport id="booksconatainer{{$teacher->teacherid}}">
                                                     <h1 class="text-center">Books</h1>
-                                                    <div id="bookscontainer{{$teacher->teacherid}}">
-                                                        <p id="booksassignedcontainer{{$teacher->teacherid}}" style="text-align:center;"></p>
-                                                            <div class="row pl-2"id="booksassignedcontainerul{{$teacher->teacherid}}">
-                                                            </div>
-                                                            <br/>
-                                                            <div class="row">
+                                                    <h3 class="text-center teachername"></h3>
+                                                    <div class="row">
                                                                 <div class="col-md-4"></div>
                                                                 <div class="col-md-4">
                                                                     <label class="text-center">Assign more books</label>
@@ -136,17 +132,24 @@
                                                                 </div>
                                                                 <div class="col-md-4"></div>
                                                             </div>
-                                                            <div class="row">
-                                                                <div class="col-12" >
-                                                                    <p class="text-center" id="searchbookscontainerresponse{{$teacher->teacherid}}"></p>
-                                                                    
-                                                                    <div class="section-small">
+                                                    
+                                                    <div id="bookscontainer{{$teacher->teacherid}}">
+                                                        <div class="row">
+                                                            <div class="col-12" >
+                                                                <p class="text-center" id="searchbookscontainerresponse{{$teacher->teacherid}}"></p>
+                                                                
+                                                                <div class="section-small">
 
-                                                                        <div class="uk-child-width-1-4@m uk-child-width-1-3@s uk-grid" uk-grid=""id="searchbooksresults{{$teacher->teacherid}}">
-                                                                        </div>
+                                                                    <div class="uk-child-width-1-4@m uk-child-width-1-3@s uk-grid" uk-grid=""id="searchbooksresults{{$teacher->teacherid}}">
                                                                     </div>
                                                                 </div>
                                                             </div>
+                                                        </div>
+                                                        <p id="booksassignedcontainer{{$teacher->teacherid}}" style="text-align:center;"></p>
+                                                            <div class="row pl-2"id="booksassignedcontainerul{{$teacher->teacherid}}">
+                                                            </div>
+                                                            <br/>
+                                                            
                                                     </div>
                                                 </div>
                                                 {{-- <div class="uk-padding-large" uk-height-viewport>
@@ -192,6 +195,12 @@
     <script src="{{asset('plugins/sweetalert2/sweetalert2.all.min.js')}}"></script>
     @include('admin.sweetalerts.swalmanuallecture')
     <script>
+
+        $(document).on('input','.teacherinput', function(){
+            $('.buttonupdateinfo').prop('disabled', false);
+
+        })
+
         $(document).on('click','.buttoneditstatus', function(){
             var userid = $(this).attr('id');
             var currentstat = $(this).attr('currentstat');
@@ -305,6 +314,7 @@
         })
         var selectedteacherid;
         $(document).on('click','.buttonbooksassigned', function(){
+            $('.teachername').text(' ');
             var id  = $(this).attr('id');
             selectedteacherid = id;
             $.ajax({
@@ -315,7 +325,11 @@
                     id          : id
                 },
                 success: function(data){
-                    $('#booksassignedcontainerul'+id).text('')
+                    $('#booksassignedcontainerul'+id).text('');
+                    console.log(data);
+                    $('.teachername').text(data[0].teachername);
+                    
+                    
                     if(data.length == 0)
                     {
                         $('#booksassignedcontainerul'+id).append(
@@ -324,21 +338,30 @@
                     }else{
                         $('#booksassignedcontainerul'+id).removeClass('text-center')
                         $.each(data, function(key, value){
-                            $('#booksassignedcontainerul'+id).append(
-                                '<div class="col-md-3 col-4">'+
-                                    '<a href="#" class="skill-card" style="border: 1px solid #ddd">'+
-                                        '<i class="skill-card-icon" style="color:#dd0031">'+
-                                            '<img src="'+value.picurl+'" style="width: 50px">'+
-                                        '</i>'+
-                                        '<div>'+
-                                            '<h2 class="skill-card-title"> '+value.title+'</h2>'+
-                                            '<p class="skill-card-subtitle">'+
-                                                '<button type="button" class="btn btn-sm btn-block btn-danger deleteassignbook" id="'+value.id+'">Delete</button>'+
-                                            '</p>'+
-                                        '</div>'+
-                                    '</a>'+
-                                '</div>'
-                            )
+                        
+                        var html =   ` <div class="col-md-3 col-4">
+                                            <a href="#" class="skill-card" style="border: 1px solid #ddd">
+                                                <i class="skill-card-icon" style="color:#dd0031">
+                                                    <img src="${value.picurl}" style="width: 50px">
+                                                </i>
+                                                <div>
+                                                    <h2 class="skill-card-title">${value.title}</h2>
+                                                    <p class="skill-card-title">Classroom books added: </p>
+                                                    <ol>`
+                        $.each(value.classroom, function(key, value){
+                                                html+= `<li>${value.classroomname}</li>`
+
+                        })
+                        
+                    
+                        html+=  `</ol> <p class="skill-card-subtitle">
+                                                <button type="button" class="btn btn-sm btn-block btn-danger deleteassignbook" id="${value.id}">Delete</button>
+                                            </p>
+                                        </div>
+                                    </a>
+                                </div>`
+
+                        $('#booksassignedcontainerul'+id).append(html);
                         })
                     }
                 }

@@ -28,16 +28,20 @@
 <!-- summernote -->
     <!-- icons
     ================================================== -->
+    <link rel="stylesheet" href="{{asset('plugins/fullcalendar/main.css')}}">
+    <link rel="stylesheet" href="{{asset('plugins/fullcalendar/main.min.css')}}">
     <link rel="stylesheet" href="{{asset('templatefiles/icons.css')}}">
+    <!-- FullCalendar CSS -->
+`  
 
 
 </head>
 
 <body>
 
-     <div id="wrapper">
+    <div id="wrapper">
 
-        @include('student.inc.topnav')
+        {{-- @include('student.inc.topnav') --}}
         @include('student.inc.sidenav')
 
         @yield('headercover')
@@ -76,7 +80,7 @@
         <script src="{{asset('plugins/summernote/summernote-bs4.js')}}"></script>
         <script src="{{asset('templatefiles/chart.min.js')}}"></script>
         {{-- <script type="text/javascript" src="{{asset('plugins/jquery-ui/jquery-ui.min.js')}}"></script> --}}
-        <script src="{{asset('templatefiles/chart-custom.js')}}"></script>
+    
         <script src="{{asset('plugins/jquery-ui/jquery-ui.min.js')}}"></script>
         <!-- Select2 -->
         <script src="{{asset('plugins/select2/js/select2.full.min.js')}}"></script>
@@ -85,6 +89,8 @@
         <script src="{{asset('plugins/sweetalert2/sweetalert2.all.min.js')}}"></script>
         <script src="{{asset('plugins/datatables/jquery.dataTables.js')}}"></script>
         <script src="{{asset('plugins/datatables-bs4/js/dataTables.bootstrap4.js')}}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+        <script src="{{asset('plugins/fullcalendar/main.min.js')}}"></script>
         @yield('script')
 
     </div>

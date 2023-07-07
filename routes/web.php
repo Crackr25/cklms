@@ -135,6 +135,10 @@ Route::middleware(['auth', 'isAdministrator','isDefaultPass'])->group(function (
     Route::get('/adminviewbook/deleteacadprog', 'Admin\BookController@deleteacadprog');   
     Route::get('/adminviewbook/deletebook', 'Admin\BookController@deletebook');  
 
+    Route::get('classroomassignedtable', 'Admin\BookController@getClassroomAssignedTable');  
+    Route::get('/adminviewbook/assigngradelevel', 'Admin\BookController@gradeAssign');  
+    
+    
     Route::get('/adminviewbook/getchapters', 'Admin\BookController@getchapters');    
     Route::get('/adminviewbook/getlessons', 'Admin\BookController@getlessons');  
     Route::get('/adminviewbook/updatesort', 'Admin\BookController@updateSort');   
@@ -395,6 +399,10 @@ Route::middleware(['auth', 'isTeacher','isDefaultPass'])->group(function () {
 
 Route::middleware(['auth', 'isStudent','isDefaultPass'])->group(function () {  
     
+    Route::get('/studentprofile', 'Student\StudentProfileController@index');   
+    Route::post('/student/updateprofile', 'Student\StudentProfileController@updateProfile');   
+    Route::post('/student/updateprofilegrades', 'Student\StudentProfileController@updateProfileGrades');   
+    Route::post('/student/updateprofilegender', 'Student\StudentProfileController@updateProfileGender');   
     Route::get('/studentjoinclassroom', 'Student\StudentClassroomController@joinclassroom');   
     Route::get('/studentviewclassroom', 'Student\StudentClassroomController@index');
     Route::get('/loadclassroomtable', 'Student\StudentClassroomController@loadclassroomtable');
@@ -411,7 +419,8 @@ Route::middleware(['auth', 'isStudent','isDefaultPass'])->group(function () {
     Route::get('/attempt-quiz','Student\StudentBookController@attemptQuiz');
     Route::get('/save-answer','Student\StudentBookController@saveAnswer');
     Route::post('/save-image','Student\StudentBookController@saveImage');
-
+    //Route::post('/save-file','Student\StudentBookController@saveFile');
+    Route::post('/save-file', 'Student\StudentBookController@saveFile');
 
     Route::get('/studentfeed','Student\StudentClassroomController@studentfeed');
     Route::get('/student/quizsummarry','Student\StudentClassroomController@quizSummarry');
@@ -470,6 +479,7 @@ Route::group(['middleware' => ['auth', 'web']], function() {
     Route::get('/videoconference/start','GlobalController\VideoConferenceController@startcall');
     Route::get('/videoconference/checkifcallisrunning','GlobalController\VideoConferenceController@checkifcallisrunning');
     Route::get('/videoconference/join','GlobalController\VideoConferenceController@joincall');
+     Route::get('/adminviewbook/gradeSelect', 'Admin\BookController@gradeSelect')->name('gradeSelect');
 
     Route::get('/videoconference/closevideoconference',function(){
         return view('closebrowser');

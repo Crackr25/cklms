@@ -11,7 +11,7 @@ class AuthenticateDefaultPass
      * Handle an incoming request.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param  \Closure  $nextt
      * @return mixed
      */
     public function handle($request, Closure $next)

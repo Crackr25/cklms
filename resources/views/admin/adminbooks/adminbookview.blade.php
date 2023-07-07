@@ -10,7 +10,7 @@
         <link rel="stylesheet" href="{{asset('plugins/summernote/summernote-bs4.css')}}">
         <!-- Select2 -->
         <link rel="stylesheet" href="{{asset('plugins/select2/css/select2.min.css')}}">
-        <link rel="stylesheet" href="{{asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css')}}">
+        <link rel="stylesheet" href="{{asset('plugins/select2/select2.min.css')}}">
 
     <style>
         .swal2-header{ border: none; }
@@ -136,7 +136,24 @@
         
                                 <ul class="uk-list uk-list-divider text-small mt-1" style="font-size: 90%">
                                     <li> Title: {{$book->booktitle}}  </li>
-                                    {{-- <li> Academic Programs: 
+                                    <li id="gradeid" data-toggle="modal" data-target="#gradeModal">Grade level:
+                                        @if(isset($book->grade))
+
+
+                                        {{$book->grades}}
+
+                                        
+                                        @else
+
+
+                                        <u>Grade Not Assigned</u>
+                                        
+
+                                        @endif
+                                        
+                                        <i class="fas fa-pencil-alt ml-2"></i></li>
+                            
+                                        {{-- <li> Academic Programs: 
                                         <div class="text-left mt-2 mb-2">
                                             @if(count($academicprograms)>0 )
                                                 @foreach($academicprograms as $academicprogram)
@@ -154,6 +171,7 @@
                                     <div class="col-md-12 col-12">
                                         {{-- <button type="button" class="btn btn-warning" id="buttonaddlinks" uk-toggle="target: #modallinks"><i class="fa fa-plus"></i> Links</button> --}}
                                         <button type="button" class="btn btn-warning" id="buttonupdateinfo">Book info</button>
+                                        <button type="button" class="btn btn-info" id="classroomassigned">Classroom Assigned</button>
                                         <button type="button" class="btn btn-soft-danger" id="buttondeletebook"><i class="fa fa-trash"></i></button>
                                     </div>
                                 </div>
@@ -331,7 +349,7 @@
                     <div class="col-sm-5">
                         <input type="number" class="form-control" id="updatesortid" style="border: 1px solid #ddd" disabled>
                     </div>
-                  </div>
+                    </div>
                 <p class="uk-text-right">
                     <button class="uk-button uk-button-default uk-modal-close modalviewupdate" type="button">Cancel</button>
                     <button class="uk-button uk-button-primary modalviewupdate" type="button" id="updateinfo">Update</button>
@@ -352,7 +370,7 @@
                 <input type="text" id="updatetitlequiz">
                 <label>Description</label>
                 <textarea id="updatedescriptionquiz" class="form-control"></textarea>
-                <label>Quiz Cover</label>
+                <label>Quiz Cover</label> <span class="imageholder"> </span>
                 <input type="file" name="editcoverphoto" class="form-control form-control-sm" accept="image/x-png,image/gif,image/jpeg" >
                 <p class="uk-text-right">
                     <button class="uk-button uk-button-default uk-modal-close modalviewupdate" type="button">Cancel</button>
@@ -387,7 +405,67 @@
 
 
 
+    <!-- Modal -->
+    <div class="modal fade" id="classroomModal" tabindex="-1" role="dialog" aria-labelledby="classroomModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="classroomModalLabel">Classroom Assignment</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped" style= "width:100%" id = "classroomtable">
+                            <thead>
+                            <tr>
+                                <th class="text-center">#</th>
+                                <th class="text-center" >Classroom Name</th>
+                                <th class="text-center" >Classroom Code</th>
+                                <th class="text-center">Teacher</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="gradeModal" tabindex="-1" role="dialog" aria-labelledby="gradeModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="gradeModalLabel">Select Grade</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <label for="gradeSelect">Grade:</label>
+                    <select class="form-control select2" id="gradeSelect">
+                    <!-- Add more options as needed -->
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" id="saveChanges" class="btn btn-primary">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
     
+
+    <script src="{{asset('plugins/select2/select2.min.js')}}"></script>
+
+
     <script src="{{asset('plugins/jquery/jquery.min.js')}}"></script>
     <!-- Bootstrap -->
     <script src="{{asset('plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
@@ -395,8 +473,109 @@
     <script src="{{asset('plugins/select2/js/select2.full.min.js')}}"></script>
     <!-- AdminLTE -->
     <script src="{{asset('dist/js/adminlte.js')}}"></script>
+    
+    
+    
     <script>
+
+        
+
+
         $(document).ready(function(){
+
+
+
+
+
+
+
+            function classroomFunction() {
+                var bookid =  '{{$book->bookid}}';
+
+                $.ajax({
+                    type:'GET',
+                    url: '/classroomassignedtable',
+                    data:{
+
+                        bookid:    bookid
+                    },
+                    success: function(data) {
+                        console.log(data);
+                        classroomTable = data
+                        renderClassroomDataTable1();
+                    }
+                })
+
+            }
+
+
+            
+        $('#gradeSelect').select2({
+                width: '100%',
+                allowClear: true,
+                placeholder: "All",
+                language: {
+                    noResults: function () {
+                        return "No results found";
+                    }
+                },
+                escapeMarkup: function (markup) {
+                    return markup;
+                },
+                ajax: {
+                    url: "{{ route('gradeSelect') }}",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        var query = {
+                            search: params.term,
+                            page: params.page || 0
+                        }
+                        return query;
+                    },
+                    processResults: function (data, params) {
+                        params.page = params.page || 0;
+                        return {
+                            results: data.results,
+                            pagination: {
+                                more: data.pagination.more
+                            }
+                        };
+                    },
+                    cache: true
+                }
+        });
+
+
+
+
+            var classroomTable;
+            $(document).on('click', '#classroomassigned', function(){
+                
+                classroomFunction();
+                $('#classroomModal').modal('show');
+
+            });
+
+
+            $(document).on('click', '#saveChanges', function(){
+                
+                var gradeid = $('#gradeSelect').val();
+                console.log('Grade ID:', gradeid);
+
+                $.ajax({
+                    url: '/adminviewbook/assigngradelevel',
+                    type: 'get',
+                    dataType: 'json',
+                    data: {
+                        bookid      :   '{{$book->bookid}}',
+                        gradeid  :   gradeid
+                    }
+                })
+
+
+                UIkit.notification("<span uk-icon='icon: check' style=\'font-size: 15px;\'></span> Updated successfully", {pos: 'top-right',status:'success', timeout: 4000 });
+            });
 
 
 
@@ -413,6 +592,11 @@
                 }
             });
 
+
+
+
+        
+
             $('#newlessontitle').on('keyup', function() {
                 var inputText = $(this).val();
                 console.log(inputText);
@@ -420,9 +604,14 @@
                 var text = "This is a sample text: with a colon.";
 
                 if (inputText.indexOf(":") !== -1) {
+
+
                 console.log("The text contains a colon.");
+                
                 } else {
+                
                 console.log("The text does not contain a colon.");
+                
                 }
                 // You can perform further actions with the captured inputText here
             });
@@ -834,6 +1023,7 @@
                         $('#modalviewupdatequiz').removeClass('uk-modal-close')
                         $('#updateidquiz').val(data.id)
                         $('#updatedescriptionquiz').val(data.description)
+                        $('.imageholder').text(data.picurl)
                         $('#updatetitlequiz').val(data.title)
                         $('#updatedescription').val(data.description)
                     }
@@ -1172,6 +1362,71 @@
                 
                 
             })
+
+
+            function renderClassroomDataTable1(){
+                $("#classroomtable").DataTable({
+                    responsive: true,
+                    autowidth: false,
+                    destroy: true,
+                    searching: false,
+                    //scrollX: true,
+                    data:classroomTable,
+                    order: [[0, 'asc']],
+                    lengthChange: false,
+                    ordering: false,
+                    columns: [
+                        { "data": null},
+                        { "data": null},
+                        { "data": null},
+                        { "data": null},
+                    ],
+                    columnDefs: [
+                        {
+                            'targets': 0,
+                            'orderable': false, 
+                            'createdCell':  function (td, cellData, rowData, row, col) {
+                                    var text = '<a class="mb-0">'+(row + 1)+'</a>'
+                                    $(td)[0].innerHTML =  text
+                                    $(td).addClass('text-center')
+                                    $(td).addClass('align-middle')
+                            }
+                        },
+                    
+                    
+                        {
+                            'targets': 1,
+                            'orderable': false, 
+                            'createdCell':  function (td, cellData, rowData, row, col) {
+                                    var text = '<a class="mb-0">'+rowData.classroomname +'</a>'
+                                    $(td)[0].innerHTML =  text
+                                    $(td).addClass('text-center')
+                                    $(td).addClass('align-middle')
+                            }
+                        },
+                        {
+                            'targets': 2,
+                            'orderable': false, 
+                            'createdCell':  function (td, cellData, rowData, row, col) {
+                                var text = '<a class="mb-0">'+rowData.code+'</a>'
+                                $(td)[0].innerHTML =  text
+                                $(td).addClass('text-center')
+                                $(td).addClass('align-middle')
+                            }
+                        },
+                        {
+                            'targets': 3,
+                            'orderable': false, 
+                            'createdCell':  function (td, cellData, rowData, row, col) {
+                                var text = '<a class="mb-0">'+ rowData.teacher +'</a>'
+                                $(td)[0].innerHTML =  text
+                                $(td).addClass('text-center')
+                                $(td).addClass('align-middle')
+                            }
+                        },
+                    ]
+                });
+        }
         })
                                                         
     </script>

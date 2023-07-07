@@ -15,13 +15,14 @@
         "intervention/image": "dev-master",
         "joisarjignesh/bigbluebutton": "^1.1",
         "laravel/framework": "^6.2",
+        "laravel/sanctum": "^2.15",
         "laravel/slack-notification-channel": "^2.0",
         "laravel/tinker": "^1.0",
-        "realrashid/sweet-alert": "^3.1",
-        "riskihajar/terbilang": "^1.2",
         "maatwebsite/excel": "^3.1",
         "phpoffice/phpspreadsheet": "^1.12",
         "phpoffice/phpword": "^0.17.0",
+        "realrashid/sweet-alert": "^3.1",
+        "riskihajar/terbilang": "^1.2",
         "symfony/psr-http-message-bridge": "^2.0"
     },
     "require-dev": {

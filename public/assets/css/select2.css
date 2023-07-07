@@ -1,0 +1,78 @@
+Custom styles for the Select2 .select2 {
+    width: 50%;
+    height: 100%;
+}
+
+.select2-container .select2-selection--single {
+    height: 40px !important;
+}
+
+/* Custom styles for the Select2 dropdown */
+.select2-dropdown {
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    max-height: 200px; /* Adjust the max-height as needed */
+}
+
+/* Custom styles for the Select2 selection container */
+.select2-selection {
+    background-color: #f2f2f2;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    overflow: hidden; /* Ensure the selection container does not expand beyond its boundaries */
+}
+
+/* Custom styles for the Select2 selection text */
+.select2-selection__rendered {
+    color: #333;
+    font-size: 14px;
+    white-space: nowrap; /* Prevent line breaks within the selected text */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Show an ellipsis (...) for overflowing text */
+}
+
+/* Custom styles for the Select2 dropdown icon */
+.select2-selection__arrow {
+    height: 100%;
+}
+
+/* Custom styles for the Select2 dropdown icon arrow */
+.select2-selection__arrow b {
+    border-color: #999 transparent transparent transparent;
+    margin-top: 6px;
+}
+
+/* Custom styles for the Select2 dropdown icon arrow when opened */
+.select2-container--open .select2-selection__arrow b {
+    border-color: transparent transparent #999 transparent;
+    margin-top: 3px;
+}
+
+/* Custom styles for the Select2 search input */
+.select2-search__field {
+    border: none;
+}
+
+/* Custom styles for the Select2 search input placeholder */
+.select2-search__field::placeholder {
+    color: #999;
+}
+
+/* Custom styles for the Select2 search input when focused */
+.select2-search--dropdown .select2-search__field {
+    outline: none;
+}
+
+/* Custom styles for the Select2 options */
+.select2-results__option {
+    padding: 8px 10px;
+    color: #333;
+}
+
+/* Custom styles for the Select2 options on hover */
+.select2-results__option:hover {
+    background-color: #f9f9f9;
+    color: #333;
+}

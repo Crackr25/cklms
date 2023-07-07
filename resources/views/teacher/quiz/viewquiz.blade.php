@@ -63,6 +63,19 @@
     font-size: 18px;
 }
 
+.alert {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px;
+    border-radius: 4px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+
 
 
 
@@ -194,7 +207,7 @@
         </button>
         </div>
         <div class="modal-body">
-        <table class="table">
+        <table class="table">-*--
             <thead>
             <tr>
                 <th>Student Name</th>
@@ -685,6 +698,19 @@
         }
 
 
+        // Function to show alert with custom style and color
+        function showAlert(message, color) {
+            var alertDiv = document.createElement('div');
+            alertDiv.className = 'alert';
+            alertDiv.style.backgroundColor = color;
+            alertDiv.innerText = message; // or use innerHTML if you need to include HTML markup
+            document.body.appendChild(alertDiv);
+            setTimeout(function() {
+                alertDiv.style.display = 'none';
+            }, 5000); // Hide the alert after 5 seconds (adjust as needed)
+        }
+
+
 
         // init
         quizDataTable(); 
@@ -709,13 +735,21 @@
             var quizSchedStat = 0;
 
             if (!dateFrom || !timeFrom || !dateTo || !timeTo || !attempts) {
-                alert('Please fill in all fields.');
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: 'Please input all fields!'
+                })
                 return;
             }
 
             // check if the date and time inputs are valid
             if (new Date(dateFrom + 'T' + timeFrom + ':00') >= new Date(dateTo + 'T' + timeTo + ':00')) {
-                alert('The date and time inputs are not valid.');
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: 'Invalid date and time'
+                })
                 return;
             }
 

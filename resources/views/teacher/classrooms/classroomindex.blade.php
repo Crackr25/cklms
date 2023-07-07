@@ -13,6 +13,9 @@
 
 @section('content')
 
+    <link rel="stylesheet" href="{{asset('plugins/select2/css/select2.min.css')}}">
+    <link rel="stylesheet" href="{{asset('plugins/select2/select2.min.css')}}">
+
     <!-- search overlay-->
     <div id="searchbox">
 
@@ -44,11 +47,18 @@
                 </div>
             </div>
             <div class="uk-margin">
+                <label class="uk-form-label" for="form-horizontal-text">Classroom Grade Level</label>
+                <div class="uk-form-controls">
+                    <select class="form-control select2" id="gradeSelect"></select>
+                </div>
+            </div>
+            <div class="uk-margin">
                 <label class="uk-form-label" for="form-horizontal-file">Cover photo</label>
                 <div class="uk-form-controls">
                     <input class="uk-input" name="classroomimage" type="file" accept="image/*">
                 </div>
             </div>
+            
             <div class="uk-margin">
                 <label class="uk-form-label" for="form-horizontal-text">Classroom Code</label>
                 <div class="uk-form-controls">
@@ -125,7 +135,10 @@
         
         
         </div>
+
+
     <script src="{{asset('plugins/jquery/jquery.min.js')}}"></script>
+    <script src="{{asset('plugins/select2/js/select2.full.min.js')}}"></script>
 
     <script>
         $(document).ready(function(){
@@ -164,6 +177,43 @@
                 })
                 
             }
+
+
+            $('#gradeSelect').select2({
+                        width: '100%',
+                        allowClear: true,
+                        placeholder: "All",
+                        language: {
+                            noResults: function () {
+                                return "No results found";
+                            }
+                        },
+                        escapeMarkup: function (markup) {
+                            return markup;
+                        },
+                        ajax: {
+                            url: "{{ route('gradeSelect') }}",
+                            dataType: 'json',
+                            delay: 250,
+                            data: function (params) {
+                                var query = {
+                                    search: params.term,
+                                    page: params.page || 0
+                                }
+                                return query;
+                            },
+                            processResults: function (data, params) {
+                                params.page = params.page || 0;
+                                return {
+                                    results: data.results,
+                                    pagination: {
+                                        more: data.pagination.more
+                                    }
+                                };
+                            },
+                            cache: true
+                        }
+                });
 
 
 
@@ -232,6 +282,9 @@
             $(document).on('click', '#create_classroom', function() {
                 var validInput = true;
                 var selectedFile = $('input[name=classroomimage]')[0].files[0];
+                var gradeid = $('#gradeSelect').val();
+
+                console.log(gradeid)
                 console.log(selectedFile);
 
                 if ($('input[name=classroomname]').val() == '') {
@@ -240,10 +293,21 @@
                     console.log('invalid');
                 }
 
+
+                if (gradeid == undefined) {
+                    UIkit.notification("<span uk-icon='icon: warning'></span> Error occurred during creation!", { status: 'danger', timeout: 1000 });
+                    validInput = false;
+                    console.log('invalid');
+                }
+
+
+
+
                 if (validInput) {
                     var formData = new FormData();
                     formData.append('classroomname', $('input[name=classroomname]').val());
                     formData.append('code', $('input[name=classroomcode]').val());
+                    formData.append('gradeid', gradeid);
                     formData.append('selectedFile', selectedFile);
                     var csrfToken = $('meta[name="csrf-token"]').attr('content');
 
@@ -275,6 +339,9 @@
                         loadClassroom()
                         $('#create_classroom').addClass('uk-modal-close')
                         // Rest of your success callback code
+                    },error: function(xhr, status, error) {
+                        // Handle the error
+                        UIkit.notification("<span uk-icon='icon: warning'></span> Error occurred during creation!", { status: 'danger', timeout: 1000 });
                     }
                     });
                 }

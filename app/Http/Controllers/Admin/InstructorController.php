@@ -166,8 +166,57 @@ class InstructorController extends Controller
             ->where('teacherbooks.deleted','0')
             ->where('books.deleted','0')
             ->get();
+
+
+
+
+
+        $teacherid = DB::table('teachers')
+                        ->where('id', $request->get('id'))
+                        ->value('userid');
+
+        $teachername = DB::table('teachers')
+                        ->where('id', $request->get('id'))
+                        ->select('firstname', 'middlename', 'lastname')
+                        ->first();
+
+
+        
+
+
+
+
+
+        if(isset($booksassigned)){
+
+            
+            foreach($booksassigned as $book){
+
+                $book->teachername = $teachername->firstname. ' ' .$teachername->middlename. ' '.$teachername->lastname;
+
+                $book->classroom = DB::table('classroombooks')
+                                    ->select('bookid', 'classroomid')
+                                    ->where('bookid', $book->bookid)
+                                    ->where('createdby', $teacherid)
+                                    ->where('deleted','0')
+                                    ->get();
+
+
+                                    foreach($book->classroom as $classroom){
+
+                                        $classroom->classroomname = DB::table('classrooms')
+                                                    ->where('id', $classroom->classroomid)
+                                                    ->value('classroomname');
+                                    }
+
+            }
+
+        }
+
+
             
         return collect($booksassigned);
+
     }
     public function searchbook(Request $request)
     { 

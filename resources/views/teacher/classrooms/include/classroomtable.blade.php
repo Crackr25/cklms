@@ -17,7 +17,7 @@
                             <p>{{$classroom->code}}</p>
                             <div class="course-card-footer">
                                 <h5> <i class="icon-feather-film"></i> {{$classroom->students}} Students </h5>
-                                <h5> <i class="icon-feather-clock"></i>{{$classroom->books}} Books</h5>
+                                {{-- <h5> <i class="icon-feather-clock"></i>{{$classroom->books}} Books</h5> --}}
                             </div>
                         </div>
                     </div>

@@ -37,6 +37,12 @@
 
 <body>
 
+    @if(session('error'))
+    <div class="alert alert-danger">
+            {{ session('error') }}
+    </div>
+    @endif
+
 
 
     <!-- Content
@@ -183,7 +189,7 @@
                                         <span class="uk-form-icon">
                                             <i class="icon-feather-lock"></i>
                                         </span>
-                                        <input class="uk-input" type="password" placeholder="********" required autofocus>
+                                        <input class="uk-input" name="confirmpassword" type="password" placeholder="********" required autofocus>
                                     </div>
         
                                 </div>

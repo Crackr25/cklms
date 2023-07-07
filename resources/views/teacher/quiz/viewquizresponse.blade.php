@@ -472,6 +472,122 @@
                     </div>
                     @endif
 
+                    @if($item->typeofquiz == 1)
+                            <!-- multiple choice -->
+                            <div class="card mt-5 ml-3 editcontent" id="quiz-question-{{$item->id}}">
+                                <div class="card-body">
+
+                                    <div class="circle-points" >
+                                        <input type="checkbox" id="menu_opener_id_{{$item->id}}" class="menu_opener">
+                                        <label for="menu_opener_id_{{$item->id}}" data-detailsid = "{{ $item->detailsid  }}" data-maxpoint="{{$item->points }}" data-points-edit="{{$item->id}}" class="menu_opener_label student-score">
+                                            
+                                            @if($item->check == 1)
+                                                    1
+                                            @else
+                                                    0
+                                            @endif
+                                        
+                                        
+                                        </label>
+
+                                        <div class="link_one" data-detailsid = "{{ $item->detailsid  }}"   data-question-id="{{$item->id}}">
+                                            <div class="link_general">
+                                                0
+                                            </div>
+                                        </div>
+
+                                        <div class="link_three" data-detailsid = "{{ $item->detailsid  }}"   data-question-id="{{$item->id}}">
+                                            <div class="link_general">
+                                                {{$item->points}}
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    
+
+                                    <p class="question" data-question-type="{{$item->typeofquiz}}">
+                                        {{$key+=1}}.  {!! $item->question !!}
+                                    </p>
+                                    @foreach ($item->choices as $questioninfo)
+                                        <div class="form-check mt-2">
+                                            @if($questioninfo->id == $item->answer)
+                                                
+                                                <input data-question-type="{{$item->typeofquiz}}" data-question-id="{{$item->id}}" id="{{$questioninfo->id}}" class="answer-field form-check-input" type="radio" name="{{$item->id}}" value="{{$questioninfo->id}}" checked>
+                                                
+                                            @else
+                                                <input data-question-type="{{$item->typeofquiz}}" data-question-id="{{$item->id}}" id="{{$questioninfo->id}}" class="answer-field form-check-input" type="radio" name="{{$item->id}}" value="{{$questioninfo->id}}">
+                                            @endif
+                                            <label for="{{$item->id}}" class="form-check-label">
+                                                {{$questioninfo->description}}
+                                            @if($item->check == 1 && $questioninfo->id == $item->answer)
+                                                <span><i class="fa fa-check" style="color:rgb(7, 255, 7)" aria-hidden="true"></i></span>
+                                            @endif
+                                            @if($item->check == 0 && $questioninfo->id == $item->answer)
+                                                <span><i class="fa fa-times" style="color: red;" aria-hidden="true"></i></span>
+                                            @endif
+                                        
+                                            
+                                            
+                                            </label>
+                                            
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                    @endif
+
+                    @if($item->typeofquiz == 11)
+                                <!-- upload file -->
+                                <div class="card mt-5 editcontent">
+                                    <div class="card-body">
+
+                                        
+                                    <div class="circle-points" >
+                                        <input type="checkbox" id="menu_opener_id_{{$item->id}}" class="menu_opener">
+                                        <label for="menu_opener_id_{{$item->id}}" data-maxpoint="{{$item->points}}" data-detailsid = "{{ $item->detailsid }}" data-points-edit="{{$item->id}}" class="menu_opener_label student-score">{{$item->pointsgiven}}</label>
+
+                                        <div class="link_one" data-detailsid = "{{ $item->detailsid }}"  data-question-id="{{$item->id}}">
+                                            <div class="link_general">
+                                                0
+                                            </div>
+                                        </div>
+
+                                        <div class="link_two" data-detailsid = "{{ $item->detailsid }}"  data-question-id="{{$item->id}}">
+                                            <div class="link_general">
+                                                {{$item->points /2}}
+                                            </div>
+                                        </div>
+
+                                        <div class="link_three" data-detailsid = "{{ $item->detailsid }}"  data-question-id="{{$item->id}}">
+                                            <div class="link_general">
+                                                {{$item->points}}
+                                            </div>
+                                        </div>
+
+                                        <div class="link_four" data-question-id="{{$item->id}}">
+                                            <div class="link_general">
+                                                <i class="fa fa-plus"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                        <p class="question" data-question-type="{{$item->typeofquiz}}"> <b> Points. </b> {{$item->points}}</p>
+                                        <p>{!! $item->question !!}</p>
+                                        <div class="form-group">
+                                            <input class="form-control-file fileInput" data-question-type="{{$item->typeofquiz}}" data-question-id="{{$item->id}}" type="file">
+                                        </div>
+
+                                        <div class="file-links-container">
+                                            @if(isset($item->fileurl))
+                                            <a href="{{$item->fileurl}}" target="_blank">View File</a>
+                                            @endif
+                                        </div>
+
+                                    </div>
+                                </div>
+                    @endif
+
 
             @endforeach
 

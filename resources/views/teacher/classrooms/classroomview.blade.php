@@ -14,6 +14,10 @@
 
 @section('content')
 
+
+    <link rel="stylesheet" href="{{asset('plugins/select2/css/select2.min.css')}}">
+    <link rel="stylesheet" href="{{asset('plugins/select2/select2.min.css')}}">
+
     <style>
         .btn-icon-only {
             line-height: 2.5rem !important;
@@ -39,6 +43,14 @@
                 <label for="updatetitle">Title</label>
                 <input type="text" class="form-control" id="updatetitle">
             </div>
+
+            <div class="form-group gradelevel">
+                <label for="gradelevel">Grade Level <i class="fas fa-pencil-alt ml-2 editgradelevel"> </i> </label> 
+                <input type="text" class="form-control" id="updategradelevel" disabled> 
+            </div>
+            
+
+
             <div class="form-group">
                 <label for="updatedescription">Choose classroom cover photo</label>
                 <input type="file" class="form-control-file" name="classroomimage" id="updatedescription" accept="image/*">
@@ -156,12 +168,21 @@
             <div class="uk-width-2-3@m uk-first-column">
 
                 <div class="course-details">
-                    <h1> {{$classroominfo->classroomname}}<i class="fas fa-pencil-alt ml-2"></i> </h1>
+                    <h1> {{$classroominfo->classroomname}}
+                        
+                        <span class="position-relative">
+                            <i class="fas fa-pencil-alt ml-2"></i>
+                            @if(empty($classroominfo->gradeid))
+                                <span class="position-absolute top-0 end-0 translate-middle p-1 bg-danger rounded-circle"></span>
+                            @endif
+                        </span></h1>
+
 
                     <div class="course-details-info">
 
-                        <ul>
+                        <ul style="display: block">
                             <li> Created by <a href="#"> {{auth()->user()->name}}</a> </li>
+                            <li> Grade Level <a href="#">  {{$classroominfo->grade}}</a> </li>
                             <li> Created last {{\Carbon\Carbon::create($classroominfo->createddatetime)->isoFormat('MM/DD/YYYY')}}</li>
                         </ul>
 
@@ -511,17 +532,19 @@
 </div>
 
 
-    
-   
-
-  
 
 
 @endsection
 
 @section('footerscript')
 
+
+
+    <script src="{{asset('plugins/select2/js/select2.full.min.js')}}"></script>
+
     <script>
+
+        var gradeid;
         $(document).ready(function(){
             
 
@@ -542,6 +565,48 @@
 
             }
 
+
+
+            function gradeselect(){
+
+                $('#gradeSelect').select2({
+                        width: '100%',
+                        allowClear: true,
+                        placeholder: "All",
+                        language: {
+                            noResults: function () {
+                                return "No results found";
+                            }
+                        },
+                        escapeMarkup: function (markup) {
+                            return markup;
+                        },
+                        ajax: {
+                            url: "{{ route('gradeSelect') }}",
+                            dataType: 'json',
+                            delay: 250,
+                            data: function (params) {
+                                var query = {
+                                    search: params.term,
+                                    page: params.page || 0
+                                }
+                                return query;
+                            },
+                            processResults: function (data, params) {
+                                params.page = params.page || 0;
+                                return {
+                                    results: data.results,
+                                    pagination: {
+                                        more: data.pagination.more
+                                    }
+                                };
+                            },
+                            cache: true
+                        }
+                });
+
+            }
+
             //setInterval(loadfeed(), 500);
 
 
@@ -553,14 +618,19 @@
                 var classroomtitle = $('#updatetitle').val();
                 var classroomid = '{{$classroominfo->id}}';
 
+
+                
+
                 console.log(selectedFile);
                 console.log(classroomtitle);
                 console.log(classroomid);
+                console.log(gradeid);
 
                 var formData = new FormData();
                 formData.append('selectedFile', selectedFile);
                 formData.append('classroomid', classroomid);
                 formData.append('classroomtitle', classroomtitle);
+                formData.append('gradeid', gradeid);
                 var csrfToken = $('meta[name="csrf-token"]').attr('content');
                 console.log(csrfToken);
 
@@ -622,6 +692,32 @@
                 }
 
             })
+
+
+
+            $(document).on('click','.editgradelevel', function(){
+
+
+                console.log('grade');
+
+
+
+                $('.gradelevel').empty();
+
+                $('.gradelevel').append(` <select class="form-control select2" id="gradeSelect"></select>`);
+            
+                gradeselect();
+            
+            
+            })
+
+            $(document).on('change','#gradeSelect', function(){
+
+
+                gradeid = $('#gradeSelect').val();
+            
+            })
+
 
 
             $(document).on('click','.removepost', function(){
@@ -727,7 +823,13 @@
 
                     $('#modalviewupdateLabel').text('{{$classroominfo->classroomname}}');
                     $('#updatetitle').val('{{$classroominfo->classroomname}}')
+                    $('#updategradelevel').val('{{$classroominfo->grade}}')
 
+
+                    if('{{$classroominfo->grade}}' != 'Grade Level Unassigned'){
+
+                        gradeid = $('#updatetitle').val();
+                    }
 
                     $('#modalviewupdate').modal('show');
                 
@@ -855,7 +957,7 @@
                 var searchVal = $('input[name="booktitle"]').val();
 
                 $.ajax({
-                        url: '/allbooks?list=list&search='+searchVal+'&classroomid='+'{{$classroominfo->id}}',
+                        url: '/allbooks?list=list&search='+searchVal+'&classroomid='+'{{$classroominfo->id}}'+'&gradeid='+'{{$classroominfo->gradeid}}',
                         type:"GET",
                         success: function(data){
                             $('#book_list_Holder').empty()

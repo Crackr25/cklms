@@ -267,6 +267,21 @@ class BookController extends Controller
 
                 }
 
+                if($item->typeofquiz == 10){
+
+                    $choices = DB::table('lessonquizchoices')
+                                    ->where('questionid',$item->id)
+                                    ->where('deleted',0)
+                                    ->select('description','id','answer', 'sortid')
+                                    ->orderBy('sortid')
+                                    ->get();
+
+                    $item->choices = $choices;
+
+
+
+                }
+
 
                 if($item->typeofquiz == 7 ){
 

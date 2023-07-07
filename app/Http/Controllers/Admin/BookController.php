@@ -69,10 +69,16 @@ class BookController extends Controller
                 'books.title as booktitle',
                 'books.description as bookdescription',
                 'books.isactive as status',
+                'books.gradeid as grade',
                 'books.picurl'
             )
             ->where('books.id',$request->get('id'))
             ->first();
+
+        $book->grades = DB::table('gradelevel')
+                        ->where('id', $book->grade)
+                        ->value('levelname');
+        
             
         $parts = DB::table('parts')
             ->where('bookid', $request->get('id'))
@@ -195,6 +201,9 @@ class BookController extends Controller
             return  collect($sortdata)->sortBy('sortid')->values()->all();
         }
     }
+
+
+
     public function getlessons(Request $request)
     {
         $contents = array();
@@ -351,17 +360,74 @@ class BookController extends Controller
         
         $imageFile = $request->file('selectedFile');
 
-        // Save the image locally
-        $imageName = time() . '_' . $imageFile->getClientOriginalName();
-        $imageFile->move(public_path('quizcover'), $imageName);
+        
+        if ($imageFile) {
+                // Save the image locally
+                $imageName = time() . '_' . $imageFile->getClientOriginalName();
+                $imageFile->move(public_path('quizcover'), $imageName);
+
+                DB::table('lesssonquiz')
+                ->where('id', $request->get('id'))
+                ->update([
+                    'picurl' => 'quizcover/' . $imageName,
+                ]);
+
+
+        } else {
+            $data = null; // Set $data to null if the image file is null
+        }
+    
 
             DB::table('lesssonquiz')
                 ->where('id', $request->get('id'))
                 ->update([
-                    'picurl' => 'quizcover/' . $imageName,
                     'title' => $request->get('title'),
                     'description' => $request->get('description')
                 ]);
+
+    }
+
+
+    public function getClassroomAssignedTable(Request $request)
+    {
+        
+        $bookid = $request->get('bookid');
+
+        $classroombooks = DB::table('classroombooks')
+            ->join('classrooms', 'classrooms.id', '=', 'classroombooks.classroomid')
+            ->where('classroombooks.bookid', $bookid)
+            ->where('classrooms.deleted', '0')
+            ->where('classroombooks.deleted', '0')
+            ->select('classrooms.classroomname', 'classrooms.code', 'classrooms.createdby')
+            ->get();
+
+
+
+
+        if(isset($classroombooks)){
+
+            foreach($classroombooks as $book){
+                $teacher = DB::table('teachers')
+                                ->where('id', $book->createdby)
+                                ->select('teachers.firstname', 'teachers.lastname', 'teachers.middlename')
+                                ->first();
+
+                $book->teacher = $teacher->firstname.' '.$teacher->middlename.' '.$teacher->lastname;
+
+
+            }
+
+        }
+
+
+
+
+    return $classroombooks;
+
+
+
+
+
 
     }
 
@@ -383,6 +449,65 @@ class BookController extends Controller
 
         return collect($partinfo);
     }
+
+    public function gradeSelect(Request $request)
+    {
+        $page = $request->get('page')*10;
+        $search = $request->get('search');
+
+
+
+        $query = Db::table('gradelevel')
+            ->select(
+                'gradelevel.id as id',
+                'gradelevel.levelname as text'
+            )
+            ->orderBy('gradelevel.sortid')
+            ->where('deleted','0');
+        if ($search) {
+
+            $query->where('gradelevel.levelname', 'LIKE', '%' . $search . '%');
+
+        }
+        
+        $query =$query->take(10)
+            ->skip($page)
+            ->get();
+
+
+        $query_count = count($query);
+
+
+
+            return @json_encode((object)[
+                    "results"=>$query,
+                    "pagination"=>(object)[
+                            "more"=>$query_count > ($page)  ? true :false
+                    ],
+                    "count_filtered"=>$query_count
+                ]);
+    }
+
+
+    public function gradeAssign(Request $request)
+    {
+
+            DB::table('books')
+                ->where('id', $request->get('bookid'))
+                ->update([
+                    'gradeid'             =>  $request->get('gradeid'),
+                ]);
+
+
+
+
+    }
+    
+
+
+
+
+
     public function addchapter(Request $request)
     {
         date_default_timezone_set('Asia/Manila');

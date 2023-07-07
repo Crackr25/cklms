@@ -93,6 +93,17 @@
 </style>
 
 
+@section('headercover')
+    <div class="home-hero pt-2" style="background-image: url({{asset('assets/images/elearning4.jpg')}}); background-repeat:no-repeat;background-size:cover;background-position:center center; height: 130%;">
+        <div class="uk-width-1-1">
+            <div class="page-content-inner uk-position-z-index">
+                <h1 class="text-white">CK Learning Management System</h1>
+                <h4 class="my-lg-4 text-white">Your Access to Visual Learning and Integration </h4>
+            </div>
+        </div>
+    </div>
+@endsection
+
 
 
 
@@ -107,6 +118,7 @@
 
 
             @foreach($quizQuestions as $key=>$item)
+                
                 @if($item->typeofquiz == 1)
                     <!-- multiple choice -->
                     <div class="card mt-5 ml-3 editcontent" id="quiz-question-{{$item->id}}">
@@ -125,7 +137,9 @@
 
             @foreach($quizQuestions as $key=>$item)
                 @if($item->typeofquiz == 2)
+
                     <!-- multiple choice -->
+                    
                     <div class="card mt-5 ml-3 editcontent" id="quiz-question-{{$item->id}}">
                         <div class="card-body">
 
@@ -141,17 +155,18 @@
             @endforeach
 
 
-@endsection
 
 
 
 <script src="{{asset('plugins/jquery/jquery.min.js')}}"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{{asset('plugins/chart.js/Chart.js')}}"></script>
+
+
 
 
 
 <script>
-   // var dataFromBlade = {!! json_encode($quizQuestions) !!};
+    // var dataFromBlade = {!! json_encode($quizQuestions) !!};
 </script>
 
 
@@ -353,3 +368,6 @@
 
 
 </script>
+
+
+@endsection

@@ -200,7 +200,29 @@
         }
 
 
+        .hidden-content {
+            display: none;
+        }
+
+
+
+
+
     </style>
+
+
+
+    <style media="print">
+        /* Example: Hide a specific element when printing */
+        #lesson_content_holder {
+            display: none;
+        }
+
+        #wrapper{
+            display: none;
+        }
+    </style>
+
 </head>
 
 <body style="">
@@ -260,6 +282,10 @@
         {{-- </div> --}}
     </div>
 
+
+
+    
+
     {{-- <i class="fas fa-spinner fa-spin"></i> --}}
 
 
@@ -276,11 +302,37 @@
         <script src="{{asset('plugins/datatables/jquery.dataTables.js')}}"></script>
         <script src="{{asset('plugins/datatables-bs4/js/dataTables.bootstrap4.js')}}"></script>
 
+    
+
+    <script>
+            $(document).keyup(function(event) {
+            // Check if the key code is for the print screen button (44)
+            if (event.which === 44) {
+                event.preventDefault();
+                // Display the error message
+                $('#lesson_content_holder').addClass('hidden-content');
+                
+            }
+            });
+    </script>
 
     <script>
 
         
         $(document).ready(function(){
+
+
+
+            $(document).on('contextmenu', function(e) {
+                e.preventDefault();
+            });
+
+            // Disable print screen
+            $(document).on('keydown', function(e) {
+                if (e.keyCode === 44) {
+                    e.preventDefault();
+                }
+            });
 
             var heightwindow = $(document).height();
             console.log(heightwindow);

@@ -37,6 +37,16 @@
             <div class="section-header-left">
                 <h2 class="uk-heading-line text-left"><span> Classrooms </span></h2>
             </div>
+            <div class="section-header-right">
+                    <form class="form-inline">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="search-input" placeholder="Search" aria-label="Search" aria-describedby="search-button">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-secondary" type="button" id="search-button"><i class="fas fa-search"></i></button>
+                            </div>
+                        </div>
+                    </form>
+            </div>
             {{-- <div class="section-header-right">
                 <a href="#" class="btn btn-default uk-visible@s" id="addinstructor"> <i class="uil-plus"></i> Add teacher</a>
             </div> --}}
@@ -50,23 +60,26 @@
                         <a href="#modal-full{{$classroom->id}}" class="classroom" id="{{$classroom->id}}" uk-toggle>
                             <div class="course-card animate-this">
                                 <div class="course-card-thumbnail ">
-                                    <img src="{{asset('assets/images/elearning6.png')}}"/>
-                                    <span class="play-button-trigger"></span>
+                                    @if(isset($classroom->picurl))
+                                        <img src="{{$classroom->picurl}}"/>
+                                    
+                                    @else
+                                        <img src="{{asset('assets/images/elearning6.png')}}"/>
+                                        <span class="play-button-trigger"></span>
+                                    @endif
                                 </div>
                                 <div class="course-card-body">
-                                    {{-- <div class="course-card-info">
-                                        <div>
-                                            <span class="catagroy">Angular</span>
-                                        </div>
-                                        <div>
-                                            <i class="icon-feather-bookmark icon-small"></i>
-                                        </div>
-                                    </div> --}}
                                     <h4>{{$classroom->classroomname}} </h4>
                                     <p> Date created: {{$classroom->createddatetime}} </p>
+                                    <p> Code: <b> {{$classroom->code}} </b> </p>
+                                    <p> Grade: {{$classroom->grade}} </p>
+                
                                     <div class="course-card-footer">
                                         <h5> <i class="icon-feather-book"></i> {{$classroom->countbooks}} Books </h5>
                                         <h5> <i class="icon-feather-user"></i> {{$classroom->countstudents}} Students </h5>
+                                    </div>
+                                    <div class="course-card-footer">
+                                        <h5> <i class="icon-feather-user"></i> {{$classroom->adviser}} </h5>
                                     </div>
                                 </div>
 
@@ -76,7 +89,7 @@
                             <div class="uk-modal-dialog">
                                 <button class="uk-modal-close-full uk-close-large" type="button" uk-close></button>
                                 <div class="uk-grid-collapse uk-child-width-1-2@s uk-flex-middle" uk-grid>
-                                    <div class="uk-background-cover uk-padding-large" uk-height-viewport id="booksconatainer{{$classroom->id}}">
+                                        <div class="uk-background-cover uk-padding-large" uk-height-viewport id="booksconatainer{{$classroom->id}}">
                                         <h1 class="text-center">Books</h1>
                                         <div class="uk-child-width-1-1@m uk-grid-small uk-grid-match" uk-grid id="bookscontainer{{$classroom->id}}">
                                         </div>
@@ -88,20 +101,6 @@
                                 </div>
                             </div> 
                         </div>
-
-
-                        
-                        {{-- <div id="viewattachment{{$attachment->id}}" class="uk-flex-top" uk-modal >
-                            <div class="uk-modal-dialog uk-modal-body uk-margin-auto-vertical" id="modalview{{$attachment->id}}">
-                                <button class="uk-modal-close-default" type="button" uk-close></button>
-                                @if($attachment->extension == 'pdf')
-                                    <embed src="{{asset($attachment->filepath)}}#toolbar=0" style="width: 100%; height: 500px"/>
-                                @elseif($attachment->extension == 'jpg' || $attachment->extension == 'png' || $attachment->extension == 'gif')
-                                    <img src="{{asset($attachment->filepath)}}"style="width: 100%;"/>
-                                @endif
-                                <button type="button" class="btn btn-sm btn-danger mt-2 deleteattachment deleteattachment{{$attachment->id}}" id="{{$attachment->id}}"><i class="fa fa-trash"></i> Delete</button>
-                            </div>
-                        </div> --}}
                     </div>
                 @endforeach
             </div>      
@@ -125,6 +124,29 @@
     <script src="{{asset('plugins/sweetalert2/sweetalert2.all.min.js')}}"></script>
     <!-- DataTables -->
     <script>
+
+        $('#search-input').on('input', function() {
+                var searchText = $(this).val();
+                
+                // Perform your search logic or update the UI based on the search text
+                console.log('Search Text:', searchText);
+
+                searchVal = searchText;
+
+                $.ajax({
+                    url: '/teacherclassrooms?table=table'+'&search='+searchVal+'&skip='+skip,
+                    type:"GET",
+                    success: function(data){
+                        $('#classroom_table_holder').empty();
+                        $('#classroom_table_holder').append(data)
+                        //console.log(data);
+                
+                    }
+                })
+
+
+
+        });
         
         $(document).on('click','.classroom', function(){
             var id = $(this).attr('id');
@@ -139,6 +161,8 @@
                 success: function(data){
                     $('#bookscontainer'+id).empty()
                     $('#studentscontainer'+id).empty();
+
+
                     if(data[0].length == 0)
                     {
                         $('#bookscontainer'+id).append(

@@ -44,6 +44,14 @@ class ClassroomController extends Controller
 
             }
 
+
+            if($request->get('gradeid') != 'null' ){
+
+                $classrooms = $classrooms->where(function($query) use($request){
+                                    $query->where('gradeid', $request->get('gradeid'));
+                                });
+
+            }
         
 
 
@@ -60,6 +68,11 @@ class ClassroomController extends Controller
                 // $classrooms = $classrooms->take(12);
                 $filtertype = 2;
             }
+
+            // if($request->get('take') != 'null' && $request->has('take') ){
+            //         $take = $request->get('take');
+            //         $classrooms->take($take);
+            // }
 
             $data = array((object)[
                 'count'=>$classroomCount,
@@ -124,19 +137,31 @@ class ClassroomController extends Controller
         //dd($imageFile);
 
 
-        
+        if ($imageFile) {
+            // Save the image locally
+            $imageName = time() . '_' . $imageFile->getClientOriginalName();
+            $imageFile->move(public_path('bookcover'), $imageName);
 
-        // Save the image locally
-        $imageName = time() . '_' . $imageFile->getClientOriginalName();
-        $imageFile->move(public_path('bookcover'), $imageName);
+            // Store the image URL path
+            $data = 'bookcover/' . $imageName;
 
-        // Store the image URL path
-        $data= 'bookcover/' . $imageName;
+
+            DB::table('classrooms')
+                ->where('id', $request->get('classroomid'))
+                ->update([
+                    'picurl' => $data
+            ]);
+
+
+        } else {
+            $data = null; // Set $data to null if the image file is null
+        }
 
         $createdby = DB::table('teachers')
             ->where('userid', auth()->user()->id)
             ->first()
             ->id;
+
 
 
 
@@ -151,9 +176,13 @@ class ClassroomController extends Controller
             ->update([
                 'classroomname' => $request->get('classroomtitle'),
                 'createdby'     => $createdby,
-                'picurl'        => $data,
+                'gradeid'     =>  $request->get('gradeid'),
                 'createddatetime'   => date('Y-m-d H:i:s')
-            ]);
+        
+        ]);
+
+
+        
 
 
 
@@ -207,45 +236,60 @@ class ClassroomController extends Controller
             
         if(count($checkifexists) == 0){
 
-            $imageFile = $request->file('selectedFile');
-
-
-
-            // Save the image locally
-            $imageName = time() . '_' . $imageFile->getClientOriginalName();
-            $imageFile->move(public_path('bookcover'), $imageName);
-
-        // Store the image URL path
-            $data= 'bookcover/' . $imageName;
+        
 
             $id = DB::table('classrooms')
                 ->insertGetID([
                     'classroomname' => $request->get('classroomname'),
                     'code'          => $request->get('code'),
                     'createdby'     => $createdby,
-                    'picurl'        => $data,
+                    'gradeid'       => $request->get('gradeid'),
                     'createddatetime'   => date('Y-m-d H:i:s')
                 ]);
+
+
+            $imageFile = $request->file('selectedFile');
+
+
+            if ($imageFile) {
+                // Save the image locally
+                $imageName = time() . '_' . $imageFile->getClientOriginalName();
+                $imageFile->move(public_path('bookcover'), $imageName);
+
+                // Store the image URL path
+                $data = 'bookcover/' . $imageName;
+
+
+                DB::table('classrooms')
+                    ->where('id', $id)
+                    ->update([
+                        'picurl' => $data
+                ]);
+
+
+            } else {
+                $data = null; // Set $data to null if the image file is null
+            }
 
             // $classrooms = Db::table('classrooms')
             //         ->count();
 
-            DB::table('videoconference')
-                ->insertGetID([
-                    'classroomid'   => $id,
-                    'code'          => 'cklms'.$request->get('code'),
-                    'createdby'     => $createdby,
-                    'createddatetime'   => date('Y-m-d H:i:s')
-                ]);
+            // DB::table('videoconference')
+            //     ->insertGetID([
+            //         'classroomid'   => $id,
+            //         'code'          => 'cklms'.$request->get('code'),
+            //         'createdby'     => $createdby,
+            //         'createddatetime'   => date('Y-m-d H:i:s')
+            //     ]);
             
-            \Bigbluebutton::create([
-                'meetingID' => 'cklms'.$request->get('code'),
-                'meetingName' => $request->get('classroomname'),
-                'attendeePW' => 'studentscklms'.$request->get('code'),
-                'moderatorPW' => 'teachercklms'.$request->get('code'),
-                'defaultWelcomeMessageFooter'       => 'CK Children\'s Publishing',
-                'logoutUrl' => explode('/',url()->full())[2].'/videoconference/closevideoconference'
-            ]); 
+            // \Bigbluebutton::create([
+            //     'meetingID' => 'cklms'.$request->get('code'),
+            //     'meetingName' => $request->get('classroomname'),
+            //     'attendeePW' => 'studentscklms'.$request->get('code'),
+            //     'moderatorPW' => 'teachercklms'.$request->get('code'),
+            //     'defaultWelcomeMessageFooter'       => 'CK Children\'s Publishing',
+            //     'logoutUrl' => explode('/',url()->full())[2].'/videoconference/closevideoconference'
+            // ]); 
 
             //return $booksdata;
 
@@ -262,6 +306,20 @@ class ClassroomController extends Controller
             ->where('id', $request->get('classroomview'))
             ->where('deleted','0')
             ->first();
+
+
+            if(isset($classroominfo->gradeid)){
+
+                $classroominfo->grade = DB::table('gradelevel')
+                ->where('id', $classroominfo->gradeid)
+                ->value('levelname');
+
+
+            }else{
+
+
+                $classroominfo->grade = "Grade Level Unassigned";
+            }
 
         // $students = Db::table('students')
         //     ->where('deleted','0')
@@ -1072,55 +1130,64 @@ class ClassroomController extends Controller
         $classroombooks = DB::table('classroombooks')
                             ->where('classroombooks.deleted',0);
 
-        if($request->get('classroomid') != null && $request->has('classroomid')){
+            if($request->get('classroomid') != null && $request->has('classroomid')){
 
-            $classroombooks = $classroombooks->where('classroomid',$request->get('classroomid'))
-                                                   ->where('classroombooks.createdby',auth()->user()->id);
+                $classroombooks = $classroombooks->where('classroomid',$request->get('classroomid'))
+                                                    ->where('classroombooks.createdby',auth()->user()->id);
 
-                                              
+                                                
+            }
+
+            if($request->get('classroombookid') != null && $request->has('classroombookid')){
+
+                $classroombooks = $classroombooks->where('id',$request->get('classroombookid'));
+                                                    
+            }
+
+    
+
+
+            if($request->get('table') == 'table' && $request->has('table')){
+
+                $classroombooks = $classroombooks
+                                    ->join('books',function($join){
+                                            $join->on('classroombooks.bookid','=','books.id');
+                                            $join->where('books.deleted',0);
+                                    })
+                                    ->select('books.title','classroombooks.*','books.picurl')
+                                    ->get();
+
+                return view('teacher.classrooms.books.bookstable')
+                                ->with('classroombooks',$classroombooks);
+
+            }
+            else if($request->get('remove') == 'remove' && $request->has('remove')){
+
+                $classroombooks->update([
+                    'deleted'=>1,
+                    'deletedby'=>auth()->user()->id,
+                    'deleteddatetime'=>\Carbon\Carbon::now('Asia/Manila')
+                ]);
+
+            }
+
         }
-
-        if($request->get('classroombookid') != null && $request->has('classroombookid')){
-
-            $classroombooks = $classroombooks->where('id',$request->get('classroombookid'));
-                                                   
-        }
-
- 
-
-
-        if($request->get('table') == 'table' && $request->has('table')){
-
-            $classroombooks = $classroombooks
-                                ->join('books',function($join){
-                                        $join->on('classroombooks.bookid','=','books.id');
-                                        $join->where('books.deleted',0);
-                                })
-                                ->select('books.title','classroombooks.*','books.picurl')
-                                ->get();
-
-            return view('teacher.classrooms.books.bookstable')
-                             ->with('classroombooks',$classroombooks);
-
-        }
-        else if($request->get('remove') == 'remove' && $request->has('remove')){
-
-            $classroombooks->update([
-                'deleted'=>1,
-                'deletedby'=>auth()->user()->id,
-                'deleteddatetime'=>\Carbon\Carbon::now('Asia/Manila')
-            ]);
-
-        }
-
-    }
 
     public function allbooks(Request $request){
 
 
             $books = DB::table('books')
                     ->where('books.deleted',0);
+            
 
+
+            if($request->get('gradeid') != null && $request->has('gradeid')){
+
+                $books =  $books->where(function($query) use($request){
+                    $query->where('books.gradeid', $request->get('gradeid'));
+                });
+
+            }
         
             if($request->get('search') != null && $request->has('search')){
 

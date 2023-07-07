@@ -1,6 +1,8 @@
 
         <!-- Header Container
+            
         ================================================== -->
+        <link rel="stylesheet" href="{{asset('templatefiles/night-mode.css')}}">
         <header class="header header-transparent uk-light"
             uk-sticky="top:20 ; cls-active:header-sticky ; cls-inactive: uk-light">
 
@@ -20,7 +22,7 @@
                         </a>
 
                         <!-- breadcrumbs -->
-                        @yield('breadcrumbs')
+                   
 
 
                     </div>
@@ -445,6 +447,10 @@
                                             <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                                 @csrf
                                             </form>
+
+
+
+
                                             
                 {{-- <a href="#" id="logout" class="nav-link">
                     <!-- <i class="nav-icon fa fa-power-off"></i> -->
@@ -453,6 +459,58 @@
                   <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                           @csrf
                       </form> --}}
+                                        </li>
+
+                                        <li>
+
+                                                <a href="h#" id="night-mode" class="btn-night-mode">
+                                                    <i class="icon-feather-moon"></i> Night mode
+                                                    <span class="btn-night-mode-switch">
+                                                        <span class="uk-switch-button"></span>
+                                                    </span>
+                                                </a>
+
+                       
+
+                                                <script>
+                                                (function (window, document, undefined) {
+                                                    'use strict';
+                                                    if (!('localStorage' in window)) return;
+                                                    var nightMode = localStorage.getItem('gmtNightMode');
+                                                    if (nightMode) {
+                                                        document.documentElement.className += ' night-mode';
+                                                    }
+                                                })(window, document);
+
+
+                                                (function (window, document, undefined) {
+
+                                                    'use strict';
+
+                                                    // Feature test
+                                                    if (!('localStorage' in window)) return;
+
+                                                    // Get our newly insert toggle
+                                                    var nightMode = document.querySelector('#night-mode');
+                                                    if (!nightMode) return;
+
+                                                    // When clicked, toggle night mode on or off
+                                                    nightMode.addEventListener('click', function (event) {
+                                                        event.preventDefault();
+                                                        document.documentElement.classList.toggle('night-mode');
+                                                        if (document.documentElement.classList.contains('night-mode')) {
+                                                            localStorage.setItem('gmtNightMode', true);
+                                                            return;
+                                                        }
+                                                        localStorage.removeItem('gmtNightMode');
+                                                    }, false);
+
+                                                })(window, document);
+                                            </script>
+
+
+
+
                                         </li>
                                     </ul>
         

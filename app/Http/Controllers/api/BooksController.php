@@ -62,14 +62,34 @@ class BooksController extends Controller
         if (count($parts) > 0) {
 
 
-            $lessons = DB::table('lessons')
-                ->join('parts', 'parts.id', '=', 'lessons.chapterid')
+
+            //check if the parts has chapters
+            $chapter = DB::table('chapters')
+                ->join('parts', 'parts.id', '=', 'chapters.partid')
                 ->where('parts.bookid', $id)
                 ->where('parts.deleted', 0)
+                ->count();
+
+
+
+            if($chapter > 0){
+
+
+
+            $lessons = DB::table('lessons')
+                ->join('chapters', 'chapters.id', '=', 'lessons.chapterid')
+                ->join('parts', 'parts.id', '=', 'chapters.partid')
+                ->where('parts.bookid', $id)
+                ->where('parts.deleted', 0)
+                ->where('chapters.deleted', 0)
                 ->where('lessons.deleted', 0)
-                ->select('lessons.id', 'lessons.title', 'parts.id as chapterid', 'parts.title as chaptertitle')
-                ->orderBy('chapterid')
-                ->orderBy('lessons.id')
+                ->select('lessons.id', 'parts.id as chapterid', 'parts.title as chaptertitle')
+                ->orderBy('lessonid')
+                // ->orderBy('chapterid')
+                // ->orderBy('parts.sortid')
+                // ->orderBy('chapters.sortid')
+                // ->orderBy('lessons.sortid')
+                // ->orderBy('lessonid')
                 ->get();
 
             foreach ($lessons as $lesson) {
@@ -77,10 +97,56 @@ class BooksController extends Controller
                     ->where('lessonid', $lesson->id)
                     ->where('lessoncontents.deleted', 0)
                     ->value('filepath');
+
+                $lesson->lessontitle = DB::table('lessons')
+                    ->where('id', $lesson->id)
+                    ->where('deleted', 0)
+                    ->value('title');
             }
             
 
-            return response()->json($lessons);
+            $array = array($lessons, $parts);
+        
+            return response()->json($array);
+
+
+            //if parts has no chapter
+            }else{
+
+                $lessons = DB::table('chapters')
+                ->join('books', 'books.id', '=', 'chapters.bookid')
+                ->join('lessons', 'lessons.chapterid', '=', 'chapters.id')
+                ->where('books.id', $id)
+                ->where('books.deleted', 0)
+                ->where('chapters.deleted', 0)
+                ->where('lessons.deleted', 0)
+                ->select('chapters.id', 'lessons.title as lessontitle', 'chapters.id as chapterid', 'chapters.title as chaptertitle' ,'lessons.id as lessonid')
+                // //->orderBy('parts.id')
+                // ->orderBy('chapters.sortid')
+                // ->orderBy('lessons.sortid')
+                ->orderBy('lessonid')
+                ->get();
+
+                foreach ($lessons as $lesson) {
+                    $lesson->path = DB::table('lessoncontents')
+                        ->where('lessonid', $lesson->lessonid)
+                        ->where('lessoncontents.deleted', 0)
+                        ->value('filepath');
+                }
+            
+
+                $array = array($lessons, $parts);
+        
+            return response()->json($array);
+
+
+
+
+
+            }
+
+
+
 
 
 
@@ -90,8 +156,75 @@ class BooksController extends Controller
                 ->where('chapters.bookid', $id)
                 ->where('chapters.deleted', 0)
                 ->where('lessons.deleted', 0)
-                ->select('lessons.id', 'lessons.title', 'chapters.id as chapterid', 'chapters.title as chaptertitle')
-                ->orderBy('chapterid')
+                ->select('lessons.id as lessonid', 'lessons.title as lessontitle', 'chapters.id as chapterid', 'chapters.title as chaptertitle')
+                ->orderBy('chapters.sortid')
+                ->orderBy('lessons.sortid')
+                ->orderBy('lessonid')
+                ->get();
+
+            foreach ($lessons as $lesson) {
+                $lesson->path = DB::table('lessoncontents')
+                    ->where('lessonid', $lesson->lessonid)
+                    ->where('lessoncontents.deleted', 0)
+                    ->value('filepath');
+            }
+
+            $array = array($lessons, $parts);
+        
+            return response()->json($array);
+        }
+
+    }
+
+
+
+
+    public function bookChapter2($id)
+    {
+
+        $bookinfo = DB::table('books')
+                ->where('id', $id)
+                ->first();
+
+        
+
+
+        
+        $parts = DB::table('parts')
+            ->where('bookid', $id)
+            ->where('deleted', 0)
+            ->orderBy('parts.sortid')
+            ->get();      
+
+        
+        if (count($parts) > 0) {
+
+
+
+            //check if the parts has chapters
+            $chapters = DB::table('chapters')
+                ->join('parts', 'parts.id', '=', 'chapters.partid')
+                ->where('parts.bookid', $id)
+                ->where('parts.deleted', 0)
+                ->where('chapters.deleted', 0)
+                ->select('chapters.*')
+                ->orderBy('chapters.sortid')
+                ->get();
+
+
+
+            if(count($chapters) > 0){
+
+
+
+            $lessons = DB::table('lessons')
+                ->join('chapters', 'chapters.id', '=', 'lessons.chapterid')
+                ->join('parts', 'parts.id', '=', 'chapters.partid')
+                ->where('parts.bookid', $id)
+                ->where('parts.deleted', 0)
+                ->where('chapters.deleted', 0)
+                ->where('lessons.deleted', 0)
+                ->select('lessons.id', 'parts.id as par', 'parts.title as chaptertitle')
                 ->orderBy('lessons.id')
                 ->get();
 
@@ -100,132 +233,111 @@ class BooksController extends Controller
                     ->where('lessonid', $lesson->id)
                     ->where('lessoncontents.deleted', 0)
                     ->value('filepath');
+
+                $lesson->lessontitle = DB::table('lessons')
+                    ->where('id', $lesson->id)
+                    ->where('deleted', 0)
+                    ->value('title');
             }
 
-            return response()->json($lessons);
-        }
+            $object = (object) [
+                'bookcover' => $bookinfo->picurl,
+                'parts' => $parts,
+                'chapters' => $chapters,
+                'lessons' => $lessons,
+                
+            ];
+            
 
-    }
-
-
-
-
-    public function bookChapter2()
-    {
-
-        $id = 10;
-
-        // $bookinfo = Db::table('books')
-        //             ->where('id', $id)
-        //             ->select('id','title')
-        //             ->first();
-
-        $parts = Db::table('parts')
-                    ->where('bookid', $id)
-                    ->select('id','title')
-                    ->where('deleted', 0)
-                    ->get();
-
-        // $emptyObject = new stdClass();
+        
+            return response()->json($object);
 
 
-        //     if (count($parts) > 0) {
-        //         foreach ($parts as $part) {
+            //if parts has no chapter
+            }else{
 
-        //             $chapters = DB::table('chapters')
-        //                 ->where('partid', $part->id)
-        //                 ->select('id', 'title')
-        //                 ->where('deleted', 0)
-        //                 ->get();
+                $lessons = DB::table('chapters')
+                ->join('books', 'books.id', '=', 'chapters.bookid')
+                ->join('lessons', 'lessons.chapterid', '=', 'chapters.id')
+                ->where('books.id', $id)
+                ->where('books.deleted', 0)
+                ->where('chapters.deleted', 0)
+                ->where('lessons.deleted', 0)
+                ->select('chapters.id', 'lessons.title as lessontitle', 'chapters.id as chapterid', 'chapters.title as chaptertitle' ,'lessons.id as lessonid')
+                ->orderBy('lessons.id')
+                ->get();
 
+                foreach ($lessons as $lesson) {
+                    $lesson->path = DB::table('lessoncontents')
+                        ->where('lessonid', $lesson->lessonid)
+                        ->where('lessoncontents.deleted', 0)
+                        ->value('filepath');
+                }
 
-        //             if (count($chapters) > 0) {
+                $object = (object) [
+                    'bookcover' => $bookinfo->picurl,
+                    'parts' => $parts,
+                    'lessons' => $lessons,
+                    
+                ];
+            
 
-        //                 foreach ($chapters as $chapter) {
-                            
-        //                     $lessons = DB::table('lessons')
-        //                         ->where('chapterid', $chapter->id)
-        //                         ->where('deleted', 0)
-        //                         ->select('id', 'title')
-        //                         ->get();
+                $array = array($lessons, $objects);
+        
+            return response()->json($array);
 
-
-
-        //                     foreach ($lessons as $lesson){
-
-        //                         $lesson->lessoncontent = DB::table('lessoncontents')
-        //                             ->where('lessonid',$lesson->id)
-        //                             ->where('lessoncontents.deleted',0)
-        //                             ->get();
-
-        //                     }
-
-
-        //                     $chapter->lessons = $lessons;
-        //                 }
-
-        //                 $part->chapters = $chapters;
-
-        //             } else {
-
-        //                 $lessons = DB::table('lessons')
-        //                     ->where('chapterid', $part->id)
-        //                     ->select('id', 'title')
-        //                     ->where('deleted', 0)
-        //                     ->get();
+            
 
 
-        //                 foreach ($lessons as $lesson){
-
-        //                         $lesson->path = DB::table('lessoncontents')
-        //                             ->where('lessonid',$lesson->id)
-        //                             ->where('lessoncontents.deleted',0)
-        //                             ->value('filepath');
-
-        //                 }
-
-        //                 $chapter = $lessons;
-        //                 $chapter->path = $lesson->path;
-
-        //             }
-        //         }
 
 
-        //                 return response()->json($lessons);
-        //     }else{
+
+            }
+
+
+
+
+
+
+        } else {
+
+
+            $chapters = DB::table('chapters')
+            ->where('bookid', $id)
+            ->where('deleted', 0)
+            ->get(); 
+
+
 
             $lessons = DB::table('lessons')
                 ->join('chapters', 'chapters.id', '=', 'lessons.chapterid')
                 ->where('chapters.bookid', $id)
                 ->where('chapters.deleted', 0)
                 ->where('lessons.deleted', 0)
-                ->select('lessons.id', 'lessons.title' , 'chapters.id as chapterid' ,  'chapters.title as chaptertitle')
-                ->orderby('chapterid')
-                ->orderby('lessons.id')
+                ->select('lessons.id as lessonid', 'lessons.title as lessontitle', 'chapters.id as chapterid', 'chapters.title as chaptertitle')
+                ->orderBy('chapters.sortid')
+                ->orderBy('lessons.sortid')
+                ->orderBy('lessonid')
                 ->get();
 
             foreach ($lessons as $lesson) {
                 $lesson->path = DB::table('lessoncontents')
-                            ->where('lessonid',$lesson->id)
-                            ->where('lessoncontents.deleted',0)
-                            ->value('filepath'); 
-
-
+                    ->where('lessonid', $lesson->lessonid)
+                    ->where('lessoncontents.deleted', 0)
+                    ->value('filepath');
             }
 
-
-                // }
-
-
-
-
+            $object = (object) [
+                'bookcover' => $bookinfo->picurl,
+                'chapters' => $chapters,
+                'lessons' => $lessons,
+                
+            ];
                     
-                    return response()->json($lessons);
+            return response()->json($object);
+        }
 
 
-
-        
-        
 
 
 

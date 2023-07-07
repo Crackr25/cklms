@@ -111,6 +111,7 @@ class HomeController extends Controller
                 
             if(count($classrooms) > 0){
                 foreach($classrooms as $classroom){
+                    $classroomid = $classroom->id;
                     $classroom->createddatetime = date('F d, Y h:i:s A', strtotime($classroom->createddatetime));
                     $classroom->students = Db::table('classroomstudents')
                         ->where('classroomid', $classroom->id)
@@ -129,13 +130,57 @@ class HomeController extends Controller
                         $classroom->joined = 1;
                         $classroom->datejoined = date('F d, Y', strtotime($joined[0]->createddatetime));
                     }
-                    $classroom->books = Db::table('classroombooks')
-                        ->where('classroomid', $classroom->id)
-                        ->where('deleted','0')
-                        ->count();
+
+                    if($classroom->joined == 1){
+                        $classroom->books = Db::table('classroombooks')
+                            ->where('classroomid', $classroom->id)
+                            ->where('deleted','0')
+                            ->get();
+                        
+                        
+                        foreach($classroom->books as $book){
+                                $bookid = $book->bookid;
+                                $book->title = DB :: table('books')
+                                                ->where('id', $bookid)
+                                                ->value('title');
+                                                
+                                $book->picurl = DB:: table('books')
+                                                ->where('id', $bookid)
+                                                ->value('picurl');
+
+                                $book->quiz = DB::table('chapterquizsched')
+                                    ->where('chapterquizsched.deleted', 0)
+                                    ->where('classroomid', $classroom->id)
+                                    ->join('lesssonquiz', function($join) {
+                                        $join->on('chapterquizsched.chapterquizid', '=', 'lesssonquiz.id');
+                                                
+                                    })
+                                    ->where('lesssonquiz.bookid', $bookid)
+                                    ->where('chapterquizsched.status', 0)
+                                    ->where('lesssonquiz.deleted', 0)
+                                    ->select(
+                                        'lesssonquiz.title',
+                                        'lesssonquiz.id',
+                                        'datefrom',
+                                        'timefrom',
+                                        'dateto',
+                                        'timeto',
+                                        'noofattempts',
+                                        'chapterquizsched.id as schedid',
+                                        'chapterquizsched.status',
+                                        'chapterquizsched.createddatetime',
+                                        'chapterquizsched.updateddatetime'
+                                    )
+                                    ->take(5)
+                                    ->orderBy('createddatetime', 'desc')
+                                    ->orderBy('updateddatetime', 'desc')
+                                    ->get();
+                            
+                        }
+                    }
                 }
             }
-            
+        
             return view('student.studentdashboard')
                 // ->with('classroomsjoined', $classroomsjoined)
                 ->with('classrooms', $classrooms);

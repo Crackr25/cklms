@@ -2,6 +2,8 @@
 
 @section('breadcrumbs')
 <style>
+
+
     .push {
     height: 25px;
     }
@@ -39,7 +41,15 @@
 
 @endsection
 
+
+
+
+
+
+
 @section('content')
+
+
 
 <div id="modal-book-info" uk-modal> 
     <div class="uk-modal-dialog uk-modal-body"> 
@@ -50,7 +60,6 @@
                     <img  id="modal_book_cover" alt="">
                 </div>
                 <div class="uk-width-2-3@m">
-                   
                     <ul class="uk-list uk-list-divider text-small mt-lg-4">
                         <li>
                             <div class="uk-grid" uk-grid="">
@@ -108,12 +117,12 @@
                             <li> Created last {{\Carbon\Carbon::create($classroominfo->createddatetime)->isoFormat('MM/DD/YYYY')}}</li>
                         </ul>
                         
-                       {{-- <button type="button" class="btn btn-icon-label mt-2 call button-2" id="{{$classroominfo->id}}" disabled="disabled">
-                            <span class="btn-inner--icon">
-                                <i class="icon-feather-video"></i>
-                            </span>
-                            <span class="btn-inner--text" id="buttontext">Teacher is not yet calling</span>
-                          </button>--}}
+                        {{-- <button type="button" class="btn btn-icon-label mt-2 call button-2" id="{{$classroominfo->id}}" disabled="disabled">
+                                <span class="btn-inner--icon">
+                                    <i class="icon-feather-video"></i>
+                                </span>
+                                <span class="btn-inner--text" id="buttontext">Teacher is not yet calling</span>
+                            </button>--}}
                     </div>
                 </div>
                 <nav class="responsive-tab style-5">
@@ -144,19 +153,18 @@
     </div>
 </div>
 
-<div id="myModal" class="uk-modal" uk-modal>
-    <div class="uk-modal-dialog uk-modal-dialog-large">
-        <button class="uk-modal-close-default" type="button" uk-close></button>
-        <div class="uk-modal-header">
-            <h2 class="uk-modal-title">{{ auth()->user()->name }}</h2>
+{{-- <div id="myModal" class="modal fade">
+    <div class="modal-dialog modal-lg " style="background-color:aliceblue;" data-backdrop="static">
+        <div class="modal-header">
+            <h2 class="modal-title">{{ auth()->user()->name }}</h2>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
-
-
-        <div class="uk-modal-body">
-                <h5 class="grades"></h5>
-                <h5 class="percentage"></h5>
-            <div style="overflow-x: auto;">
-                <table class="table">
+        <div class="modal-body">
+                <h5 class="grades">2323</h5>
+                <h5 class="percentage">2323</h5>
+                <table class="table" id= "quizmodal" style=" width: 100%">
                     <thead>
                         <tr>
                             <th>Quiz Title</th>
@@ -166,17 +174,52 @@
                             <th>Percentage</th>
                         </tr>
                     </thead>
-                    <tbody id="quizResponseDetails">
-                        <!-- Table rows go here -->
+                    <tbody>
                     </tbody>
                 </table>
-            </div>
         </div>
-        <div class="uk-modal-footer">
-            <button class="uk-button uk-button-default uk-modal-close" type="button">Close</button>
+        <div class="modal-footer">
+            <button class="btn btn-secondary"  data-dismiss="modal">Close</button>
         </div>
     </div>
-</div>
+</div> --}}
+
+
+    <div class="modal fade bd-example-modal-lg" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" style="max-width: 90%; width:100%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">{{ auth()->user()->name }}</h2>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                        
+                    <h5 class="grades">2323</h5>
+                    <h5 class="percentage">2323</h5>
+                    <h3> Quiz Summarry </h5>
+
+                    <table class="table" id= "quizmodal" style=" width: 100%;">
+                        <thead>
+                            <tr>
+                                <th class="text-center align-middle">Quiz Title</th>
+                                <th class="text-center align-middle">Date &amp; Time Submitted</th>
+                                <th class="text-center align-middle">No. of Attempts</th>
+                                <th class="text-center align-middle">Score</th>
+                                <th class="text-center align-middle" >Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary"  data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+    </div>
 
 
 
@@ -194,9 +237,18 @@
 
 
         <script src="{{asset('templatefiles/jquery-3.3.1.min.js')}}"></script>
+        <script src="{{asset('plugins/datatables/jquery.dataTables.js')}}"></script>
+        <script src="{{asset('plugins/datatables-bs4/js/dataTables.bootstrap4.js')}}"></script>
+        <script src="{{asset('plugins/datatables/jquery.dataTables.min.js')}}"></script>
 
+        <!-- Bootstrap JavaScript -->
+        <script src="{{asset('plugins/bootstrap/js/bootstrap.bundle.min.js')}}"></script>
+       
+
+        
         <script>
 
+            var quiztable;
 
             $(document).ready(function(){
 
@@ -214,24 +266,26 @@
 
                 })
 
+                
+
                 $(document).on('click','#modal_view_quiz_button',function(){
 
                     var selectedBook = $(this).attr('data-id');
 
                     console.log(selectedBook);
 
-                    $('#quizResponseDetails').empty();
+    
 
                     var sum = 0;
                     getQuizResponses(selectedBook).then(function(data) {
                         console.log(data);
 
+                        quiztable = data;
+                        
+
                         let sum = 0; // Variable to store the sum of scores
                         let maxpointstotal = 0; // Variable to store the sum of scores
 
-                        // Iterate through the data and filter the entries for each submittedby
-                        // Create the HTML for the filtered entries
-                        let filteredEntriesHtml = '';
 
                         const entriesHtml = data.map(entry => {
                             let options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
@@ -240,24 +294,9 @@
                             if (entry.score) {
                                 sum += entry.score; // Add the score to the sum
                                 maxpointstotal += parseInt(entry.maxpoints);
-                                console.log(entry.maxpoints)
-                                console.log(maxpointstotal)
                             }
 
-                            return `
-                                <tr>
-                                    <td>${entry.title}</td>
-                                    <td>${formattedDate}</td>
-                                    <td>${entry.attempt ? entry.attempt : 'Not yet taken.'}</td>
-                                    <td>${entry.score ? entry.score + '/' + entry.maxpoints : 'Not yet graded.'}</td>
-                                    <td>${entry.score ? Math.round((entry.score/entry.maxpoints) * 100) + '%' : 'Not yet graded.'}</td>
-                                </tr>
-                            `;
-                        }).join('');
-
-                        filteredEntriesHtml += entriesHtml;
-
-                        $(filteredEntriesHtml).appendTo('#quizResponseDetails');
+                        });
 
                         
                         // Update the grades element with the sum of scores
@@ -268,15 +307,11 @@
 
                         $('.percentage').text('Partial Average : '+ average  + '%'); 
 
-                        console.log('Sum of scores:', sum);
-                        console.log('Sum of maxpoints:', maxpointstotal);
+                        renderQuizDataTable1();
+                        $('#myModal').modal('show');
                     });
 
 
-                    UIkit.modal('#myModal').show();
-
-
-                    //     $(latestEntriesHtml).appendTo('#quizResponseDetails');
 
                     
 
@@ -357,6 +392,112 @@
 
 
                 }
+
+
+                function renderQuizDataTable1(){
+
+                
+                    $("#quizmodal").DataTable({
+                        responsive: false,
+                        autowidth: false,
+                        destroy: true,
+                        //scrollX: true,
+                        data:quiztable,
+                        searching: true,
+                        order: [[0, 'asc']],
+                        lengthChange: false,
+                        ordering: false,
+                        columns: [
+                            { "data": null},
+                            { "data": null},
+                            { "data": null},
+                            { "data": null},
+                            { "data": null},
+                        ],
+                        columnDefs: [
+                            {
+                                'targets': 0,
+                                'orderable': false, 
+                                'createdCell':  function (td, cellData, rowData, row, col) {
+                                        var text = '<a class="mb-0">'+rowData.title+'</a>'
+                                        $(td)[0].innerHTML =  text
+                                        $(td).addClass('text-center')
+                                        $(td).addClass('align-middle')
+                                }
+                            },
+                        
+                        
+                            {
+                                'targets': 1,
+                                'orderable': false, 
+                                'createdCell':  function (td, cellData, rowData, row, col) {
+                                        let options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+                                        let formattedDate = rowData.date ?  new Date(rowData.date).toLocaleDateString('en-US', options): '';
+                                        var text = rowData.date ? '<a class="mb-0">'+formattedDate +'</a>' : '- - -';
+                                        $(td)[0].innerHTML =  text
+                                        $(td).addClass('text-center')
+                                        $(td).addClass('align-middle')
+
+                                }
+                            },
+
+
+                            {
+                                'targets': 2,
+                                'orderable': false, 
+                                'createdCell':  function (td, cellData, rowData, row, col) {
+                                        var text = rowData.attempt ? '<a class="mb-0">'+rowData.attempt+'</a>' : 'Not yet Taken';
+                                        $(td)[0].innerHTML =  text
+                                        $(td).addClass('text-center')
+                                        $(td).addClass('align-middle')
+
+
+                
+                                    
+                                }
+                            },
+
+        
+                            {
+                                'targets': 3,
+                                'orderable': false, 
+                                'createdCell':  function (td, cellData, rowData, row, col) {
+                                    if(rowData.score != '' || rowData.score != null){
+                                        var text = rowData.score ?  '<a class="mb-0">'+rowData.score+' / '+rowData.maxpoints+'</a>' : 'Not yet taken';
+                                        $(td)[0].innerHTML =  text
+                                        $(td).addClass('text-center')
+                                        $(td).addClass('align-middle')
+
+
+                                    }else{
+
+                                        var text = '<a class="mb-0">Not yeat scored</a>'
+                                        $(td)[0].innerHTML =  text
+                                        $(td).addClass('text-center')
+                                        $(td).addClass('align-middle')
+
+
+
+
+                                    }
+                                    
+                                }
+                            },
+                            {
+                                'targets': 4,
+                                'orderable': false, 
+                                'createdCell':  function (td, cellData, rowData, row, col) {
+                                        var num = Math.round((rowData.score/rowData.maxpoints) * 100);
+                                        var text = rowData.score ? '<a class="mb-0">'+num+' % </a>' : '-'
+                                        $(td)[0].innerHTML =  text
+                                        $(td).addClass('text-center')
+                                        $(td).addClass('align-middle')
+
+                                }
+                            },
+                        ]
+                    });
+        }
 
                 
                 $(document).on('click','.commentbutton', function(){
@@ -451,7 +592,7 @@
 
             })
         </script>
-
+{{-- 
    <script>
        
        $(document).ready(function() {
@@ -492,6 +633,6 @@
             })
         
         })
-   </script>
+   </script> --}}
 
 @endsection

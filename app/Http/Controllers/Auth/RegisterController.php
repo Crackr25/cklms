@@ -78,6 +78,14 @@ class RegisterController extends Controller
         }else{
             $middlename = $request->get('middlename').'. ';
         }
+
+
+        if ($request->input('password') != $request->input('confirmpassword')) {
+            
+            return redirect()->back()->with('error', 'Password does not match');
+        }
+
+
         $checkifexists = Db::table('users')
             ->where('email', $request->get('email'))
             ->get();
@@ -108,14 +116,14 @@ class RegisterController extends Controller
 
         }else{
 
-            return redirect()->back()->with('response','Account already exists!');
+            return redirect()->back()->with('error','Account already exists!');
 
         }
-        // return User::create([
-        //     'name' => $data['lastname'].','.$data['firstname'].' '.$middlename.' '.$data['suffix'],
-        //     'email' => $data['email'],
-        //     'type' => '3',
-        //     'password' => Hash::make($data['password']),
-        // ]);
+        return User::create([
+            'name' => $data['lastname'].','.$data['firstname'].' '.$middlename.' '.$data['suffix'],
+            'email' => $data['email'],
+            'type' => '3',
+            'password' => Hash::make($data['password']),
+        ]);
     }
 }

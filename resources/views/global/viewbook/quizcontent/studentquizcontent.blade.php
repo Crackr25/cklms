@@ -328,12 +328,88 @@
                         @endif
 
 
+
+                        @if($item->typeofquiz == 10)
+
+                                <!-- multiple choice -->
+                                
+                                    <div class="card mt-5 editcontent" id="quiz-question-{{$item->id}}">
+                                        <div class="card-body ">
+
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <div class="points student-score">
+                                                        {{$key+=1}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                            
+                                                    
+                                                    <p >{!! $item->question !!} </p>
+
+                                                    @foreach ($item->choices as $questioninfo)
+                                                    <div class="form-check mt-2">
+                                                        @if($questioninfo->answer == 1)
+
+                                                        <input data-question-type="{{$item->typeofquiz}}" data-question-id="{{  $item->id }}" id="{{ $questioninfo->id}}" class="answer-field form-check-input" type="radio" name="{{ $item->id }}" value="{{ $questioninfo->id}}" checked>
+                                                        
+
+                                                        @else
+
+
+                                                        <input data-question-type="{{$item->typeofquiz}}" data-question-id="{{  $item->id }}" id="{{ $questioninfo->id}}" class="answer-field form-check-input" type="radio" name="{{ $item->id }}" value="{{ $questioninfo->id}}">
+                                                        
+                                                        @endif
+                                                        <label for="{{ $item->id }}" class="form-check-label">
+                                                            {{$questioninfo->description}}
+                                                        </label>
+                                                    </div>
+                                                    @endforeach
+                                
+                                            
+                                        </div>
+                                    </div>
+                            @endif
+
+                            @if($item->typeofquiz == 11)
+                                <!-- upload file -->
+                                <div class="card mt-5 editcontent">
+                                    <div class="card-body">
+
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="points student-score">
+                                                    {{$key+=1}}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <p class="question" data-question-type="{{$item->typeofquiz}}"> <b> Points. </b> {{$item->points}}</p>
+                                        <p>{!! $item->question !!}</p>
+                                        <div class="form-group">
+                                            <input class="form-control-file fileInput" data-question-type="{{$item->typeofquiz}}" data-question-id="{{$item->id}}" type="file">
+                                        </div>
+
+                                        <div class="file-links-container">
+                                            @if(isset($item->fileurl))
+                                            <a href="{{$item->fileurl}}" target="_blank">View File</a>
+                        
+                                            @endif
+                                            <!-- File links will be appended here -->
+                                        </div>
+
+                                    </div>
+                                </div>
+                            @endif
+
+
+
                         @endforeach
 
                         <div class="save mb-5">
                         <div class="row">
                             <div class="col-md-12 d-flex justify-content-end">
-                                <div class="btn btn-success btn-lg" data-id="{{$headerid}}" id="save-quiz">Save</div>
+                                <div class="btn btn-success btn-lg" data-id="{{$headerid}}" id="save-quiz">Submit</div>
                             </div>
                         </div>
                         </div>
@@ -395,7 +471,7 @@
                     //Send an AJAX request to save the answer data
 
 
-                    if (questionType !== 6) {
+                    if (questionType !== 6 || questionType !== 11 ) {
                     //Send an AJAX request to save the answer data
                         $.ajax({
                             url: '/save-answer',
@@ -419,6 +495,9 @@
                             }
                         });
                     }
+
+
+                    
                 }
 
                 
@@ -514,6 +593,78 @@
             });
 
 			previewImage(this);
+        });
+
+
+        $(document).on('change', '.fileInput', function(){
+            // Get the answer data
+            var quizId = $('#quiz-info').data('quizid');
+            var headerId = $('.card-body').data('headerid');
+            var questionId = $(this).data('question-id');
+            var questionType = $(this).data('question-type');
+
+
+            console.log(questionId, questionType);
+
+            // Get the file input element
+            var fileInputElement = $(this)[0];
+            var files = fileInputElement.files;
+            var file = files[0];
+
+            console.log("File : ");
+            console.log(file);
+            // Create a FormData object to store the file data
+            var formData = new FormData();
+            formData.append('chapterquizid', quizId);
+            formData.append('answer', file);
+            formData.append('headerId', headerId);
+            formData.append('questionType', questionType);
+            formData.append('question_id', questionId);
+
+            // Get the CSRF token value
+            var csrfToken = $('meta[name="csrf-token"]').attr('content');
+
+            // Set the CSRF token in the request headers
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
+                }
+            });
+
+            // Send an AJAX request to save the answer data
+            $.ajax({
+                url: '/save-file', // Replace with the appropriate URL
+                method: 'POST', // Use POST method instead of GET
+                data: formData,
+                processData: false, // Prevent jQuery from processing the data
+                contentType: false, // Prevent jQuery from setting content type
+                success: function(response) {
+                    if (response.status === 'success') {
+                    console.log("Answer inserted successfully");
+                    
+                    // Get the URL of the uploaded file from the response
+                    var fileUrl = response.fileUrl;
+
+                    
+                    
+                    // Create a link element to view the file
+                    var link = $('<a>')
+                        .attr('href', fileUrl)
+                        .attr('target', '_blank')
+                        .text('View File');
+                    $('.file-links-container').empty();
+                    // Append the link to a suitable element on your page
+                    $('.file-links-container').append(link);
+                    } else {
+                    console.log("Answer updated successfully");
+                    }
+        
+                }
+            });
+
+
+
+
         });
 
         // show the button when the user scrolls past a certain point

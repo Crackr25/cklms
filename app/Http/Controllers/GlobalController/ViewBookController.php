@@ -472,6 +472,13 @@ class ViewBookController extends Controller
                 'status'    => '1'
             ]);
 
+        DB::table('allowed_student_quiz')
+            ->where('chapterquizschedid', $id)
+            ->update([
+                'deleted' => '1',
+            ]);
+
+            
         return 1;
         
     }
@@ -689,6 +696,71 @@ class ViewBookController extends Controller
             foreach($quizQuestions as $item){
 
                 if($item->typeofquiz == 1){
+
+                    $choices = DB::table('lessonquizchoices')
+                                    ->where('questionid',$item->id)
+                                    ->where('deleted',0)
+                                    ->select('description','id','answer', 'sortid')
+                                    ->orderBy('sortid')
+                                    ->get();
+
+                    $item->choices = $choices;
+
+                    $answer = DB::table('chapterquizrecordsdetail')
+                                    ->where('questionid',$item->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('deleted',0)
+                                    ->value('choiceid');
+
+                    $check = DB::table('lessonquizchoices')
+                                    ->where('questionid',$item->id)
+                                    ->where('id', $answer)
+                                    ->where('deleted',0)
+                                    ->value('answer');
+
+                    if(isset($answer)){
+                        $item->answer = $answer;
+                        $chapterdetailsid = DB::table('chapterquizrecordsdetail')
+                                    ->where('questionid',$item->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('deleted',0)
+                                    ->value('id');
+                            
+                        $item->detailsid = $chapterdetailsid;
+                        if($check == 1){
+
+
+                            $item->check = 1;
+                            //update points value
+                            DB::table('chapterquizrecordsdetail')
+
+                            ->where('id', $chapterdetailsid)
+                            ->where('deleted', 0)
+                            ->update([
+                                'points' => 1
+
+
+                            ]);
+                            
+
+
+
+                        }else{
+                            $item->check = 0;
+                        }
+                        
+                    }else{
+
+                        $item->answer = 0;
+                        $item->check = 0;
+
+                    }
+
+
+                }
+
+
+                if($item->typeofquiz == 10){
 
                     $choices = DB::table('lessonquizchoices')
                                     ->where('questionid',$item->id)
@@ -976,6 +1048,41 @@ class ViewBookController extends Controller
                                     ->value('points');
                     }else{
                         $item->picurl = "";
+                        $item->detailsid = -1;
+                        $item->pointsgiven = 0;
+                    }
+                }
+
+
+                if($item->typeofquiz == 11 ){
+
+                    $protocol = $request->getScheme();
+                    $host = $request->getHost();
+
+                    $rootDomain = $protocol . '://' . $host;
+
+                    $answer = DB::table('chapterquizrecordsdetail')
+                        ->where('questionid',$item->id)
+                        ->where('headerid', $recordid)
+                        ->where('deleted',0)
+                        ->value('fileurl');
+
+                    if(isset($answer)){
+                        $item->fileurl = $rootDomain.'/'.$answer;
+
+                        $item->detailsid = DB::table('chapterquizrecordsdetail')
+                                    ->where('questionid',$item->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('deleted',0)
+                                    ->value('id');
+
+                        $item->pointsgiven = DB::table('chapterquizrecordsdetail')
+                                    ->where('questionid',$item->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('deleted',0)
+                                    ->value('points');
+                    }else{
+                        $item->fileurl = "";
                         $item->detailsid = -1;
                         $item->pointsgiven = 0;
                     }
@@ -1286,7 +1393,8 @@ class ViewBookController extends Controller
             $classroomid = $request->get('classroomid');
     
             $students = DB::table('classroomstudents')
-                ->join('users', 'classroomstudents.studentid', '=', 'users.id')
+                ->join('students', 'students.id', '=', 'classroomstudents.studentid')
+                ->join('users', 'students.userid', '=', 'users.id')
                 ->select('classroomstudents.*', 'users.name')
                 ->where('classroomstudents.classroomid', $classroomid)
                 ->where('classroomstudents.deleted', 0)

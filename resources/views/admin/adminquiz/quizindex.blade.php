@@ -190,7 +190,7 @@
 
                                                         <div class="col-10 mt-2">
                                                             <select class="form-control-sm select2 pr-3" id="select-lesson" multiple="multiple">
-                                                            <option>All</option>
+                                                            
                                                             </select>
                                                         
                                                         </div>
@@ -255,7 +255,8 @@
                                                                     <option value="image">Image Answer</option>
                                                                     <option value="fill_n_blanks">Fill in the blanks</option>
                                                                     <option value="enumeration">Enumeration</option>
-                                                                    
+                                                                    <option value="multiple_choice2">Multiple choice 2</option>
+                                                                    <option value="file_answer">File Answer</option>
                                                                     </select>
                                                                 </div>
                                                                 <div class="col-12 m-2" id="quiztioncontent{{$question->id}}">
@@ -326,6 +327,8 @@
                                                                     <option value="image">Image Answer</option>
                                                                     <option value="fill_n_blanks">Fill in the blanks</option>
                                                                     <option value="enumeration">Enumeration</option>
+                                                                    <option value="multiple_choice2">Multiple choice 2</option>
+                                                                    <option value="file_answer">File Answer</option>
                                                                     </select>
                                                                 </div>
                                                                 <div class="col-12 m-2" id="quiztioncontent{{$question->id}}">
@@ -373,6 +376,8 @@
                                                                     <option value="image">Image Answer</option>
                                                                     <option value="fill_n_blanks">Fill in the blanks</option>
                                                                     <option value="enumeration">Enumeration</option>
+                                                                    <option value="multiple_choice2">Multiple choice 2</option>
+                                                                    <option value="file_answer">File Answer</option>
                                                                     </select>
                                                                 </div>
                                                                 <div class="col-12 mt-2" id="quiztioncontent{{$question->id}}">
@@ -417,6 +422,8 @@
                                                                     <option value="image">Image Answer</option>
                                                                     <option value="fill_n_blanks">Fill in the blanks</option>
                                                                     <option value="enumeration">Enumeration</option>
+                                                                    <option value="multiple_choice2">Multiple choice 2</option>
+                                                                    <option value="file_answer">File Answer</option>
                                                                     </select>
                                                                 </div>
                                                                 <div class="col-12 mt-2" id="quiztioncontent{{$question->id}}">
@@ -455,6 +462,8 @@
                                                                         <option value="image">Image Answer</option>
                                                                         <option value="fill_n_blanks">Fill in the blanks</option>
                                                                         <option value="enumeration">Enumeration</option>
+                                                                        <option value="multiple_choice2">Multiple choice 2</option>
+                                                                        <option value="file_answer">File Answer</option>
                                                                     </select>
                                                                 </div>
                                                                 <div class="col-12 m-2" id="quiztioncontent{{$question->id}}">
@@ -548,6 +557,8 @@
                                                                     <option value="drag_drop">Drag & drop</option>
                                                                     <option value="fill_n_blanks">Fill in the blanks</option>
                                                                     <option value="enumeration">Enumeration</option>
+                                                                    <option value="multiple_choice2">Multiple choice 2</option>
+                                                                    <option value="file_answer">File Answer</option>
                                                                     </select>
                                                                 </div>
                                                                 <div class="col-12 m-2" id="quiztioncontent{{$question->id}}">
@@ -588,6 +599,8 @@
                                                                     <option value="drag_drop">Drag & drop</option>
                                                                     <option value="image">Image Answer</option>
                                                                     <option value="enumeration">Enumeration</option>
+                                                                    <option value="multiple_choice2">Multiple choice 2</option>
+                                                                    <option value="file_answer">File Answer</option>
                                                                     </select>
                                                                 </div>
                                                                 <div class="col-12 m-2" id="quiztioncontent{{$question->id}}">
@@ -673,6 +686,8 @@
                                                                     <option value="drag_drop">Drag & drop</option>
                                                                     <option value="image">Image Answer</option>
                                                                     <option value="fill_n_blanks">Fill in the blanks</option>
+                                                                    <option value="multiple_choice2">Multiple choice 2</option>
+                                                                    <option value="file_answer">File Answer</option>
                                                                     </select>
                                                                 </div>
                                                                 <div class="col-12 m-2" id="quiztioncontent{{$question->id}}">
@@ -770,9 +785,121 @@
                                                 </div>
                                             </div>
                                             @break
+
+                                            @case(10)
+                                            <div id={{$question->id}} class="row p-4 dragrow{{$question->id}}">
+                                                <div class="col-lg-1 col-2 rowhidden buttonholder{{$question->id}} d-flex align-items-center">
+                                                </div>
+                                                <div id={{$question->id}} class="col-lg-11 col-10 editcontent col-content identifier{{$question->id}}">
+                                                    <div class="card mt-5 shadow-none border-0">
+                                                        <div class="card-header">
+                                                            <div class="row justify-content-end">
+                                                                <div class="col-6 mr-1 quizarea">
+                                                                    <select class="form-control quiztype" data-id="{{$question->id}}" id="quiztype{{$question->id}}">
+                                                                    <option value="multiple_choice2">Multiple choice 2</option>
+                                                                    <option value="multiple_choice">Multiple Choice</option>
+                                                                    <option value="short_answer">Short Answer</option>
+                                                                    <option value="paragraph_answer">Essay</option>
+                                                                    <option value="instruction">Instruction</option>
+                                                                    <option value="drag_drop">Drag & drop</option>
+                                                                    <option value="image">Image Answer</option>
+                                                                    <option value="fill_n_blanks">Fill in the blanks</option>
+                                                                    <option value="enumeration">Enumeration</option>
+                                                                    <option value="file_answer">File Answer</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-12 m-2" id="quiztioncontent{{$question->id}}">
+                                                                    <div class="row ml-2">
+                                                                        <div class="col-12">
+                                                                            <textarea class="form-control question multiplechoice2" placeholder="Untitled question" data-id ="{{$question->id}}" data-question-type ="1" id="multiplechoice2{{$question->id}}" >{{$question->question}}</textarea>
+                                                                        </div>
+                                                                        @php
+                                                                        $quizchoices = DB::table('lessonquizchoices')
+                                                                            ->where('questionid', $question->id)
+                                                                            ->where('deleted', 0)
+                                                                            ->orderBy('sortid')
+                                                                            ->get();
+
+
+                                                                        @endphp
+                                                                        <div class="col-12" id="list_option{{$question->id}}">
+                                                                            @if(count($quizchoices) > 0)
+                                                                            @foreach($quizchoices as $choice)
+                                                                            <div id="containerchoices">
+                                                                                <input class="form-check-input ml-2" type="radio" name="option1" value="1">
+                                                                                <label class="form-check-label ml-5 option{{$question->id}}" id="option{{$question->id}}" contenteditable="true">{{$choice->description}} 
+                                                                                    @if($choice->answer==1)
+                                                                                        <span><i class="fa fa-check" style="color:rgb(7, 255, 7)" aria-hidden="true"></i></span>
+                                                                                    @endif
+                                                                                    <span id= "deletechoice" data-id= "{{$choice->id}}" class = "pl-1"><i class="fa fa-trash" aria-hidden="true"></i></span>
+                                                                                </label>
+                                                                            </div>
+                                                                            
+                                                                            @endforeach
+                                                                            @endif
+                                                                        </div>
+                                                                        <div class="col-12">
+                                                                            <div class="row justify-content-end p-3 mt-2">
+                                                                                    <button class="btn btn-success addoption" id="{{$question->id}}">Add option</button>
+                                                                            </div>
+                                                                            <button class="btn btn-primary btn-sm answer-key-2" id="{{$question->id}}">Answer key</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @break
+                                            @case(11)
+                                            <div id={{$question->id}} class="row p-4 dragrow{{$question->id}}">
+                                                <div class="col-lg-1 col-2 rowhidden buttonholder{{$question->id}} d-flex align-items-center">
+                                                </div>
+                                                <div id={{$question->id}} class="col-lg-11 col-10 editcontent col-content identifier{{$question->id}}">
+                                                    <div class="card mt-5 shadow-none border-0">
+                                                        <div class="card-header">
+                                                            <div class="row justify-content-end">
+                                                                <div class="col-6 mr-1 quizarea">
+                                                                    <select class="form-control quiztype" data-id="{{$question->id}}" id="quiztype{{$question->id}}">
+                                                                    <option value="file_answer">File Answer</option>
+                                                                    <option value="image">Image Answer</option>
+                                                                    <option value="multiple_choice">Multiple Choice</option>
+                                                                    <option value="short_answer">Short Answer</option>
+                                                                    <option value="paragraph_answer">Essay</option>
+                                                                    <option value="instruction">Instruction</option>
+                                                                    <option value="drag_drop">Drag & drop</option>
+                                                                    <option value="fill_n_blanks">Fill in the blanks</option>
+                                                                    <option value="enumeration">Enumeration</option>
+                                                                    <option value="multiple_choice2">Multiple choice 2</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-12 m-2" id="quiztioncontent{{$question->id}}">
+                                                                    <div class="row">
+                                                                        <div class="col-12 m-2">
+                                                                            <h6><label class= "ml-2" for="number_question{{$question->id}}">Points:</label></h6>
+                                                                            <input type="number" class="form-control m-2 addpoints" placeholder="Required" data-id= "{{$question->id}}" id="Required{{$question->id}}" value="{{$question->points}}">
+                                                                            <textarea class="form-control imageanswer" placeholder="Untitled instruction" style="height: 20px !important;" id="file_item{{$question->id}}">{{$question->question}}</textarea>
+                                                                            <input type="file" class="mt-2" disabled>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @break
                                         @endswitch
                                     @endforeach
                                 @endif
+                            </div>
+                            <div class="save mb-5">
+                                    <div class="row">
+                                        <div class="col-md-12 d-flex justify-content-end">
+                                            <div class="btn btn-success mr-2  btn-lg"  id="save-quiz">Save</div>
+                                        </div>
+                                    </div>
                             </div>
                         </div> 
                     </div>
@@ -857,6 +984,66 @@
                                     // ['height', ['height']]
                                             ]
                             });
+            $('.multiplechoice2').summernote({
+                            height: 200,
+                            toolbar: [
+                                    // [groupName, [list of button]]
+                                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                                    // ['font', ['strikethrough', 'superscript', 'subscript']],
+                                    ['fontsize', ['fontsize']],
+                                    ['color', ['color']],
+                                    ['para', ['ul', 'ol', 'paragraph']],
+                                    // ['height', ['height']]
+                                            ]
+                            });
+
+
+                $(document).keydown(function(e) {
+                    // Check if Ctrl key is pressed and the "S" key is also pressed
+                    if (e.ctrlKey && (e.key === "s" || e.key === "S")) {
+                        e.preventDefault(); // Prevent the default browser behavior (e.g., saving the page)
+                        // Your custom code to handle Ctrl+S
+                        // Trigger click event on the button with ID "save-quiz"
+                        
+                        $('#save-quiz').trigger('click');
+                        console.log("Ctrl+S pressed");
+                        // Call a function or perform any action you want
+                    }
+
+                    if (e.ctrlKey && (e.key === "i" || e.key === "I")) {
+                        e.preventDefault(); // Prevent the default browser behavior (e.g., saving the page)
+                        // Your custom code to handle Ctrl+S
+                        // Trigger click event on the button with ID "save-quiz"
+                        
+                        var focusedInput = $(':focus');
+
+                        // Insert "~input" at the current cursor position
+                        var currentText = focusedInput.val();
+                        var cursorPosition = focusedInput.prop("selectionStart");
+                        var updatedText = currentText.slice(0, cursorPosition) + "~input" + currentText.slice(cursorPosition);
+                        focusedInput.val(updatedText);
+
+                        // Call a function or perform any action you want
+                    }
+
+
+                    if (e.ctrlKey && (e.key === "u" || e.key === "U")) {
+                        e.preventDefault(); // Prevent the default browser behavior (e.g., saving the page)
+                        // Your custom code to handle Ctrl+S
+                        // Trigger click event on the button with ID "save-quiz"
+                        
+                        var focusedInput = $(':focus');
+
+                        // Insert "~input" at the current cursor position
+                        var currentText = focusedInput.val();
+                        var cursorPosition = focusedInput.prop("selectionStart");
+                        var updatedText = currentText.slice(0, cursorPosition) + "<u>  </u>" + currentText.slice(cursorPosition);
+                        focusedInput.val(updatedText);
+
+                        // Call a function or perform any action you want
+                    }
+                });
+
 
 
                 $(document).on('click', function(event) {
@@ -905,7 +1092,84 @@
 
                                             });
                                             }
-                                            break;
+                            break;
+
+
+                            case 'multiple_choice2':
+                                
+                                var textareaValue = $('#multiplechoice2' + last_id).val();
+                                console.log("Question: ", textareaValue);
+                                console.log("Quiztype: ", last_quiz_type);
+                                
+                                // the textarea has some text
+                                if (textareaValue.length != 0) {
+
+
+    
+                                $.ajax({
+                                    type: "get",
+                                    dataType: 'json',
+                                    url: "/adminviewbook/createquestion",
+                                    data: { 
+                                        question : textareaValue,
+                                        typeofquiz : 10,
+                                        id: last_id
+                                            },
+                                    success: function(response) {
+
+                                        if (response == 1){
+                                    
+                                        Toast.fire({
+                                            icon: 'success',
+                                            title: 'All the changes have been saved'
+                                        })
+
+                                        }
+                                        
+                                    },
+                                    error: function(xhr) {
+                                        // Handle error here
+                                        Toast.fire({
+                                            type: 'error',
+                                            title: 'Something went wrong'
+                                        })
+                                    }
+                                    });
+                        
+
+
+                                
+                                    var i = 1;
+                                    $('.option' + last_id).each(function() {
+                                            // Get the value of the current label element using its id attribute
+                                            const value = $(this).text().trim();
+
+                                            console.log(i);
+                                            
+                                            $.ajax({
+                                                type: "get",
+                                                dataType: 'json',
+                                                url: "/adminviewbook/createchoices",
+                                                data: { 
+                                                    questionid : last_id,
+                                                    sortid: i,
+                                                    description : value
+                                                        },
+                                                success: function(response) {
+
+                                                    console.log("Choices Succesfully save!");
+                                                    
+                                                },
+                                                error: function(xhr) {
+                                                    // Handle error here
+                                                }
+                                            });
+
+                                            i+=1;
+
+                                            });
+                                            }
+                            break;
 
                                             
                             case 'enumeration':
@@ -1001,8 +1265,8 @@
                                             })
                                         }
                                         });
-                                        }
-                                        break;
+                                }
+                            break;
                             
 
                             case 'drag_drop':
@@ -1243,6 +1507,51 @@
                                                         });
 
                                                         break;
+                            case 'file_answer':
+
+                                var textareaValue2 = $('#file_item' + last_id).val();
+                                console.log("Question: ", textareaValue2);
+                                console.log("Quiztype: ", last_quiz_type);
+                
+                                if (textareaValue2.length != 0) {
+                                    $.ajax({
+                                        type: "get",
+                                        dataType: 'json',
+                                        url: "/adminviewbook/createquestion",
+                                        data: { 
+                                            question : textareaValue2,
+                                            typeofquiz : 11,
+                                            id: last_id
+                                                },
+                                        success: function(response) {
+
+                                            if (response == 1){
+                                        
+                                            Toast.fire({
+                                                icon: 'success',
+                                                title: 'All the changes have been saved'
+                                            })
+
+                                            }
+                                            
+                                        },
+                                        error: function(xhr) {
+                                            Toast.fire({
+                                                type: 'error',
+                                                title: 'File is too large'
+                                            });
+                                        }
+                                    });
+                                } else {
+                                    UIkit.notification({
+                                        message: '<span uk-type="type: close"></span> Points Required!',
+                                        status: 'error',
+                                        timeout: 1000
+                                    });
+                                    $('#Required' + last_id).focus();
+                                }
+                                break;
+
 
                             default:
                                 var quizTitle = $('#quizTitle h3').text();
@@ -1429,6 +1738,8 @@
                                                             '<option value="fill_n_blanks">Fill in the blanks</option>' +
                                                             '<option value="drag_drop">Drag & drop</option>' +
                                                             '<option value="image">Image Answer</option>' +
+                                                            '<option value="multiple_choice2">Multiple choice 2</option>' +
+                                                            '<option value="file_answer">File Answer</option>' +
                                                             '</select>' +
                                                         '</div>' +
                                                         '<div class="col-12">'+
@@ -1454,21 +1765,6 @@
                                                 '</div>' +
                                                 '</div>' +
                                             '</div>');
-
-
-
-                                    // $('.multiplechoice').summernote({
-                                    //         height: 200,
-                                    //         toolbar: [
-                                    //                 // [groupName, [list of button]]
-                                    //                 ['style', ['bold', 'italic', 'underline', 'clear']],
-                                    //                 // ['font', ['strikethrough', 'superscript', 'subscript']],
-                                    //                 ['fontsize', ['fontsize']],
-                                    //                 ['color', ['color']],
-                                    //                 ['para', ['ul', 'ol', 'paragraph']],
-                                    //                 // ['height', ['height']]
-                                    //                         ]
-                                    // });
 
 
                                         
@@ -1651,18 +1947,7 @@
                                     '</div>'
                                 );
 
-                                $('.multiplechoice').summernote({
-                                    height: 200,
-                                    toolbar: [
-                                            // [groupName, [list of button]]
-                                            ['style', ['bold', 'italic', 'underline', 'clear']],
-                                            // ['font', ['strikethrough', 'superscript', 'subscript']],
-                                            ['fontsize', ['fontsize']],
-                                            ['color', ['color']],
-                                            ['para', ['ul', 'ol', 'paragraph']],
-                                            // ['height', ['height']]
-                                                    ]
-                                });
+        
                                 break;
 
                             case 'short_answer':
@@ -1783,6 +2068,63 @@
                                     '</div>'
                                 );
                                 $('#image_item' + parentId).summernote({
+                                    height: 200,
+                                    toolbar: [
+                                        ['style', ['bold', 'italic', 'underline', 'clear']],
+                                        ['fontsize', ['fontsize']],
+                                        ['color', ['color']],
+                                        ['para', ['ul', 'ol', 'paragraph']]
+                                    ]
+                                });
+                                break;
+
+                            case 'multiple_choice2':
+                                option = 1;
+                                $('#quiztioncontent' + parentId).empty().append(
+                                    '<div class="row">' +
+                                    '<div class="col-12 m-2">' +
+                                    '<textarea class="form-control question multiplechoice2" placeholder="Untitled question" data-id="' + parentId + '" data-question-type="1" style="height: 20px !important;" id="multiplechoice2' + parentId + '"></textarea>' +
+                                    '</div>' +
+                                    '<div class="col-12" id="list_option' + parentId + '">' +
+                                    '<input class="form-check-input ml-2" type="radio" name="option1" value="1">' +
+                                    '<label class="form-check-label option' + parentId + ' ml-5" id="option' + parentId + '" contenteditable="true">Option ' + option + '</label>' +
+                                    '</div>' +
+                                    '</div>' +
+                                    '<div class="col-12">' +
+                                    '<div class="row justify-content-end p-3 mt-2">' +
+                                    '<button class="btn btn-success addoption" id="' + parentId + '">Add option</button>' +
+                                    '</div>' +
+                                    '<button class="btn btn-primary btn-sm answer-key-2" id="' + parentId + '">Answer key</button>' +
+                                    '</div>'
+                                );
+
+                                $('.multiplechoice2').summernote({
+                                    height: 200,
+                                    toolbar: [
+                                            // [groupName, [list of button]]
+                                            ['style', ['bold', 'italic', 'underline', 'clear']],
+                                            // ['font', ['strikethrough', 'superscript', 'subscript']],
+                                            ['fontsize', ['fontsize']],
+                                            ['color', ['color']],
+                                            ['para', ['ul', 'ol', 'paragraph']],
+                                            // ['height', ['height']]
+                                                    ]
+                                });
+                                break;
+
+
+                            case 'file_answer':
+                                $('#quiztioncontent' + parentId).empty().append(
+                                    '<div class="row">' +
+                                    '<div class="col-12 m-2">' +
+                                    '<h6><label class="ml-2" for="number_question' + parentId + '">Points:</label></h6>' +
+                                    '<input type="number" class="form-control m-2 addpoints is-invalid" placeholder="Required" data-id="' + parentId + '" id="Required' + parentId + '">' +
+                                    '<textarea class="form-control question" placeholder="Untitled instruction" data-id="' + parentId + '" data-question-type="11"  style="height: 20px !important;"  id="file_item' + parentId + '"></textarea>' +
+                                    '<input type="file" class="mt-2" disabled>' +
+                                    '</div>' +
+                                    '</div>'
+                                );
+                                $('#file_item' + parentId).summernote({
                                     height: 200,
                                     toolbar: [
                                         ['style', ['bold', 'italic', 'underline', 'clear']],
@@ -2023,6 +2365,142 @@
                                                                     </div></div>`;
 
                                             $('#quiztioncontent' + parentId).empty().append(html);
+                                        },
+                                    error: function(xhr) {
+                                        console.log("error");
+                                        // Handle error here
+                                    }
+
+                                    });
+                        }
+
+
+                        $(document).on('click', '.answer-key-2', function(){
+                        
+
+                        var parentId = $(this).attr('id');
+                        var question = $('#multiplechoice2' + parentId).val();
+                        console.log(question);
+                        
+                        if(question.length > 0){
+                            function saveChoices(parentId) {
+
+                                    $.ajax({
+                                        type: "get",
+                                        dataType: 'json',
+                                        url: "/adminviewbook/createquestion",
+                                        data: { 
+                                            question : question,
+                                            typeofquiz : 10,
+                                            id: last_id
+                                                },
+                                        success: function(response) {
+
+                                            if (response == 1){
+                                        
+                                            Toast.fire({
+                                                icon: 'success',
+                                                title: 'All the changes have been saved'
+                                            })
+
+                                            }
+                                            
+                                        },
+                                        error: function(xhr) {
+                                            // Handle error here
+                                            Toast.fire({
+                                                type: 'error',
+                                                title: 'Something went wrong'
+                                            })
+                                        }
+                                    });
+
+
+
+                                    var promises = []; // Array to store the promises
+
+                                    var i = 1;
+                                    $('.option' + parentId).each(function() {
+                                        const value = $(this).text();
+                                        console.log(i);
+                                        
+                                        var promise = $.ajax({
+                                            type: "get",
+                                            dataType: 'json',
+                                            url: "/adminviewbook/createchoices",
+                                            data: { 
+                                                questionid : parentId,
+                                                sortid: i,
+                                                description : value
+                                            }
+                                        });
+
+                                        promises.push(promise); // Add the promise to the array
+                                        i += 1;
+                                    });
+
+                                    return Promise.all(promises); // Return a promise that resolves when all AJAX requests are completed
+                            }
+
+
+                            saveChoices(parentId)
+                                .then(function() {
+                                    getQuestion2(parentId); // Call getQuestion function after all saveChoices AJAX requests are completed
+                                })
+                                .catch(function(error) {
+                                    // Handle error here
+                                });
+
+                            }else{
+                                UIkit.notification({
+                                        message: '<span uk-type="type: close"></span> Question Required!',
+                                        status: 'error',
+                                        timeout: 1000
+                                    });
+                            }
+
+                        });
+                        
+                        
+
+                        function getQuestion2(parentId){
+
+                            $.ajax({
+                                    type: "get",
+                                    dataType: 'json',
+                                    url: "/adminviewbook/getquestion",
+                                    data: { 
+                                        id: parentId
+                                
+                                            },
+                                    success: function(response) {
+                                            console.log(response);
+
+                                            $('#quiztype' + parentId).prop('disabled', true);
+
+
+                                            var html = `<div class="row">
+                                                            <div class="col-12 m-2">
+                                                                <label>1. ${response.question}</label>`;
+
+                                            response.choices.forEach(function(item) {
+                                                html += `<div class="form-check mt-2">
+                                                            <input data-question-type="${item.typeofquiz}" data-question-id="${response.id}" id="${item.id}" class="answer-field form-check-input" type="radio" data-type="1" name="${response.id}" value="${item.id}">
+                                                            <label for="${item.id}" class="form-check-label itemchoices">
+                                                                ${item.description}
+                                                            </label>
+                                                        </div>`;
+                                            });
+
+                                            html += `</div><div class="col-12 p-3 text-end">
+                                                                        <button class="btn btn-primary btn-sm answerdone2" id="${response.id}">Done</button>
+                                                                        <button class="btn btn-primary btn-sm setasBonus" id="${response.id}">Bonus</button>
+                                                                    </div></div>`;
+
+                                            $('#quiztioncontent' + parentId).empty().append(html);
+
+
+                                            
                                         },
                                     error: function(xhr) {
                                         console.log("error");
@@ -2458,6 +2936,87 @@
                                                     </div>`;
 
                                             $('#quiztioncontent' + id).empty().append(html);
+                                        },
+                                    error: function(xhr) {
+                                        console.log("Error");
+                                        // Handle error here
+                                    }
+                            });
+
+                        
+
+
+
+                        });
+
+
+
+                        $(document).on('click', '.answerdone2', function(){
+
+                            var id = $(this).attr("id");
+                            console.log(id);
+
+
+                            $.ajax({
+                                    type: "get",
+                                    dataType: 'json',
+                                    url: "/adminviewbook/returneditquiz",
+                                    data: { 
+                                        id: id
+                                
+                                            },
+                                    success: function(response)  {
+                                            console.log(response);
+
+                                            $('#quiztype' + id).prop('disabled', false);
+
+
+
+                                            var html = `<div class="row">
+                                                            <div class="col-12 m-2">
+                                                                <textarea class="form-control multiplechoice2" placeholder="Untitled question" id="multiplechoice${response.id}" > ${response.question}</textarea>
+                                                            </div>
+                                                        <div class="col-12" id="list_option${response.id}">`;
+
+                                            response.choices.forEach(function(item) {
+                                                html += `<div id="containerchoices${response.id}">
+                                                            <input class="form-check-input ml-2" type="radio" name="option${response.id}" value="${item.id}">
+                                                            <label class="form-check-label ml-5 option${response.id}" id="option${response.id}" contenteditable="true">
+                                                                ${item.description}`;
+                                                                
+                                                                if(item.answer == 1){
+                                                                    html +=`<span class="ml-2"><i class="fa fa-check" style="color:rgb(7, 255, 7)" aria-hidden="true"></i></span>`;
+                                                                }
+                                                                
+                                                                html += `<span id="deletechoice" data-id="${item.id}" class="pl-1"><i class="fa fa-trash" aria-hidden="true"></i></span>
+                                                            </label>
+                                                        </div>`;
+                                            });
+
+
+                                            html += `</div>
+                                                    <div class="col-12">
+                                                        <div class="row justify-content-end p-3 mt-2">
+                                                            <button class="btn btn-success addoption" id="${response.id}">Add option</button>
+                                                        </div>
+                                                        <button class="btn btn-primary btn-sm answer-key" id="${response.id}">Answer key</button>
+                                                    </div>`;
+
+                                            $('#quiztioncontent' + id).empty().append(html);
+                                                
+                                            //enable summernote
+                                            $('.multiplechoice2').summernote({
+                                                height: 200,
+                                                toolbar: [
+                                                        // [groupName, [list of button]]
+                                                        ['style', ['bold', 'italic', 'underline', 'clear']],
+                                                        // ['font', ['strikethrough', 'superscript', 'subscript']],
+                                                        ['fontsize', ['fontsize']],
+                                                        ['color', ['color']],
+                                                        ['para', ['ul', 'ol', 'paragraph']],
+                                                        // ['height', ['height']]
+                                                                ]
+                                            });
                                         },
                                     error: function(xhr) {
                                         console.log("Error");

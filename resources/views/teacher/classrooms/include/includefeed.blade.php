@@ -26,7 +26,7 @@
 
 
                                 <div class="uk-flex">
-                                    <button type="button" class="btn btn-sm btn-warning m-1" id="addattachment"><i class="fa fa-plus"></i> Attachment</button>
+                                    {{-- <button type="button" class="btn btn-sm btn-warning m-1" id="addattachment"><i class="fa fa-plus"></i> Attachment</button> --}}
                                     <button type="button" class="btn btn-sm btn-success m-1 float-right" id="submitform"><i class="icon-brand-telegram-plane"></i> Post</button>
                                 </div>
                             </form>

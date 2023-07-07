@@ -198,6 +198,26 @@ class StudentBookController extends Controller
                     }
                 }
 
+                if($item->typeofquiz == 11 ){
+
+                    $protocol = $request->getScheme();
+                    $host = $request->getHost();
+
+                    $rootDomain = $protocol . '://' . $host;
+
+                    $answer = DB::table('chapterquizrecordsdetail')
+                        ->where('questionid',$item->id)
+                        ->where('headerid', $recordid)
+                        ->where('deleted',0)
+                        ->value('fileurl');
+
+                    if(isset($answer)){
+                        $item->fileurl = $rootDomain.'/'.$answer;
+                    }else{
+                        $item->fileurl = "";
+                    }
+                }
+
                 if($item->typeofquiz == 9 ){
 
                     $protocol = $request->getScheme();
@@ -339,6 +359,7 @@ class StudentBookController extends Controller
 
             $chapterquizsched = DB::table('chapterquizsched')
                             ->where('chapterquizid',$quizid)
+                            ->orderBy('createddatetime', 'desc')
                             ->select(
                                 'chapterquizsched.classroomid',
                                 'chapterquizsched.datefrom',
@@ -445,6 +466,9 @@ class StudentBookController extends Controller
                 $score->maxpoints = $maxpoints;
             }
 
+            date_default_timezone_set('Asia/Manila');
+            $now = date('Y-m-d H:i:s');
+
 
             
 
@@ -457,6 +481,7 @@ class StudentBookController extends Controller
                         ->with('lastattempt',$lastattempt)
                         ->with('coverage',$coverage)
                         ->with('title',$title)
+                        ->with('now',$now)
                         ->with('maxpoints',$maxpoints);
     
 
@@ -657,6 +682,55 @@ class StudentBookController extends Controller
 
         return $data;
 
+    }
+
+
+    public function saveFile(Request $request)
+    {
+        $headerId = $request->get('headerId');
+        $question_id = $request->get('question_id');
+        $file = $request->file('answer');
+
+
+
+        $checkIfexist = DB::table('chapterquizrecordsdetail')
+            ->where('headerid', $headerId)
+            ->where('questionid', $question_id)
+            ->count();
+
+        $data = [
+            'headerid' => $request->get('headerId'),
+            'questionid' => $request->get('question_id'),
+            'typeofquestion' => $request->get('questionType'),
+        ];
+
+        // Save the file locally
+        $fileName = time() . '_' . $file->getClientOriginalName();
+        $file->move(public_path('quizzes'), $fileName);
+
+        // Store the file URL path
+        $data['fileurl'] = 'quizzes/' . $fileName;
+
+        // Make the complete path of the file
+        $protocol = $request->getScheme();
+        $host = $request->getHost();
+        $rootDomain = $protocol . '://' . $host;
+
+        // Insert or update data
+        if ($checkIfexist == 0) {
+            DB::table('chapterquizrecordsdetail')->insert($data);
+        } else {
+            $data['updateddatetime'] = \Carbon\Carbon::now('Asia/Manila');
+            $data['updatedby'] = auth()->user()->id;
+            DB::table('chapterquizrecordsdetail')
+                ->where('headerid', $request->get('headerId'))
+                ->where('questionid', $request->get('question_id'))
+                ->update($data);
+        }
+
+        $data['fileurl'] = $rootDomain . '/' . $data['fileurl'];
+
+        return response()->json(['status' => 'success', 'fileUrl' => $data['fileurl']]);
     }
 
 }

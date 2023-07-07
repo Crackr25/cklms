@@ -50,6 +50,13 @@
       'Bigbluebutton' => 'JoisarJignesh\\Bigbluebutton\\Facades\\Bigbluebutton',
     ),
   ),
+  'laravel/sanctum' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Laravel\\Sanctum\\SanctumServiceProvider',
+    ),
+  ),
   'laravel/slack-notification-channel' => 
   array (
     'providers' => 

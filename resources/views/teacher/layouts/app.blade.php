@@ -30,6 +30,9 @@
     <!-- icons -->
     <link rel="stylesheet" href="{{asset('templatefiles/icons.css')}}">
 
+
+     <link rel="stylesheet" href="{{asset('plugins/fullcalendar/main.css')}}">
+    <link rel="stylesheet" href="{{asset('plugins/fullcalendar/main.min.css')}}">
     <!-- font-awesome -->
     {{-- <link rel="stylesheet" href="{{asset('plugins/font-awesome/css/font-awesome.min.css')}}"> --}}
 
@@ -45,6 +48,9 @@
         @include('teacher.inc.topnav')
         @include('teacher.inc.sidenav')
 
+
+        @yield('headercover')
+        
         <div class="page-content">
             @yield('content')
         </div>
@@ -71,6 +77,8 @@
         <script src="{{asset('plugins/sweetalert2/sweetalert2.all.min.js')}}"></script>
         <script src="{{asset('plugins/datatables/jquery.dataTables.js')}}"></script>
         <script src="{{asset('plugins/datatables-bs4/js/dataTables.bootstrap4.js')}}"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+        <script src="{{asset('plugins/fullcalendar/main.min.js')}}"></script>
         @yield('script')
 
     </div>

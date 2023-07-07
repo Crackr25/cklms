@@ -94,8 +94,10 @@
         @include('admin.inc.topnav')
 
         <!-- content -->
+        
         <div class="page-content">
-
+        
+        
 
         @yield('content')
 
