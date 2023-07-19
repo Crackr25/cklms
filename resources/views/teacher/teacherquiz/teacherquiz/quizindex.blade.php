@@ -711,6 +711,78 @@
         var last_quiz_type = 'multiple_choice';
 
 
+        function calculate(id) {
+            var total = 0;
+
+            var promise = new Promise(function(resolve, reject) {
+                $('.fill' + last_id).each(function() {
+                    const value = $(this).val();
+                    var description = $(this).val();
+                    var keyword = "~input";
+                    var count = (description.match(new RegExp(keyword, "g")) || []).length;
+
+                    total += parseInt(count);
+                    console.log('Count: ' + count);
+                });
+
+                var questionid = id;
+                resolve({ total: total, questionid: questionid });
+            });
+
+            promise.then(function(data) {
+                console.log('Total: ' + data.total);
+                
+                $.ajax({
+                    type: "GET",
+                    url: "/teacherquiz/quiz/fill/setpoints",
+                    data: {
+                        total: data.total,
+                        questionid: data.questionid
+                    }
+                });
+            });
+        }
+
+
+
+        function calculateDrag(id) {
+            console.log("Here:");
+            var total = 0;
+            console.log(id);
+
+            var promise = new Promise(function(resolve, reject) {
+                $('.drop' + id).each(function() {
+                    const value = $(this).val();
+                    var description = $(this).val();
+                    var keyword = "~input";
+                    var count = (description.match(new RegExp(keyword, "g")) || []).length;
+
+                    total += parseInt(count);
+                    console.log('Count: ' + count);
+                });
+
+                var questionid = id;
+
+                resolve({ total: total, questionid: questionid });
+            });
+
+            promise.then(function(data) {
+                console.log('Totalpointsdapat: ' + data.total);
+                console.log('ID: ' + data.questionid);
+                $.ajax({
+                    type: "GET",
+                    url: "/teacherquiz/quiz/drag/setpoints",
+                    data: {
+                        total: data.total,
+                        questionid: data.questionid
+                    }
+                });
+            });
+        }
+
+
+
+
 
         $(document).ready(function(){
             
@@ -1163,6 +1235,8 @@
                                     break;
 
                                 case 'drag_drop':
+
+
                                     $.ajax({
                                     type: "get",
                                     dataType: 'json',
@@ -1188,6 +1262,8 @@
 
                                     var i = 1;
                                     console.log("Drag and Drop");
+                                    
+
                                     $('.drag' + last_id).each(function() {
                                     const value = $(this).text().trim();
                                     console.log(value);
@@ -1217,9 +1293,14 @@
                                     });
 
                                     var i = 1;
+
+                                    calculateDrag(last_id)
                                     $('.drop' + last_id).each(function() {
                                     const value = $(this).val();
                                     console.log(value);
+
+
+
 
                                     $.ajax({
                                         type: "get",
@@ -1321,6 +1402,8 @@
                                         console.log(value);
 
                                         if (i == 1) {
+
+                                            calculate(last_id);
                                             $.ajax({
                                                 type: "get",
                                                 url: "/teacherquiz/createquestion",
@@ -1388,6 +1471,7 @@
 
                     }
                 });
+
                     
 
 
@@ -2126,6 +2210,7 @@
 
                             var promises = []; // Array to store the promises
 
+                    
                             $('.fill' + parentId).each(function() {
                                 const value = $(this).val();
                                 console.log(i);
@@ -2167,6 +2252,7 @@
                                     // Handle error here
                                 });
 
+                            console.log('parentId');
                             console.log(parentId);
                         });
 
@@ -2246,7 +2332,7 @@
                                                     <button class="btn btn-success add_fill_question"  id="${response.id}">Add fill question</button>
                                                     </div>
                                                     <div class="col-12">
-                                                    <button class="btn btn-primary btn-sm answer-key id="${response.id}">Answer key</button>
+                                                    <button class="btn btn-primary btn-sm answer-key-fill" id="${id}">Answer key</button>
                                                     </div>`
 
                                         $('#quiztioncontent' + id).empty().append(html);
@@ -2292,7 +2378,7 @@
 
                         $(document).on('click', '.answer-key-drag', function() {
                             var parentId = $(this).attr('id');
-
+                        
                             var i = 1;
                             var dragPromises = [];
                             console.log("Drag and Drop");

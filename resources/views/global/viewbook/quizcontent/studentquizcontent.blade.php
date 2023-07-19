@@ -349,16 +349,10 @@
 
                                                     @foreach ($item->choices as $questioninfo)
                                                     <div class="form-check mt-2">
-                                                        @if($questioninfo->answer == 1)
-
-                                                        <input data-question-type="{{$item->typeofquiz}}" data-question-id="{{  $item->id }}" id="{{ $questioninfo->id}}" class="answer-field form-check-input" type="radio" name="{{ $item->id }}" value="{{ $questioninfo->id}}" checked>
-                                                        
-
+                                                        @if($questioninfo->id == $item->answer)
+                                                            <input data-question-type="{{$item->typeofquiz}}" data-question-id="{{  $item->id }}" id="{{ $questioninfo->id}}" class="answer-field form-check-input" type="radio" name="{{ $item->id }}" value="{{ $questioninfo->id}}" checked>
                                                         @else
-
-
-                                                        <input data-question-type="{{$item->typeofquiz}}" data-question-id="{{  $item->id }}" id="{{ $questioninfo->id}}" class="answer-field form-check-input" type="radio" name="{{ $item->id }}" value="{{ $questioninfo->id}}">
-                                                        
+                                                            <input data-question-type="{{$item->typeofquiz}}" data-question-id="{{  $item->id }}" id="{{ $questioninfo->id}}" class="answer-field form-check-input" type="radio" name="{{ $item->id }}" value="{{ $questioninfo->id}}">
                                                         @endif
                                                         <label for="{{ $item->id }}" class="form-check-label">
                                                             {{$questioninfo->description}}
@@ -411,7 +405,8 @@
                             <div class="col-md-12 d-flex justify-content-end">
                                 <div class="btn btn-success btn-lg" data-id="{{$headerid}}" id="save-quiz">Submit</div>
                             </div>
-                        </div>
+                        </div>                        
+                    
                         </div>
                     
                     <button id="scroll-to-bottom" class="btn btn-dark btn-lg mb-3 mr-3" style= "
@@ -420,7 +415,7 @@
                         bottom: 0px;
                         left: 10px;
                         padding: 9px 15px 9px 15px !important;
-                    }"><i class="fas fa-arrow-circle-down"></i></button>
+                    "><i class="fas fa-arrow-circle-down"></i></button>
         </div> 
         </div> 
         

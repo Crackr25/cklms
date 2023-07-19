@@ -169,7 +169,39 @@
 
             var id = $(this).data('id');
 
-            console.log('Reset Password: ', id);
+            Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, reset!'
+                    }).then((result) => {
+                        console.log(result)
+                    if (result.value == true) {
+
+
+                        $.ajax({
+                            url: '/admin/passwordgenerator/reset',
+                            type:"GET",
+                            data: {
+                                id: id,
+                            },
+                            success: function(data){
+                                    Swal.fire(
+                                        'Done!',
+                                        'The password has been reset.',
+                                        'success'
+                                        )
+                            
+                            }
+                        })
+
+                    }
+                    })
+
+
 
 
 

@@ -750,7 +750,7 @@ class ViewBookController extends Controller
                         }
                         
                     }else{
-
+                        $item->detailsid = -1;
                         $item->answer = 0;
                         $item->check = 0;
 
@@ -815,7 +815,7 @@ class ViewBookController extends Controller
                         }
                         
                     }else{
-
+                        $item->detailsid = -1;
                         $item->answer = 0;
                         $item->check = 0;
 
@@ -908,7 +908,8 @@ class ViewBookController extends Controller
 
                             $check='';
 
-                            if($checkanswer == $fillItem->answer){
+                            if (strtolower($checkanswer) == strtolower($fillItem->answer)) {
+
 
                                 $chapterdetailsid = DB::table('chapterquizrecordsdetail')
                                     ->where('questionid',$fillItem->id)
@@ -955,13 +956,13 @@ class ViewBookController extends Controller
 
                             foreach($answer as $ans){
 
-                                $checkanswer = DB::table('lesson_quiz_drop_answer')
+                                $checkanswer = DB::table('lesson_quiz_fill_answer')
                                     ->where('headerid',$fillItem->id)
                                     ->where('sortid', $ans->sortid)
                                     ->value('answer');
 
-                                if($checkanswer == $ans->stringanswer){
-
+                                if(strtolower($checkanswer) == strtolower($ans->stringanswer)){
+                    
                                     $score+= 1;
 
                                     $chapterdetailsid = DB::table('chapterquizrecordsdetail')
@@ -1139,9 +1140,10 @@ class ViewBookController extends Controller
 
                         if($item->ordered == 1){
                             $countval = DB::table('lesson_quiz_enum_answer')
-                            ->where('answer', $new)
-                            ->where('headerid', $item->id)
-                            ->count();
+                                            ->whereRaw('LOWER(answer) = ?', strtolower($new))
+                                            ->where('headerid', $item->id)
+                                            ->count();
+
 
                             if($countval > 0){
                                 $answerArray[] = 1;
@@ -1170,10 +1172,11 @@ class ViewBookController extends Controller
                         }else{
 
                             $countval = DB::table('lesson_quiz_enum_answer')
-                            ->where('answer', $new)
-                            ->where('headerid', $item->id)
-                            ->where('sortid', $key + 1)
-                            ->count();
+                                        ->whereRaw('LOWER(answer) = ?', strtolower($new))
+                                        ->where('headerid', $item->id)
+                                        ->where('sortid', $key + 1)
+                                        ->count();
+
 
                             if($countval > 0){
                                 $answerArray[] = 1;

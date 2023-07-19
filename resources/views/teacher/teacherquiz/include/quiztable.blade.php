@@ -11,7 +11,7 @@
                                 <img src="{{asset('assets/images/elearning8.jpg')}}">
                                 <span class="play-button-trigger"></span>
                             </a>
-                                <button class="close-button" data-id="{{$quiz->id}}">×</button> <!-- Add the close button -->
+                                <button class="close-button1" data-id="{{$quiz->id}}">×</button> <!-- Add the close button -->
                             </div>
                                 <div class="course-card-body">
                                     <div class="dropdown">

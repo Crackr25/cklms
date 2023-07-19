@@ -324,11 +324,20 @@
 
                                         <span style="font-weight:600;font-size:1.0pc">
                                             Enumeration
+
+                                            @if($item->ordered == 0)
+                                                (Order)
+                                            @else
+                                                (Random)
+                                            @endif
                                         </span>
 
                                         <ol class="list-group list-group-numbered p-3" type="A">
                                         <li>
-                                            <p>{{$item->question}}</p>
+                                            
+                                            <p>{{$item->question}} </p>
+
+                                            
                                         <ol>
 
                                         @php
@@ -343,7 +352,9 @@
 
                                             <div class="col-md-12">
                                                 <li>
-                                                    <p><input data-question-id="{{ $item->id }}" data-sortid={{ $i+1 }} data-question-type="8" class="answer-field d-inline form-control q-input" type="text"></p>
+                                                    <p><input data-question-id="{{ $item->id }}" data-sortid="{{ $i+1 }}" value="{{ $item->enumanswer[$i]->answer }}" data-question-type="8" class="answer-field d-inline form-control q-input" type="text"></p>
+                                                </li>
+
                                                 </li>
                                             </div>
                                         

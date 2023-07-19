@@ -143,6 +143,34 @@
                                 </div>
                             </div> --}}
 
+                            {{-- <div class="circle-points" >
+                                <input type="checkbox" id="menu_opener_id_{{$item->id}}" class="menu_opener">
+                                <label for="menu_opener_id_{{$item->id}}" data-detailsid = "{{ $item->detailsid  }}" data-maxpoint="{{$item->points }}" data-points-edit="{{$item->id}}" class="menu_opener_label student-score">
+                                    
+                                    @if($item->check == 1)
+                                            1
+                                    @else
+                                            0
+                                    @endif
+                                
+                                
+                                </label>
+
+                                <div class="link_one" data-detailsid = "{{ $item->detailsid  }}"   data-question-id="{{$item->id}}">
+                                    <div class="link_general">
+                                        0
+                                    </div>
+                                </div>
+
+                                <div class="link_three" data-detailsid = "{{ $item->detailsid  }}"   data-question-id="{{$item->id}}">
+                                    <div class="link_general">
+                                        {{$item->points}}
+                                    </div>
+                                </div>
+
+                            </div> --}}
+
+
                             <div class="circle-points" >
                                 <input type="checkbox" id="menu_opener_id_{{$item->id}}" class="menu_opener">
                                 <label for="menu_opener_id_{{$item->id}}" data-detailsid = "{{ $item->detailsid  }}" data-maxpoint="{{$item->points }}" data-points-edit="{{$item->id}}" class="menu_opener_label student-score">
@@ -472,7 +500,7 @@
                     </div>
                     @endif
 
-                    @if($item->typeofquiz == 1)
+                    @if($item->typeofquiz == 10)
                             <!-- multiple choice -->
                             <div class="card mt-5 ml-3 editcontent" id="quiz-question-{{$item->id}}">
                                 <div class="card-body">

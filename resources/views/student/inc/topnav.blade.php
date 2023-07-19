@@ -184,19 +184,4 @@
     <a class="uk-navbar-toggle uk-icon uk-close" uk-close="" uk-toggle="target: .nav-overlay; animation: uk-animation-fade" href="#"><svg width="14" height="14" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg" data-svg="close-icon"><line fill="none" stroke="#000" stroke-width="1.1" x1="1" y1="1" x2="13" y2="13"></line><line fill="none" stroke="#000" stroke-width="1.1" x1="13" y1="1" x2="1" y2="13"></line></svg></a>
 </div>
 
-<!-- search overlay-->
-<div id="searchbox">
-    <div class="search-overlay"></div>
-    <div class="search-input-wrapper">
-        <div class="search-input-container">
-            <div class="search-input-control">
-                <span class="icon-feather-x btn-close uk-animation-scale-up" uk-toggle="target: #searchbox; cls: is-active"></span>
-                <div class=" uk-animation-slide-bottom">
-                    <input type="text" name="search" autofocus="" required="">
-                    <p class="search-help">Type the code of the classroom you are looking for</p>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 

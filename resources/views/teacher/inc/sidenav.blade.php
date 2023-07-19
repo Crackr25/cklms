@@ -48,13 +48,13 @@
             </a>
         
         </li>
-        <li>
+        {{-- <li>
             <a href="#" uk-toggle="target: #searchbox; cls: is-active">
                 <div class="d-flex flex-column align-items-center">
                 <i class="fa fa-search"></i>
                 <span class="badge" style="font-size:10px">Search</span>
                 </div>
             </a>
-        </li>
+        </li> --}}
     </ul>
 </div>

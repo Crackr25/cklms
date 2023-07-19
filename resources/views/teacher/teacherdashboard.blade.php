@@ -3,12 +3,14 @@
 
 @section('headercover')
     {{-- <div class="home-hero pt-2" style="background-image: url({{asset('assets/images/Header.png')}}); background-repeat:no-repeat;background-size:cover;background-position:center center; height: 130%;"> --}}
-    <div class="home-hero pt-2 " style="background-color: #830c14;height: 15%; padding-bottom: 0px !important;">
+    <div class="home-hero pt-2 " style="background-color: {{$schoolinfo->schoolcolor}};height: 15%; padding-bottom: 0px !important;">
         <div class="uk-width-1-1">
             <div class="page-content-inner uk-position-z-index">
-                <img src="{{asset('assets/logo.png')}}" alt="Logo" class="uk-align-center" style="height: 250px; width: 250px; float: left; margin-right: 10px;">
-                <h1 class="text-white pt-5" style="font-size: 50px">Liceo de Cagayan University</h1>
-                <h4 class="text-white">Rodolfo N. Pelaez Blvd., Kauswagan, Cagayan de Oro City, 9000, Misamis Oriental, Philippines</h4>
+                @if(isset($schoolinfo->picurl))
+                <img src="{{$schoolinfo->picurl}}" alt="Logo" class="uk-align-center" style="height: 250px; width: 250px; float: left; margin-right: 10px;">
+                @endif
+                <h1 class="text-white pt-5" style="font-size: 50px">{{$schoolinfo->schoolname}}</h1>
+                <h4 class="text-white">{{$schoolinfo->address}}</h4>
             </div>
         </div>
     </div>
@@ -34,9 +36,43 @@
 
 
 .image-wrapper {
-  height: 320px; /* Set the desired height */
+  height: 250px; /* Set the desired height */
   overflow: hidden; /* Hide any overflowing content */
 }
+
+
+
+
+    .title-word {
+    font-size: 48px;
+    display: inline-block;
+    animation: color-animation 4s linear infinite;
+    }
+
+    #hours {
+    --color-1: #DF8453;
+    --color-2: #3D8DAE;
+    --color-3: #E4A9A8;
+    }
+
+    #minutes {
+    --color-1: #DBAD4A;
+    --color-2: #ACCFCB;
+    --color-3: #17494D;
+    }
+
+    @keyframes color-animation {
+    0%    {color: var(--color-1)}
+    32%   {color: var(--color-1)}
+    33%   {color: var(--color-2)}
+    65%   {color: var(--color-2)}
+    66%   {color: var(--color-3)}
+    99%   {color: var(--color-3)}
+    100%  {color: var(--color-1)}
+    }
+
+
+
 
 </style>
 
@@ -66,6 +102,17 @@
                                 <li>
                                     <div class="uk-grid" uk-grid="">
                                         <div class="uk-width-1-3@m">
+                                            Grade Level:
+                                        </div>
+                                        <div class="uk-width-2-3@m">
+                                            <span id="modal_book_grade">
+                                            </span>
+                                        </div>
+                                    <div>
+                                </li>
+                                <li>
+                                    <div class="uk-grid" uk-grid="">
+                                        <div class="uk-width-1-3@m">
                                             Date Added:
                                         </div>
                                         <div class="uk-width-2-3@m">
@@ -74,42 +121,38 @@
                                         </div>
                                     <div>
                                 </li>
-                                
                             </ul>
                         </div>
                     </div>
                 </div>
                 <div class="uk-margin">
-                    <a href="#" target="_blank" type="button" class="btn btn-info mt-2 uk-first-column" id="modal_view_book_button">
+                    {{-- <a href="#" target="_blank" type="button" class="btn btn-info mt-2 uk-first-column" id="modal_view_book_button">
                         <i class="icon-feather-book-open mr-2h mr-2"></i>View Book
-                    </a>
+                    </a> --}}
                 </div>
             </div> 
         </div>
         <div class="row">
             <div class="col-md-8">
-                <div class="d-flex justify-content-between align-items-center mt-4" style="background-color: rgba(255, 255, 255, 0.8); border-radius: 10px; padding: 10px;">
+                <div class="d-flex justify-content-between align-items-center mt-4" style="background-color: rgba(255, 255, 255, 0.8); border-radius: 10px; ">
                     <div class="d-flex align-items-center ">
                         <div>
                             <img src="{{asset('/avatar/avatar.png')}}" alt="Logo" style="height: 100px; width: 100px;">
                         </div>
                         <div class="">
-                            <span style="line-height: 13px"><span class="h6">{{ explode(' ', auth()->user()->name)[0] }}'S DASHBOARD </span> <br> {{auth()->user()->email}}</span>
+                            <span style="line-height: 13px"><span class="h6">{{ strtoupper(explode(' ', auth()->user()->name)[0]) }}'S DASHBOARD </span> <br> {{auth()->user()->email}}</span>
                             {{-- <p class="align-items-center"></p> --}}
                         </div>
                     </div>
 
                     <div class="ml-5 mt-2 align-self-end">
-                        <p style="font-size: 10px" class="pl-5 text-muted"><b>Teacher</b></p>
+                        <p style="font-size: 10px" class="pl-5  text-muted"><b>Teacher</b></p>
                     </div>
                 </div>
 
                 <div class="col-md-5 bg-primarys">
                         <h4 class="mb-0 mt-3">Classrooms</h4>
                         <select class="rounded-pill mt-2 p-2 select2" id="gradeSelect">
-                            <option>Grade 1</option>
-                            <option>Grade 2</option>
-                            <option>Grade 3</option>
                             <!-- Add more grade options as needed -->
                         </select>
                 </div>
@@ -120,7 +163,7 @@
                 </div>
                 {{--  --}}
 
-                <h4 class="mt-5">Book</h4>
+                <h4 class="mt-5">Books Available</h4>
 
 {{-- 
                 @foreach($classrooms as $classroom)
@@ -142,7 +185,7 @@
 
 
                 <div class="row">
-                    <div class="col-md-4">
+                    {{-- <div class="col-md-4">
                         <a href="#" class="uk-text-bold book_info" uk-toggle="target: #modal-book-info" data-id="1" data-title="Book 1" data-cover="path/to/book1.jpg" data-added="July 1, 2023 10:00 AM" view-book-id="1-1-1">
                             <div class="image-wrapper">
                                 <img src="books/Animation/anime cover (Medium).jpg" class="mb-2 w-100 shadow rounded" alt="Book 1">
@@ -165,8 +208,25 @@
                             </div>
                             <div class="image-title">Book 3</div>
                         </a>
-                    </div>
+                    </div> --}}
+
+
+                    @foreach($teacherbooks as $item)
+                            <div class="col-md-3">
+                                <div class="animate-this">
+                                <a href="#" class="uk-text-bold book_info" uk-toggle="target: #modal-book-info" data-id="{{$item->id}}" data-grade="{{$item->levelname}}" data-title="{{$item->title}}" data-cover="{{ asset($item->picurl)}}" data-added="{{\Carbon\Carbon::create($item->createddatetime)->isoFormat('MMMM DD, YYYY hh:mm A')}}" view-book-id="{{$item->id}}-67-{{$item->id}}">
+                                    <div class="image-wrapper">
+                                        <img src="{{ asset($item->picurl) }}" class="mb-2 w-100 shadow rounded" alt="{{$item->title}}">
+                                    </div>
+                                    <div class="image-title">{{$item->title}}</div>
+                                </a>
+                                </div>
+                            </div>
+                    @endforeach
                 </div>
+
+
+                
 
 
 
@@ -250,10 +310,22 @@
                         </ul>
                 </div> --}}
 
+                <div class="mt-4 p-4 bg-white text-center rounded animate-this">
+                    
+                    <h4 class="">Clock</h4>
+                    <hr>
+                    <div id="clock" class="clock">
+                        <span class= "title-word" id="hours">00 </span>
+                        <span class= "title-word" id="minutes">00 </span>
+                        <span class= "title-word" id="meridiem"> </span>
+                    </div>
+
+                </div>
+
                 <div class="my-4 p-4 bg-white rounded">
                     <h4 class="">Timeline</h4>
                     <ul class="list-group rounded">
-                        <li class="list-group-item d-flex justify-content-between align-items-center list-group-flush">
+                        {{-- <li class="list-group-item d-flex justify-content-between align-items-center list-group-flush">
                             <div class="d-flex flex-column">
                                 <h5 class="mb-1">Quiz 1</h5>
                                 <p class="mb-1">Book 1</p>
@@ -268,7 +340,25 @@
                                 <small class="text-muted">July 2, 2023</small>
                             </div>
                             <span class="badge bg-info rounded-pill text-white">Upcoming</span>
-                        </li>
+                        </li> --}}
+                        @foreach($quizsched as $item)
+
+                            <a href="/quiz/212-{{$item->classroomid}}-{{$item->bookid}}" target="_blank">
+
+                                <li class="list-group-item d-flex justify-content-between align-items-center list-group-flush">
+                                    <div class="d-flex flex-column">
+                                        <h5 class="mb-1">{{$item->title}}</h5>
+                                        <p class="mb-1">{{$item->booktitle}} - {{$item->classroomname}}</p>
+                                        <small class="text-muted">{{ \Carbon\Carbon::create($item->datefrom)->isoFormat("MMMM DD, YYYY") }}</small>
+                                    </div>
+                                    <span class="badge {{$item->badge}}">{{$item->timeline}}</span>
+                                </li>
+
+                            </a>
+
+                        @endforeach
+
+
                     </ul>
                 </div>
 
@@ -277,22 +367,14 @@
 
 
                 <div class="my-3 p-4 bg-white rounded" id="calendar"></div>
-                <div class="my-5 p-4 bg-white text-center rounded">
-                    <h4 class="">Clock</h4>
-                    <hr>
-                    <div id="clock" class="display-4"></div>
-                </div>
+                
                 <div class="my-5  p-4">
 
                 </div>
             </div>
         </div>
 
-        <footer class="bg-light text-center py-4">
-                        <div class="container">
-                            <p class="m-0">© 2023 Powered by CK</p>
-                        </div>
-        </footer>
+       
 
     </div>
 
@@ -304,19 +386,26 @@
             var now = new Date();
             var hours = now.getHours();
             var minutes = now.getMinutes();
-            var seconds = now.getSeconds();
+            var meridiem = hours >= 12 ? 'PM' : 'AM';
+
+            // Convert hours to 12-hour format
+            hours = (hours + 11) % 12 + 1;
 
             // Add leading zeros if necessary
             hours = hours.toString().padStart(2, '0');
             minutes = minutes.toString().padStart(2, '0');
-            seconds = seconds.toString().padStart(2, '0');
 
-            var timeString = hours + ':' + minutes + ':' + seconds;
-            document.getElementById('clock').textContent = timeString;
+
+            document.getElementById('hours').textContent = hours + ':';
+            document.getElementById('minutes').textContent = minutes;
+            document.getElementById('meridiem').textContent = meridiem;
         }
 
-            // Update the clock every second
-            setInterval(updateClock, 1000);
+
+            // Call the updateClock function every second to keep the clock updated
+        setInterval(updateClock, 1000);
+
+
 
         var gradeid;
         var take=0;
@@ -327,6 +416,15 @@
                     selectedBook = $(this).attr('data-id');
 
                     $('#modal_book_added').text($(this).attr('data-added'))
+                    console.log($(this).attr('data-grade').length);
+
+                    if($(this).attr('data-grade').length == 0){
+
+                        $('#modal_book_grade').text('Grade not Assigned.');
+
+                    }else{
+                        $('#modal_book_grade').text($(this).attr('data-grade'));
+                    }
                     $('#modal_book_title').text($(this).attr('data-title'))
                     $('#modal_book_cover').attr('src',$(this).attr('data-cover'))
                     $('#modal_view_book_button').attr('href','/viewbook/'+$(this).attr('view-book-id'))
@@ -344,7 +442,6 @@
                 loadClassroom()
 
 
-             
             })
 
 
@@ -358,6 +455,7 @@
             
 
             function loadClassroom(){
+
 
                 $('#classroom_table_holder').empty();
 

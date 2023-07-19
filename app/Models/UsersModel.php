@@ -17,11 +17,10 @@ class UsersModel extends Model
             ->get();
 
         // return $employees;
-        $students = DB::table('studinfo')
-            ->select('studinfo.id','studinfo.userid','studinfo.firstname','studinfo.middlename','studinfo.lastname','studinfo.suffix','studinfo.gender','type','picurl','users.email','users.isDefault')
-            ->join('users','studinfo.userid','=','users.id')
-            ->where('studinfo.deleted','0')
-            ->whereIn('studinfo.studstatus',[1,2,4])
+        $students = DB::table('students')
+            ->select('students.id','students.userid','students.firstname','students.middlename','students.lastname','students.suffix','students.gender','type','picurl','users.email','users.isDefault')
+            ->join('users','students.userid','=','users.id')
+            ->where('students.deleted','0')
             ->get();
             
         if(count($students)>0)

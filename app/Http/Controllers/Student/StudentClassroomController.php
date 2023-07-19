@@ -991,6 +991,7 @@ class StudentClassroomController extends Controller
 
             $checkifExist = DB::table('classroomstudents')
                             ->where('studentid',$studentid)
+                            ->where('classroomstudents.deleted',0)
                             ->where('classroomid',$classroom->id)
                             ->count();
 
@@ -1003,8 +1004,7 @@ class StudentClassroomController extends Controller
                 return 1;
 
             }
-          
-           
+ 
         }else{
 
             return 0;

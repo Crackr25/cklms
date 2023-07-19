@@ -89,7 +89,8 @@
         <script src="{{asset('plugins/sweetalert2/sweetalert2.all.min.js')}}"></script>
         <script src="{{asset('plugins/datatables/jquery.dataTables.js')}}"></script>
         <script src="{{asset('plugins/datatables-bs4/js/dataTables.bootstrap4.js')}}"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+        {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script> --}}
+        <script src="{{asset('plugins/moment/moment.min.js') }}"></script>
         <script src="{{asset('plugins/fullcalendar/main.min.js')}}"></script>
         @yield('script')
 
@@ -118,7 +119,8 @@
             })
 
             $(document).on('change','input[name=search]',function(){
-              
+            
+
                 $.ajax({
                     url: '/searchclassroom?roomcode='+$(this).val(),
                     type:"GET",
@@ -131,7 +133,7 @@
 
                         }
                         else if(data == 1){
-                           
+        
                             $('.search-help').text('You already joined this room!')
                         }
                         else{

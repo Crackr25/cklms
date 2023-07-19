@@ -229,7 +229,7 @@
 
     <div id="wrapper">
         {{-- <div class="page-content"> --}}
-            <div class="uk-grid-collapse uk-grid" uk-grid="">
+            <div class="uk-grid-collapse uk-grid" id="maincontent" uk-grid="">
                 <div class="uk-width-3-4@m bg-white uk-first-column" id="lesson_content_holder">
                         {{-- <img src="{{asset($bookinfo->picurl)}}" alt="" > --}}
                 </div>
@@ -240,10 +240,15 @@
                 <div class="uk-width-1-4@m uk-overflow-hidden vidlist-3-container">
                     <div uk-sticky="" class="uk-sticky uk-sticky-fixed" style="position: fixed; top: 0px; width: 298px;">
                         <h5 class="bg-gradient-grey text-white py-4 p-3 mb-0"> {{$bookinfo->title}}</h5>
+                        <div class="uk-margin">
+                            <input class="uk-input uk-width-medium m-2" id="search-lesson" type="text" placeholder="Search...">
+                        </div>
+
                         <ul class="uk-child-width-expand mb-0 uk-tab" uk-switcher="animation: uk-animation-slide-right-small, uk-animation-slide-left-small" uk-tab="">
-                            <li class="uk-active"><a href="#" aria-expanded="true"> Contents</a></li>
-                            {{-- <li><a href="#" aria-expanded="false"> Details</a></li> --}}
+                            <li class="uk-active"><a href="#" aria-expanded="true">Contents</a></li>
+                            {{-- <li><a href="#" aria-expanded="false">Details</a></li> --}}
                         </ul>
+
                         <ul class="uk-switcher uk-overflow-hidden" style="touch-action: pan-y pinch-zoom;">
                             <li class="uk-active" style="">
                                 <div class="vidlist-3-content" data-simplebar="init">
@@ -254,7 +259,7 @@
                                         <div class="simplebar-mask">
                                             <div class="simplebar-offset" style="right: 0px; bottom: 0px;">
                                                 {{-- <div class="simplebar-content  p-2" style="padding: 0px; height: auto; overflow: hidden;" id="book_part_holder"> --}}
-                                                <div class="simplebar-content  p-2" style="padding: 0px; height: auto; overflow-y: auto;" id="book_part_holder">
+                                                <div class="simplebar-content  p-2" style="padding: 0px; height: auto; overflow-y: auto;" id="book_part_holder" data-picurl="{{ asset($bookinfo->picurl) }}">
                                                     {{-- <img src="{{asset($bookinfo->picurl)}}" alt=""> --}}
                                                 </div>
                                             </div>
@@ -334,6 +339,35 @@
                 }
             });
 
+
+            $(document).on('input','#search-lesson',function(){
+
+                    $('#book_part_holder').empty()
+
+                    var search = $(this).val();
+
+                    if(search.length > 0){
+
+                        $.ajax({
+                            url: '/allbooks?searchlesson='+search+'&bookid='+'{{$bookinfo->id}}',
+                            type:"GET",
+                            success: function(data){
+                                $('#book_part_holder').empty()
+                                $('#book_part_holder').append(data)
+                            }
+                        })
+                    
+                    }else{
+                        
+                        loadParts()
+
+                    }
+
+
+            })
+
+
+
             var heightwindow = $(document).height();
             console.log(heightwindow);
 
@@ -385,7 +419,9 @@
                     url: '/allbooks?lessons=lessons&bookid='+'{{$bookinfo->id}}'+'&chapterid='+selectedChapter,
                     type:"GET",
                     success: function(data){
-
+                        $('#maincontent').append(`<div id="contentdesktopview">
+                                                        &nbsp;
+                                                    </div>`);
                         $(data).insertAfter(selectedChapterElement)
                         $("Quiz").insertAfter(selectedChapterElement)
                     }
@@ -551,27 +587,27 @@
                     $(this).removeClass('is-invalid')
                     console.log($(this).val())
 
-                    if ($(this).val() == "" ) {
+                    // if ($(this).val() == "" && $(this).data('question-type') == 5) ){
                         
-                        if ($(this).prop("disabled")) {
-                            $(this).prop('disabled', false);
-                            $(this).focus();
-                            $(this).prop('disabled', true);
-                        } else {
-                            $(this).focus();
-                        }
+                    //     if ($(this).prop("disabled")) {
+                    //         $(this).prop('disabled', false);
+                    //         $(this).focus();
+                    //         $(this).prop('disabled', true);
+                    //     } else {
+                    //         $(this).focus();
+                    //     }
 
-                        if ($(this).data('question-type') == 5){
-                            console.log($(this).data('question-type'))
-                            $(this).focus();
-                            $(this).addClass('red-border');
+                    //     if ($(this).data('question-type') == 5){
+                    //         console.log($(this).data('question-type'))
+                    //         $(this).focus();
+                    //         $(this).addClass('red-border');
                             
-                        }
+                    //     }
                         
                         
-                        $(this).addClass('error-input')
-                        isvalid = false
-                    }
+                    //     $(this).addClass('error-input')
+                    //     isvalid = false
+                    // }
 
                     if ($(this).is(":radio")) {
                         
@@ -600,6 +636,7 @@
                         success: function(data){
                             $('#lesson_content_holder').empty()
                             UIkit.notification("<span uk-icon='icon: check'></span> Submitted successfully", {status:'success'})
+                            loadParts()
                             loadQuizContent()
                         }
                     })
@@ -637,6 +674,7 @@
                             type: 'GET'
                         });
 
+                        $('#book_part_holder').empty();
                         $('#contentdesktopview').remove();
                         $('#lesson_content_holder').empty()
                         $('#lesson_content_holder').prepend(data);

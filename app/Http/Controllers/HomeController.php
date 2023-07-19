@@ -71,9 +71,72 @@ class HomeController extends Controller
                 ->first()
                 ->id;
 
+            $schoolinfo = DB::table('schoolinfo')
+                        ->where('id', 1)
+                        ->select('schoolname' , 'address', 'schoolcolor', 'picurl')
+                        ->first();
+
             $books = Db::table('books')
                 ->where('deleted','0')
                 ->get();
+
+            $teacherbooks = Db::table('teacherbooks')
+                ->where('teacherbooks.teacherid', $createdby)
+                ->join('books', 'books.id', '=' , 'teacherbooks.bookid')
+                ->leftjoin('gradelevel' ,'books.gradeid', '=', 'gradelevel.id')
+                ->where('books.deleted', 0)
+                ->where('teacherbooks.deleted', 0)
+                ->select('books.*' , 'gradelevel.levelname')
+                ->get();
+
+
+            $quizsched = DB::table('chapterquizsched')
+                ->where ('lesssonquiz.deleted', 0)
+                ->where ('chapterquizsched.deleted', 0)
+                ->join('lesssonquiz', 'lesssonquiz.id', '=' , 'chapterquizsched.chapterquizid')
+                ->join('books', 'books.id', '=' , 'lesssonquiz.bookid')
+                ->join('classrooms', 'classrooms.id', '=' , 'chapterquizsched.classroomid')
+                ->where('chapterquizsched.createdby', auth()->user()->id)
+                ->select('chapterquizsched.*' , 'lesssonquiz.title', 'books.title as booktitle' ,  'books.id as bookid' , 'classrooms.classroomname') 
+                ->where('chapterquizsched.status', '0')
+                ->orderBy('chapterquizsched.createddatetime', 'desc')
+                ->take(10)
+                ->get();
+
+            
+
+
+
+
+            $now = \Carbon\Carbon::now('Asia/Manila');
+
+            foreach ($quizsched as $item) {
+                $dateTo = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $item->dateto . ' ' . $item->timeto);
+                $dateFrom = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $item->datefrom . ' ' . $item->timefrom);
+
+                if ($dateTo <= $now) {
+                    $item->timeline = "Overdue";
+                    $item->badge = "badge-danger";
+                } elseif ($dateFrom > $now) {
+                    $item->badge = "badge-info";
+                    $item->timeline = "Upcoming";
+                } else {
+                    $item->badge = "badge-success";
+                    $item->timeline = "Ongoing";
+                }
+            }
+
+
+
+
+
+    
+
+
+
+
+
+
 
             $classrooms = Db::table('classrooms')
                 ->join('teachers','classrooms.createdby','=','teachers.id')
@@ -81,9 +144,15 @@ class HomeController extends Controller
                 ->where('classrooms.createdby',$createdby)
                 ->get();
 
+            
+
+
             return view('teacher.teacherdashboard')
                 ->with('classrooms', $classrooms)
-                ->with('books', $books);
+                ->with('teacherbooks', $teacherbooks)
+                ->with('quizsched', $quizsched)
+                ->with('books', $books)
+                ->with('schoolinfo', $schoolinfo);
             
         }
         elseif(auth()->user()->type == 3 && auth()->user()->deleted == 0){
@@ -92,6 +161,12 @@ class HomeController extends Controller
                 ->where('userid', auth()->user()->id)
                 ->first()
                 ->id;
+
+
+            $schoolinfo = DB::table('schoolinfo')
+                ->where('id', 1)
+                ->select('schoolname' , 'address', 'schoolcolor', 'picurl')
+                ->first();
 
             $classrooms = Db::table('classrooms')
                 ->select(
@@ -175,15 +250,35 @@ class HomeController extends Controller
                                     ->orderBy('createddatetime', 'desc')
                                     ->orderBy('updateddatetime', 'desc')
                                     ->get();
+
+
+                                    
+                                    $now = \Carbon\Carbon::now('Asia/Manila');
+
+                                    foreach ($book->quiz as $item) {
+                                        $dateTo = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $item->dateto . ' ' . $item->timeto);
+                                        $dateFrom = \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $item->datefrom . ' ' . $item->timefrom);
+
+                                        if ($dateTo <= $now) {
+                                            $item->timeline = "Overdue";
+                                            $item->badge = "badge-danger";
+                                        } elseif ($dateFrom > $now) {
+                                            $item->badge = "badge-info";
+                                            $item->timeline = "Upcoming";
+                                        } else {
+                                            $item->badge = "badge-success";
+                                            $item->timeline = "Ongoing";
+                                        }
+                                    }
                             
                         }
                     }
                 }
             }
-        
             return view('student.studentdashboard')
                 // ->with('classroomsjoined', $classroomsjoined)
-                ->with('classrooms', $classrooms);
+                ->with('classrooms', $classrooms)
+                ->with('schoolinfo', $schoolinfo);
         }
         
         else{

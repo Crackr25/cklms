@@ -11,6 +11,32 @@ class InstructorController extends Controller
 
     public function index()
     {
+        // $teachers = DB::table('teachers')
+        //     ->select(
+        //         'teachers.id as teacherid',
+        //         'teachers.userid',
+        //         'teachers.firstname',
+        //         'teachers.middlename',
+        //         'teachers.lastname',
+        //         'teachers.suffix',
+        //         'teachers.gender',
+        //         'teachers.email',
+        //         'teachers.picurl',
+        //         'users.type',
+        //         'users.isActive'
+        //     )
+        //     ->join('users','teachers.userid','=','users.id')
+        //     ->where('teachers.deleted','0')
+        //     ->where('users.deleted','0')
+        //     ->get();
+        // return $teachers;
+        return view('admin.adminteachers.admininstructors');
+            // ->with('teachers', $teachers);
+    }
+
+
+    public function getInstructors(Request $request)
+    {
         $teachers = DB::table('teachers')
             ->select(
                 'teachers.id as teacherid',
@@ -25,13 +51,67 @@ class InstructorController extends Controller
                 'users.type',
                 'users.isActive'
             )
-            ->join('users','teachers.userid','=','users.id')
-            ->where('teachers.deleted','0')
+            ->join('users','teachers.userid','=','users.id');
+            if( $request->get('search') != null && $request->has('search') ){
+
+
+                $teachers =  $teachers->where(function($query) use($request){
+                    $query->where('users.name','like','%'.$request->get('search').'%');
+                });
+
+
+            }
+            
+            $teachers =  $teachers->where('teachers.deleted','0')
             ->where('users.deleted','0')
             ->get();
         // return $teachers;
-        return view('admin.adminteachers.admininstructors')
+        return view('admin.adminteachers.instructortable')
             ->with('teachers', $teachers);
+    }
+
+
+    public function getCode()
+    {
+        $code = DB::table('schoolinfo')
+            ->where('id', 1)
+            ->value('special_code');
+
+        return $code;
+    }
+
+
+    public static function generateCode(){
+
+
+        function codegenerator(){
+            $length = 6;    
+            return substr(str_shuffle('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ'),1,$length);
+        }
+
+        $code = codegenerator();
+
+        $checkifexists = Db::table('schoolinfo')
+            ->where('special_code', $code)
+            ->get();
+
+        if(count($checkifexists) == 0){
+
+
+                DB::table('schoolinfo')
+                ->where('id' , 1)
+                ->update([
+                    'special_code'      => $code,
+                ]);
+
+            return $code;
+
+        }else{
+
+            self::getavailablecode();
+
+        }
+
     }
 
     public function create(Request $request)

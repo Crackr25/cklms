@@ -224,7 +224,7 @@ class BooksController extends Controller
                 ->where('parts.deleted', 0)
                 ->where('chapters.deleted', 0)
                 ->where('lessons.deleted', 0)
-                ->select('lessons.id', 'parts.id as par', 'parts.title as chaptertitle')
+                ->select('lessons.*')
                 ->orderBy('lessons.id')
                 ->get();
 

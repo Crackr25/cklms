@@ -106,6 +106,12 @@ Route::middleware(['auth', 'isAdministrator','isDefaultPass'])->group(function (
     Route::get('/truncate' , 'Admin\Truncatecontroller@index');
 
 
+    //school info
+    Route::get('/admin/schoolinfo/index' , 'Admin\SchoolInfoController@index');
+    Route::post('/admin/updateschoolinfo' , 'Admin\SchoolInfoController@update');
+    Route::post('/admin/updateschoolinfo' , 'Admin\SchoolInfoController@update');
+    Route::post('/admin/updateschoolinfo/logo' , 'Admin\SchoolInfoController@updatelogo');
+
 
 
     Route::get('/admingeneratestudaccounts', 'Admin\GenerateAccountsController@index');  
@@ -247,6 +253,10 @@ Route::middleware(['auth', 'isAdministrator','isDefaultPass'])->group(function (
     Route::get('/adminclassrooms/getdetails', 'Admin\ClassroomController@getdetails');
     
     // T E A C H E R S
+    
+    Route::get('/adminteachers/getInstructors', 'Admin\InstructorController@getInstructors');
+    Route::get('/getcode', 'Admin\InstructorController@getCode');
+    Route::get('/adminteachers/generatecode', 'Admin\InstructorController@generateCode');
     Route::get('/adminteachers', 'Admin\InstructorController@index');
     Route::get('/adminteachers/create', 'Admin\InstructorController@create');
     Route::get('/adminteachers/editstatus', 'Admin\InstructorController@editstatus');
@@ -261,6 +271,7 @@ Route::middleware(['auth', 'isAdministrator','isDefaultPass'])->group(function (
     Route::get('/adminstudents', 'Admin\StudentController@index');
     
     Route::get('/admin/passwordgenerator/index', 'Admin\PasswordGeneratorController@index');
+    Route::get('/admin/passwordgenerator/reset', 'Admin\PasswordGeneratorController@reset');
     Route::get('/admin/passwordgenerator/filter', 'Admin\PasswordGeneratorController@filter');
     
     //
@@ -295,6 +306,7 @@ Route::middleware(['auth', 'isAdministrator','isDefaultPass'])->group(function (
 Route::middleware(['auth', 'isTeacher','isDefaultPass'])->group(function () {
 
     Route::get('/teacherclassrooms', 'Teacher\ClassroomController@index');   
+    Route::get('/teacher/deleteclassroom', 'Teacher\ClassroomController@deleteClassroom');   
     Route::get('/teacherquizzes', 'Teacher\Teacherquizcontroller@index');   
     // Route::post('/teacherclassroom/create', 'Teacher\ClassroomController@create'); 
     Route::post('/teacherclassroom/create/rooms', 'Teacher\ClassroomController@create');     
@@ -315,6 +327,8 @@ Route::middleware(['auth', 'isTeacher','isDefaultPass'])->group(function () {
     Route::get('/teacherviewbook/{id}', 'Teacher\BookController@viewbook');  
     Route::get('/teachermessages', 'Teacher\BookController@messages');
 
+
+  
 
     //viewQuiz
 
@@ -345,7 +359,9 @@ Route::middleware(['auth', 'isTeacher','isDefaultPass'])->group(function () {
     Route::get('/teacherquiz/setpoints', 'Teacher\Teacherquizcontroller@setPoints');
     Route::get('/teacherquiz/setguideanswer', 'Teacher\Teacherquizcontroller@setGuideanswer');
     Route::get('/teacherquiz/createquestionitem', 'Teacher\Teacherquizcontroller@createquestionitem');
+    Route::get('/teacherquiz/quiz/fill/setpoints', 'Teacher\Teacherquizcontroller@setFillPoints');
     Route::get('/teacherquiz/createfillquestion', 'Teacher\Teacherquizcontroller@createFillquestion');
+    Route::get('/teacherquiz/quiz/drag/setpoints', 'Teacher\Teacherquizcontroller@setDragPoints');
     Route::get('/teacherquiz/createdragoption', 'Teacher\Teacherquizcontroller@createdragoption');
     Route::get('/teacherquiz/createdropquestion', 'Teacher\Teacherquizcontroller@createdropquestion');
 

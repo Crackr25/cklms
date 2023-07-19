@@ -884,41 +884,18 @@ class Teacherquizcontroller extends Controller
 
         if($checkifexist == 0){
 
-            $description = $request->get('description'); // Get the input string from the frontend
-
-            $keyword = '~input'; // The word you want to count
-
-            $count = (substr_count($description, $keyword));
-
-            if($request->get('description') != null || $request->get('description') != "" ){
-
-                $existingPoints = intval(DB::table('teacherquizquestions')
-                    ->where('id', $request->get('questionid'))
-                    ->value('points'));
-
-                $count+=$existingPoints ;
-                if( $request->get('sortid') == 1){
-                    $count -= 1;
-                }
-
+            
                 DB::table('teacher_quiz_fill_question')
                     ->insert([
                             'sortid'            =>  $request->get('sortid'),
                             'questionid'        =>  $request->get('questionid'),
                             'question'       =>  $request->get('description'),
                         ]);
-            
-                DB::table('teacherquizquestions')
-                    ->where('id', $request->get('questionid'))
-                    ->update([
-                        'points'             =>  $count,
-                    ]);
 
                 return 0;
 
                     
 
-            }
 
 
         }else{
@@ -926,35 +903,7 @@ class Teacherquizcontroller extends Controller
 
             if($request->get('description') != null || $request->get('description') != "" ){
 
-                $description = $request->get('description'); // Get the input string from the frontend
 
-                $keyword = '~input'; // The word you want to count
-                $existingval = DB::table('teacher_quiz_fill_question')
-                    ->where('questionid', $request->get('questionid'))
-                    ->where('sortid', $request->get('sortid'))
-                    ->value('question');
-
-                
-                $count = substr_count($description, $keyword);
-                $count2 = substr_count($existingval, $keyword);
-
-                $existingPoints = intval(DB::table('teacherquizquestions')
-                    ->where('id', $request->get('questionid'))
-                    ->value('points'));
-
-                $newPoints = 0;
-
-                if($count > $count2){
-
-                    $total = $count - $count2;
-                    $newPoints = $existingPoints + $total;
-
-                }else{
-
-                    $total = $count2 - $count;
-                    $newPoints = $existingPoints - $total;
-
-                }
 
                 DB::table('teacher_quiz_fill_question')
                     ->where('questionid', $request->get('questionid'))
@@ -963,29 +912,10 @@ class Teacherquizcontroller extends Controller
                         'question'       =>  $request->get('description'),
                     ]);
 
-
-                DB::table('teacherquizquestions')
-                        ->where('id', $request->get('questionid'))
-                        ->update([
-                            'points'             =>  $newPoints
-                        ]);
                 return 0;
                 
             }else{
 
-                $keyword = '~input'; // The word you want to count
-                $existingval = DB::table('teacher_quiz_fill_question')
-                    ->where('questionid', $request->get('questionid'))
-                    ->where('sortid', $request->get('sortid'))
-                    ->value('question');
-
-                $count2 = substr_count($existingval, $keyword);
-
-                $existingPoints = intval(DB::table('teacherquizquestions')
-                    ->where('id', $request->get('questionid'))
-                    ->value('points'));
-
-                $newPoints = $existingPoints - $count2;
 
 
                 DB::table('teacher_quiz_fill_question')
@@ -996,14 +926,6 @@ class Teacherquizcontroller extends Controller
                     ]);
 
 
-                // Update the 'points' column with the new value
-                DB::table('teacherquizquestions')
-                    ->where('id', $request->get('questionid'))
-                    ->update([
-                        'points' => $newPoints
-                    ]);
-
-
             return 1;
 
             }
@@ -1011,6 +933,42 @@ class Teacherquizcontroller extends Controller
 
         
 
+    }
+
+    public function setFillPoints(Request $request)
+    {
+
+
+        DB::table('teacherquizquestions')
+                    ->where('id', $request->get('questionid'))
+                    ->update([
+                        'points'   =>  $request->get('total'),
+                    ]);
+        
+        $return = $request->get('total');
+
+        return $return; 
+        
+
+
+        
+    }
+
+    public function setDragPoints(Request $request)
+    {
+
+
+        DB::table('teacherquizquestions')
+                    ->where('id', $request->get('questionid'))
+                    ->update([
+                        'points'   =>  $request->get('total'),
+                    ]);
+        
+        
+        
+
+
+        
     }
 
 
@@ -1155,23 +1113,11 @@ class Teacherquizcontroller extends Controller
 
         if($choice == 0){
 
-            $description = $request->get('description'); // Get the input string from the frontend
 
-            $keyword = '~input'; // The word you want to count
-
-            $count = (substr_count($description, $keyword));
 
             if($request->get('description') != null || $request->get('description') != "" ){
 
-                $existingPoints = intval(DB::table('teacherquizquestions')
-                    ->where('id', $request->get('questionid'))
-                    ->value('points'));
-
-                    $count+=$existingPoints ;
-                if( $request->get('sortid') == 1){
-                    $count -= 1;
-                }
-
+        
 
                 DB::table('teacher_quiz_drop_question')
                     ->insert([
@@ -1181,11 +1127,7 @@ class Teacherquizcontroller extends Controller
                             'createddatetime'   => date('Y-m-d H:i:s')
                         ]);
 
-                DB::table('teacherquizquestions')
-                        ->where('id', $request->get('questionid'))
-                        ->update([
-                            'points'             =>  $count
-                        ]);
+    
 
                 }
                 
@@ -1194,36 +1136,6 @@ class Teacherquizcontroller extends Controller
 
             if($request->get('description') != null || $request->get('description') != "" ){
 
-                $description = $request->get('description'); // Get the input string from the frontend
-
-                $keyword = '~input'; // The word you want to count
-                $existingval = DB::table('teacher_quiz_drop_question')
-                    ->where('questionid', $request->get('questionid'))
-                    ->where('sortid', $request->get('sortid'))
-                    ->value('question');
-
-
-                
-                $count = substr_count($description, $keyword);
-                $count2 = substr_count($existingval, $keyword);
-
-                $existingPoints = intval(DB::table('teacherquizquestions')
-                    ->where('id', $request->get('questionid'))
-                    ->value('points'));
-
-                $newPoints = 0;
-
-                if($count > $count2){
-
-                    $total = $count - $count2;
-                    $newPoints = $existingPoints + $total;
-
-                }else{
-
-                    $total = $count2 - $count;
-                    $newPoints = $existingPoints - $total;
-
-                }
 
 
 
@@ -1237,31 +1149,10 @@ class Teacherquizcontroller extends Controller
                     ]);
 
 
-                DB::table('teacherquizquestions')
-                        ->where('id', $request->get('questionid'))
-                        ->update([
-                            'points'             =>  $newPoints
-                        ]);
-
                 
 
             }else{
 
-
-
-                $keyword = '~input'; // The word you want to count
-                $existingval = DB::table('teacher_quiz_drop_question')
-                    ->where('questionid', $request->get('questionid'))
-                    ->where('sortid', $request->get('sortid'))
-                    ->value('question');
-
-                $count2 = substr_count($existingval, $keyword);
-
-                $existingPoints = intval(DB::table('teacherquizquestions')
-                    ->where('id', $request->get('questionid'))
-                    ->value('points'));
-
-                $newPoints = $existingPoints - $count2;
                 
 
                 DB::table('teacher_quiz_drop_question')
@@ -1269,14 +1160,6 @@ class Teacherquizcontroller extends Controller
                     ->where('sortid', $request->get('sortid'))
                     ->update([
                         'deleted'             =>  1,
-                    ]);
-
-
-                // Update the 'points' column with the new value
-                DB::table('teacherquizquestions')
-                    ->where('id', $request->get('questionid'))
-                    ->update([
-                        'points' => $newPoints
                     ]);
 
 

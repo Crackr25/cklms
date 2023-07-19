@@ -889,22 +889,32 @@
             })
 
             $(document).on('click','.remove_student',function(e){
-                  $.ajax({
-                        url: '/classroomstudents?remove=remove'+'&studentroomid='+selectStudentRoomId,
-                        type:"GET",
-                        success: function(data){
-                         
-                            UIkit.notification("<span uk-icon='icon: check'></span> Student Removed Successfully", {status:'success', timeout: 1000 }); 
-                            loadclassroomstudents()
-                            loadStudentList()
-                      
-                        }
-                  })
+                console.log(selectStudentRoomId);
+                    $.ajax({
+                            url: '/classroomstudents',
+                            data: {
+
+                                remove: 'remove',
+                                studentroomid: selectStudentRoomId,
+                                studentid: selectedStudent
+
+                            },
+                            type:"GET",
+                            success: function(data){
+                            
+                                UIkit.notification("<span uk-icon='icon: check'></span> Student Removed Successfully", {status:'success', timeout: 1000 }); 
+                                loadclassroomstudents()
+                                loadStudentList()
+                        
+                            }
+                    })
             })
             
 
             $(document).on('click','.skill-card',function(){
                 selectStudentRoomId = $(this).attr('data-classid')
+                selectedStudent = $(this).attr('data-id')
+
             })
 
 

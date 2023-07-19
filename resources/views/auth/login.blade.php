@@ -91,7 +91,9 @@
                                 @enderror
                             </div>
 
-                        </div>
+                        </div>  
+
+                        
 
                         {{-- <div class="uk-form-group">
                             <label class="uk-form-label"> Confirm password</label>
@@ -107,7 +109,7 @@
 
                         <div class="mt-4 uk-flex-middle uk-grid-small uk-grid" uk-grid="">
                             <div class="uk-width-expand@s uk-first-column">
-                                 <p> <small>Don't have an account yet?</small> <a href="/register">Sign up <small>(Students only)</small></a></p> 
+                                 <p> <small>Don't have an account yet?</small> <a href="/register">Sign up</a></p> 
                             </div>
                             <div class="uk-width-auto@s">
                                 <button type="submit" class="btn btn-default">Login</button>

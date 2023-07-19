@@ -244,7 +244,8 @@ class BookController extends Controller
                         'lessonquizquestions.item',
                         'lessonquizquestions.picurl',
                         'lessonquizquestions.points',
-                        'lessonquizquestions.quideanswer'
+                        'lessonquizquestions.quideanswer',
+                        'lessonquizquestions.ordered'
                     )
                     // ->inRandomOrder()
                     ->orderBy('lessonquizquestions.id')
@@ -293,15 +294,47 @@ class BookController extends Controller
 
                     $item->fill = $fillquestions;
 
+                    
+
 
                     foreach ($item->fill as $index => $fillItem) {
-                            $questionWithInputs = preg_replace_callback('/~input/', function ($matches) use ($fillItem, &$inputCounter, &$key) {
-                                $inputField = '<input class="answer-field d-inline form-control q-input" data-question-type="7" data-sortid="' . ++$inputCounter . '" data-question-id="' . $fillItem->id . '" style="width: 200px; margin: 10px; border-color:black" type="text" id="input-' . $fillItem->id . '">';
-                                return $inputField;
-                            }, $fillItem->question);
-                            $inputCounter = 0;
+        
+                            $description = $fillItem->question;
 
-                            $fillItem->question = $questionWithInputs;
+                            $keyword = '~input'; // The word you want to count
+
+                            $count = (substr_count($description, $keyword));
+
+
+                            if ($count == 1) {
+                                    $answer = DB::table('lesson_quiz_fill_answer')
+                                        ->where('headerid', $fillItem->id)
+                                        ->value('answer');
+
+                                    $questionWithInputs = preg_replace_callback('/~input/', function ($matches) use ($fillItem, $answer, &$inputCounter, &$key) {
+                                        $inputField = '<input class="answer-field d-inline form-control q-input" data-question-type="7" value="' . $answer . '" data-sortid="' . ++$inputCounter . '" data-question-id="' . $fillItem->id . '" style="width: 200px; margin: 10px; border-color:black" type="text" value="' . $answer . '" id="input-' . $fillItem->id . '">';
+                                        return $inputField;
+                                    }, $fillItem->question);
+                                    $inputCounter = 0;
+
+                                    $fillItem->question = $questionWithInputs;
+                                } else {
+                                    $answer = DB::table('lesson_quiz_fill_answer')
+                                        ->where('headerid', $fillItem->id)
+                                        ->get();
+
+                                    $sort = -1; // Initialize sort to 0 instead of -1
+                                    $questionWithInputs = preg_replace_callback('/~input/', function ($matches) use ($fillItem, $answer, &$sort, &$inputCounter, &$key) {
+                                        $inputField = '<input class="answer-field d-inline form-control q-input" data-question-type="7" data-sortid="' . ++$inputCounter . '"   data-question-id="' . $fillItem->id . '" value="' . $answer[++$sort]->answer . '" style="width: 200px; margin: 10px; border-color:black" type="text"  id="input-' . $fillItem->id . '">';
+                                        return $inputField;
+                                    }, $fillItem->question);
+                                    $inputCounter = 0;
+
+                                    $fillItem->question = $questionWithInputs;
+                                }
+
+
+                        
                     }
 
                                             
@@ -320,6 +353,20 @@ class BookController extends Controller
                 }
 
                 
+                if($item->typeofquiz == 8){
+
+
+
+                    $item->enumanswer = DB::table('lesson_quiz_enum_answer')
+                                    ->where('headerid',$item->id)
+                                    ->where('deleted',0)
+                                    ->orderBy('sortid')
+                                    ->select('answer')
+                                    ->get();
+
+
+
+                }
 
 
 
@@ -343,16 +390,53 @@ class BookController extends Controller
                     
                     foreach($dropquestions as $index => $item){
 
-                        $key = 0;
 
 
-                            $questionWithInputs = preg_replace_callback('/~input/', function($matches) use ($item, &$inputCounter, &$key) {
-                            $inputField = '<input class="d-inline form-control q-input drop-option q-input ui-droppable answer-field" data-question-type="5" data-sortid="'.++$inputCounter.'" data-question-id="'.$item->id.'" style="width: 200px; margin: 10px; border-color:black" type="text" id="input-'.$item->id.'" disabled>';
-                            return $inputField;
-                            }, $item->question);
-                            $inputCounter = 0;
+                            $description = $item->question;
 
-                            $item->question = $questionWithInputs;
+                            $keyword = '~input'; // The word you want to count
+
+                            $count = (substr_count($description, $keyword));
+
+                            
+                            $key = 0;
+
+                            if ($count == 1) {
+                                    $answer = DB::table('lesson_quiz_drop_answer')
+                                        ->where('headerid', $item->id)
+                                        ->value('answer');
+
+                                    $questionWithInputs = preg_replace_callback('/~input/', function ($matches) use ($fillItem, $answer, &$inputCounter, &$key) {
+                                        $inputField = '<input class="d-inline form-control q-input drop-option q-input ui-droppable answer-field" data-question-type="7" value="' . $answer . '" data-sortid="' . ++$inputCounter . '" data-question-id="' . $fillItem->id . '" style="width: 200px; margin: 10px; border-color:black" type="text" value="' . $answer . '" id="input-' . $fillItem->id . '">';
+                                        return $inputField;
+                                    }, $item->question);
+                                    $inputCounter = 0;
+
+                                    $item->question = $questionWithInputs;
+                                } else {
+                                    $answer = DB::table('lesson_quiz_drop_answer')
+                                        ->where('headerid', $item->id)
+                                        ->get();
+
+                                    $sort = -1; // Initialize sort to 0 instead of -1
+                                    $questionWithInputs = preg_replace_callback('/~input/', function ($matches) use ($fillItem, $answer, &$sort, &$inputCounter, &$key) {
+                                        $inputField = '<input class="d-inline form-control q-input drop-option q-input ui-droppable answer-field" data-question-type="7" data-sortid="' . ++$inputCounter . '"   data-question-id="' . $fillItem->id . '" value="' . $answer[++$sort]->answer . '" style="width: 200px; margin: 10px; border-color:black" type="text"  id="input-' . $fillItem->id . '">';
+                                        return $inputField;
+                                    }, $item->question);
+                                    $inputCounter = 0;
+
+                                    $item->question = $questionWithInputs;
+                                }
+
+
+
+                            // $questionWithInputs = preg_replace_callback('/~input/', function($matches) use ($item, &$inputCounter, &$key) {
+                            // $inputField = '<input class="d-inline form-control q-input drop-option q-input ui-droppable answer-field" data-question-type="5" data-sortid="'.++$inputCounter.'" data-question-id="'.$item->id.'" style="width: 200px; margin: 10px; border-color:black" type="text" id="input-'.$item->id.'" disabled>';
+                            // return $inputField;
+                            // }, $item->question);
+                            // $inputCounter = 0;
+
+                            // $item->question = $questionWithInputs;
 
                     }
 
@@ -468,7 +552,7 @@ class BookController extends Controller
         return view('global.viewbook.teacherview.viewStudentAnswers')
                     ->with('quizInfo',$quizInfo)
                     ->with('quizAnswers',$quizAnswers);
-       
+
 
 
     }

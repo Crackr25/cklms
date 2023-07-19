@@ -33,6 +33,8 @@
         background-size:contain;
         background-position:center; */
     }
+
+
 </style>
 
 <body>
@@ -193,6 +195,20 @@
                                     </div>
         
                                 </div>
+
+                                <div class="uk-form-group">
+                                    <label class="uk-form-label">Are you a teacher? </label>
+                                    <div class="uk-position-relative w-100">
+                                        <label>
+                                            <input class="uk-checkbox pr-3" type="checkbox" name="teacher" value="1">
+                                                <span class="checkbox-text ml-1">I am a teacher</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div id="special-code" style="display: none;">
+                                    <label class="uk-form-label">Special Code:</label>
+                                    <input class="uk-input" placeholder="Enter Code Here" type="text" name="special_code">
+                                </div>
                             </div>
                         </div>
                         
@@ -255,7 +271,22 @@
         })(window, document);
     </script>
 
+    
 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        var teacherCheckbox = document.querySelector('input[name="teacher"]');
+        var specialCodeDiv = document.getElementById('special-code');
+
+        teacherCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+            specialCodeDiv.style.display = 'block';
+            } else {
+            specialCodeDiv.style.display = 'none';
+            }
+        });
+        });
+    </script>
     <!-- javaScripts
     ================================================== -->
     <script src="{{asset('templatefiles/framework.js')}}"></script>

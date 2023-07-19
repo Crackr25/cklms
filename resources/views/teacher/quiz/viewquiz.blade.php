@@ -555,7 +555,7 @@
                             }else{
 
                                 buttons = `<button type="button" class="btn btn-dark">
-                                                    End Quiz
+                                                    Quiz Ended 
                                                 </button>`      
 
 
@@ -749,6 +749,16 @@
                     type: 'error',
                     title: 'Oops...',
                     text: 'Invalid date and time'
+                })
+                return;
+            }
+
+
+            if (attempts < 0 ) {
+                Swal.fire({
+                    type: 'error',
+                    title: 'Oops...',
+                    text: 'Attempts cannot be less than zero!'
                 })
                 return;
             }

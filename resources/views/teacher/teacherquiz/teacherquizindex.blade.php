@@ -33,7 +33,7 @@
     position: relative;
 }
 
-    .close-button {
+    .close-button1 {
         position: absolute;
         top: 10px;
         left: 10px;
@@ -50,12 +50,12 @@
         cursor: pointer;
     }
 
-    .close-button:hover {
+    .close-button1:hover {
     background-color: white;
     color: black;
     }
 
-    .close-button::after {
+    .close-button1::after {
         content: "Delete";
         position: absolute;
         top: 35px;
@@ -68,7 +68,7 @@
         font-size: 12px;
     }
 
-    .close-button:hover::after {
+    .close-button1:hover::after {
         display: block;
     }
 
@@ -294,7 +294,7 @@
 
             if($('input[name=quizname]').val() == ''){
 
-                UIkit.notification("<span uk-icon='icon: check'></span> Quiz title is required!", {status:'success', timeout: 1500 });
+                 UIkit.notification("<span uk-icon='icon: warning'></span> Quiz title is required!", {status:'danger', timeout: 1500 });
 
                 validInput = false
                 console.log('invalid')
@@ -329,7 +329,7 @@
         })
 
 
-        $(document).on('click','.close-button',function(){
+        $(document).on('click','.close-button1',function(){
             var QuizId = $(this).data('id');
             console.log(QuizId);
 

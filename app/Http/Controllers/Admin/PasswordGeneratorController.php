@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use DB;
 use App\Models\UsersModel;
+use Illuminate\Support\Facades\Hash;
 class PasswordGeneratorController extends Controller
 {
     public function index()
@@ -30,5 +31,17 @@ class PasswordGeneratorController extends Controller
         return view('admin.passwordgenerator.resultstable')
             ->with('users', $users)
             ->with('usertype', $request->get('usertype'));
+    }
+
+
+    public function reset(Request $request)
+    {
+            DB::table('users')
+                ->where('id', $request->get('id'))
+                ->update([
+                    'password' => Hash::make(12345678),
+            ]);
+
+        return "Yey";
     }
 }

@@ -370,6 +370,8 @@
                 <input type="text" id="updatetitlequiz">
                 <label>Description</label>
                 <textarea id="updatedescriptionquiz" class="form-control"></textarea>
+                <label>Quiz points</label>
+                <input type="text" id="updatequizpoints">
                 <label>Quiz Cover</label> <span class="imageholder"> </span>
                 <input type="file" name="editcoverphoto" class="form-control form-control-sm" accept="image/x-png,image/gif,image/jpeg" >
                 <p class="uk-text-right">
@@ -463,7 +465,7 @@
     </div>
     
 
-    <script src="{{asset('plugins/select2/select2.min.js')}}"></script>
+
 
 
     <script src="{{asset('plugins/jquery/jquery.min.js')}}"></script>
@@ -472,7 +474,7 @@
     <!-- Select2 -->
     <script src="{{asset('plugins/select2/js/select2.full.min.js')}}"></script>
     <!-- AdminLTE -->
-    <script src="{{asset('dist/js/adminlte.js')}}"></script>
+    <script src="{{asset('plugins/select2/select2.min.js')}}"></script>
     
     
     
@@ -1076,6 +1078,7 @@
                 var selectedFile = $('input[name=editcoverphoto]')[0].files[0];
                 var title = $('#updatetitlequiz').val();
                 var description = $('#updatedescriptionquiz').val();
+                var points = $('#updatequizpoints').val();
 
 
                 var formData = new FormData();
@@ -1083,6 +1086,7 @@
                 formData.append('id', id);
                 formData.append('title', title);
                 formData.append('description', description);
+                formData.append('points', points);
                 var csrfToken = $('meta[name="csrf-token"]').attr('content');
                 console.log(csrfToken);
 

@@ -92,27 +92,78 @@ class RegisterController extends Controller
 
         if(count($checkifexists) == 0){
 
-            $getstudentid = DB::table('users')
-                ->insertGetId([
-                    'name' => $request->get('lastname').','.$request->get('firstname').' '.$middlename.' '.$request->get('suffix'),
-                    'email' => $request->get('email'),
-                    'type' => '3',
-                    'password' => Hash::make($request->get('password')),
-                    'createddatetime'    => date('Y-m-d H:i:s')
-                ]);
+                $teacher = $request->has('teacher'); // Replace 'checkboxName' with the actual name attribute of the checkbox input
 
-            Db::table('students')
-                ->insert([
-                    'userid'            => $getstudentid,
-                    'firstname'         => strtoupper($request->get('firstname')),
-                    'middlename'        => strtoupper($request->get('middlename')),
-                    'lastname'          => strtoupper($request->get('lastname')),
-                    'suffix'            => strtoupper($request->get('suffix')),
-                    'gender'            => strtoupper($request->get('gender')),
-                    'createddatetime'    => date('Y-m-d H:i:s')
-                ]);
+                $code = DB::table('schoolinfo')
+                    ->where('id', 1)
+                    ->value('special_code');
+            
+            if ($teacher) {
 
+                if($request->get('special_code') == $code) {
+                    
+                    $getteacherid = DB::table('users')
+                    ->insertGetId([
+                        'name' => $request->get('lastname').','.$request->get('firstname').' '.$middlename.' '.$request->get('suffix'),
+                        'email' => $request->get('email'),
+                        'type' => '2',
+                        'password' => Hash::make($request->get('password')),
+                        'createddatetime'    => date('Y-m-d H:i:s')
+                    ]);
+
+                    Db::table('teachers')
+                        ->insert([
+                            'userid'            => $getteacherid,
+                            'firstname'         => strtoupper($request->get('firstname')),
+                            'middlename'        => strtoupper($request->get('middlename')),
+                            'lastname'          => strtoupper($request->get('lastname')),
+                            'suffix'            => strtoupper($request->get('suffix')),
+                            'gender'            => strtoupper($request->get('gender')),
+                            'createddatetime'    => date('Y-m-d H:i:s')
+                        ]);
+
+
+                }else{
+
+
+                    return redirect()->back()->with('error','Code is incorrect');
+
+
+                }
+
+
+
+
+                
+
+            } else {
+
+                $getstudentid = DB::table('users')
+                    ->insertGetId([
+                        'name' => $request->get('lastname').','.$request->get('firstname').' '.$middlename.' '.$request->get('suffix'),
+                        'email' => $request->get('email'),
+                        'type' => '3',
+                        'password' => Hash::make($request->get('password')),
+                        'createddatetime'    => date('Y-m-d H:i:s')
+                    ]);
+
+                Db::table('students')
+                    ->insert([
+                        'userid'            => $getstudentid,
+                        'firstname'         => strtoupper($request->get('firstname')),
+                        'middlename'        => strtoupper($request->get('middlename')),
+                        'lastname'          => strtoupper($request->get('lastname')),
+                        'suffix'            => strtoupper($request->get('suffix')),
+                        'gender'            => strtoupper($request->get('gender')),
+                        'createddatetime'    => date('Y-m-d H:i:s')
+                    ]);
+
+            
+
+            }
+            
             return redirect()->route('login');
+
 
         }else{
 

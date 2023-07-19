@@ -31,12 +31,64 @@
     <link rel="stylesheet" href="{{asset('templatefiles/icons.css')}}">
 
 
-     <link rel="stylesheet" href="{{asset('plugins/fullcalendar/main.css')}}">
+    <link rel="stylesheet" href="{{asset('plugins/fullcalendar/main.css')}}">
     <link rel="stylesheet" href="{{asset('plugins/fullcalendar/main.min.css')}}">
     <!-- font-awesome -->
     {{-- <link rel="stylesheet" href="{{asset('plugins/font-awesome/css/font-awesome.min.css')}}"> --}}
 
+    <style>
 
+        @media print {
+                .page-content {
+                    display: none;
+                }
+            }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: white;
+            color: red;
+            border: none;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999; /* Add this line */
+            }
+
+
+            .close-button:hover {
+                background-color: white;
+                color: black;
+                }
+
+                .close-button::after {
+                    content: "Delete";
+                    position: absolute;
+                    top: 35px;
+                    left: -20px;
+                    display: none;
+                    background-color: white;
+                    color: black;
+                    padding: 5px 10px;
+                    border-radius: 4px;
+                    font-size: 12px;
+                }
+
+                .close-button:hover::after {
+                    display: block;
+                }
+
+
+
+    </style>
 
 </head>
 
@@ -54,6 +106,12 @@
         <div class="page-content">
             @yield('content')
         </div>
+
+        <footer class="text-center py-4">
+                        <div class="container">
+                            <p class="m-0">© 2023 Powered by <span>  <img src="assets/cklogo.png" alt="Logo" style="width:30px ; height:30px;">  </span> </p>
+                        </div>
+        </footer>
         
     
 
@@ -77,11 +135,13 @@
         <script src="{{asset('plugins/sweetalert2/sweetalert2.all.min.js')}}"></script>
         <script src="{{asset('plugins/datatables/jquery.dataTables.js')}}"></script>
         <script src="{{asset('plugins/datatables-bs4/js/dataTables.bootstrap4.js')}}"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+        {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script> --}}
+        <script src="{{asset('plugins/moment/moment.min.js') }}"></script>
         <script src="{{asset('plugins/fullcalendar/main.min.js')}}"></script>
         @yield('script')
 
     </div>
+    
     <div id="backtotop">
         <a href="#"></a>
     </div>
@@ -103,6 +163,52 @@
                     $('#logout-form').submit()
                 }
                 })
+            })
+
+
+            $(document).on('click','.close-button',function(){
+                var classroomId = $(this).data('id');
+                console.log(classroomId);
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "The book,quiz and student data will not be recovered.",
+                    type: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        console.log(result);
+                    if (result.value == true) {
+
+                        $.ajax({
+                            url: '/teacher/deleteclassroom',
+                            type:"GET",
+                            data:{
+                                id: classroomId
+                            },
+                            success: function(data){
+                                console.log("1");
+
+                                window.location.reload();
+
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Your file has been deleted.',
+                                    'success'
+                                    )
+                                
+                            }
+                        })
+
+                        
+                        
+                    }
+                    })
+
+            
+
             })
         })
     </script>

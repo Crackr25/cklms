@@ -36,6 +36,9 @@
             </ul>
             <ul class="uk-position-bottom">
                 <li>
+                    <a href="/admin/schoolinfo/index" class="{{ Request::url() == url('/admin/passwordgenerator/index') ? 'active' : '' }}"><i class="fa fa-school"></i><span class="tooltips">School</span></a>
+                </li>
+                <li>
                     <a href="/admin/passwordgenerator/index" class="{{ Request::url() == url('/admin/passwordgenerator/index') ? 'active' : '' }}"><i class="fa fa-sync"></i><span class="tooltips">Password Resetter</span></a>
                 </li>
                 <li>

@@ -96,6 +96,37 @@ class StudentBookController extends Controller
 
                 }
 
+
+                if($item->typeofquiz == 10){
+
+                    $choices = DB::table('lessonquizchoices')
+                                    ->where('questionid',$item->id)
+                                    ->where('deleted',0)
+                                    ->select('description','id','answer', 'sortid')
+                                    ->orderBy('sortid')
+                                    ->get();
+
+                    $item->choices = $choices;
+
+                    $answer = DB::table('chapterquizrecordsdetail')
+                                    ->where('questionid',$item->id)
+                                    ->where('headerid', $recordid)
+                                    ->where('deleted',0)
+                                    ->value('choiceid');
+
+                    if(isset($answer)){
+                        $item->answer = $answer;
+                    }else{
+
+                        $item->answer = 0;
+
+                    }
+
+
+                }
+
+
+
                 if($item->typeofquiz == 2 || $item->typeofquiz == 3 ){
 
                     $answer = DB::table('chapterquizrecordsdetail')
@@ -547,7 +578,7 @@ class StudentBookController extends Controller
                     'typeofquestion' => $request->get('questionType'),
                 ];
 
-                if ($request->get('questionType') != 1) {
+                if ($request->get('questionType') != 1 && $request->get('questionType') != 10 ) {
                     $data['stringanswer'] = $request->get('answer');
 
                     if($request->get('sortId') != null && $request->get('questionType') == 5 ){

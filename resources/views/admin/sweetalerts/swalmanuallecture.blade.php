@@ -139,65 +139,8 @@
                 }
             })
         })
-        // $(document).on('click','.createnewcontent', function() {
-        //     $('textarea').summernote();
-        //     Swal.fire({
-        //         title: 'Create New Content',
-        //         html: '<textarea class="textarea" placeholder="Place some text here" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>',
-        //         customClass: 'swal-wide',
-        //         confirmButtonText: 'Create',
-        //         showCancelButton: true,
-        //         allowOutsideClick: false,
-        //         preConfirm: () => {
-        //             if($('#deductiondescription').val() == ""){
-        //                 Swal.showValidationMessage(
-        //                     "Please fill in the required section!"+
-        //                     "<br>"+
-        //                     "Description is required"
-        //                 );
-        //             }else{
-        //                 $.ajax({
-        //                     url: '/newdeductionsetup/{{Crypt::encrypt("adddeduction")}}',
-        //                     type:"GET",
-        //                     dataType:"json",
-        //                     data:{
-        //                         type: $("#deductiontype").val(),
-        //                         deductiondescription: $("#deductiondescription").val()
-        //                     },
-        //                     // headers: { 'X-CSRF-TOKEN': token },,
-        //                     success: function(data){
-        //                         if(data == '0'){
-        //                             Swal.fire({
-        //                                 text: "New deduction has been added successfully!",
-        //                                 type: 'success',
-        //                                 confirmButtonColor: '#3085d6',
-        //                                 confirmButtonText: 'OK!',
-        //                                 allowOutsideClick: false
-        //                             }).then((confirm) => {
-        //                                 if (confirm.value) {
-        //                                     window.location.reload();
-        //                                 }
-        //                             })
-        //                         }else{
-        //                             Swal.fire({
-        //                                 text: "New deduction already exists!",
-        //                                 type: 'danger',
-        //                                 confirmButtonColor: '#3085d6',
-        //                                 confirmButtonText: 'OK!',
-        //                                 allowOutsideClick: false
-        //                             }).then((confirm) => {
-        //                                 if (confirm.value) {
-        //                                     window.location.reload();
-        //                                 }
-        //                             })
-        //                         }
-        //                     }
-        //                 })
-        //             }
-        //         }
-        //     })
-        // })
-        $(document).on('click', '#addinstructor', function(){
+
+         $(document).on('click', '#addinstructor', function(){
             Swal.fire({
                 title: 'Create New Instructor',
                 html:   '<label><strong>First Name</strong></label>'+
@@ -279,38 +222,84 @@
                     }
                 }
             })
-                    // Swal.showValidationMessage(
-                    //         "Please fill in the required section!"+
-                    //         "<br>"+
-                    //         "Description is required"
-                    //     );
-                    // $.ajax({
-                    //     url: '/deductiondetails/'+action,
-                    //     type:"GET",
-                    //     dataType:"json",
-                    //     data:{
-                    //         deductiontypeid: deductiontypeid,
-                    //         deductiondetaildescription: deductiondetaildescription,
-                    //         deductiondetailmonthlyamount: deductiondetailmonthlyamount,
-                    //         deductiondetailpercentage: deductiondetailpercentage
-                    //     },
-                    //     // headers: { 'X-CSRF-TOKEN': token },,
-                    //     complete: function(data){
-                    //         Swal.fire({
-                    //             title: 'Added Successfully!',
-                    //             // text: "Your file has been deleted.",
-                    //             type: 'success',
-                    //             confirmButtonColor: '#3085d6',
-                    //             confirmButtonText: 'OK!'
-                    //         }).then((confirm) => {
-                    //             if (confirm.value) {
-                    //                 window.location.reload();
-                    //             }
-                    //         })
-                    //     }
-                    // })
-
         })
+        // $(document).on('click','.createnewcontent', function() {
+        //     $('textarea').summernote();
+        //     Swal.fire({
+        //         title: 'Create New Content',
+        //         html: '<textarea class="textarea" placeholder="Place some text here" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>',
+        //         customClass: 'swal-wide',
+        //         confirmButtonText: 'Create',
+        //         showCancelButton: true,
+        //         allowOutsideClick: false,
+        //         preConfirm: () => {
+        //             if($('#deductiondescription').val() == ""){
+        //                 Swal.showValidationMessage(
+        //                     "Please fill in the required section!"+
+        //                     "<br>"+
+        //                     "Description is required"
+        //                 );
+        //             }else{
+        //                 $.ajax({
+        //                     url: '/newdeductionsetup/{{Crypt::encrypt("adddeduction")}}',
+        //                     type:"GET",
+        //                     dataType:"json",
+        //                     data:{
+        //                         type: $("#deductiontype").val(),
+        //                         deductiondescription: $("#deductiondescription").val()
+        //                     },
+        //                     // headers: { 'X-CSRF-TOKEN': token },,
+        //                     success: function(data){
+        //                         if(data == '0'){
+        //                             Swal.fire({
+        //                                 text: "New deduction has been added successfully!",
+        //                                 type: 'success',
+        //                                 confirmButtonColor: '#3085d6',
+        //                                 confirmButtonText: 'OK!',
+        //                                 allowOutsideClick: false
+        //                             }).then((confirm) => {
+        //                                 if (confirm.value) {
+        //                                     window.location.reload();
+        //                                 }
+        //                             })
+        //                         }else{
+        //                             Swal.fire({
+        //                                 text: "New deduction already exists!",
+        //                                 type: 'danger',
+        //                                 confirmButtonColor: '#3085d6',
+        //                                 confirmButtonText: 'OK!',
+        //                                 allowOutsideClick: false
+        //                             }).then((confirm) => {
+        //                                 if (confirm.value) {
+        //                                     window.location.reload();
+        //                                 }
+        //                             })
+        //                         }
+        //                     }
+        //                 })
+        //             }
+        //         }
+        //     })
+        // })
+        $(document).on('click', '#specialCode', function() {
+                $.ajax({
+                    url: '/getcode',
+                    type: 'GET',
+                    success: function(data) {
+                        Swal.fire({
+                            title: 'Generate New Code',
+                            html:   '<label><strong>Special Code</strong></label>'+
+                                    '<input type="text" class="form-control mb-2" name="fullname" id="specialCodeInput" value="' + data + '" disabled/>'+
+                                    '<button type="button" class="btn btn-primary" id="generateBtn">Generate new code</button>',
+                            customClass: 'swal-wide',
+                            confirmButtonText: 'Okay',
+                            showCancelButton: true,
+                            allowOutsideClick: false,
+                        });
+                    }
+                });
+        });
+
                             // $.ajax({
                             //     url: '/admincreatelessons',
                             //     type:"GET",

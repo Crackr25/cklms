@@ -303,6 +303,16 @@ class BookController extends Controller
             ->where('id', $request->get('id'))
             ->first();
 
+
+
+        $quizinfo->maxpoints = DB::table('lessonquizquestions')
+                ->where('quizid', $quizinfo->id)
+                ->where('deleted', 0)
+                ->where('typeofquiz', '!=', null)
+                ->where('typeofquiz', '!=', 4)
+                ->where('typeofquiz', '!=', 9)
+                ->sum('points');
+
         return collect($quizinfo);
     }
 
@@ -382,7 +392,8 @@ class BookController extends Controller
                 ->where('id', $request->get('id'))
                 ->update([
                     'title' => $request->get('title'),
-                    'description' => $request->get('description')
+                    'description' => $request->get('description'),
+                    'points' => $request->get('points')
                 ]);
 
     }
@@ -715,12 +726,20 @@ class BookController extends Controller
     public function createdescription(Request $request)
     {
 
+        if( $request->get('coverage') != null){
+            
+            DB::table('lesssonquiz')
+            ->where('id', $request->get('id'))
+            ->update([
+                'coverage'      => $request->get('coverage')
+            ]);
+
+        }
 
         DB::table('lesssonquiz')
             ->where('id', $request->get('id'))
             ->update([
                 'title'         => $request->get('title'),
-                'coverage'      => $request->get('coverage'),
                 'description'   => $request->get('description')
             ]);
 

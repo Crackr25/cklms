@@ -45,7 +45,8 @@ class ClassroomController extends Controller
             }
 
 
-            if($request->get('gradeid') != 'null' ){
+            if($request->get('gradeid') != 'undefined' && $request->has('gradeid') ){
+
 
                 $classrooms = $classrooms->where(function($query) use($request){
                                     $query->where('gradeid', $request->get('gradeid'));
@@ -299,6 +300,23 @@ class ClassroomController extends Controller
 
         }
     }
+
+    public static function deleteClassroom(Request $request){
+
+
+        Db::table('classrooms')
+            ->where('id', $request->get('id'))
+            ->update([
+                'deleted'=>'1',
+                'deletedby'=>auth()->user()->id,
+                'deleteddatetime'=>\Carbon\Carbon::now('Asia/Manila')
+            ]);
+
+        return 1;
+    }
+
+
+
     public function viewclassroom(Request $request)
     {
 
@@ -1030,15 +1048,13 @@ class ClassroomController extends Controller
         if($request->get('classroomid') != null && $request->has('classroomid')){
 
             $classroomstudents = $classroomstudents->where('classroomid',$request->get('classroomid'));
-                                                  
 
-                                              
         }
 
         if($request->get('studentroomid') != null && $request->has('studentroomid')){
 
             $classroomstudents =  $classroomstudents->where('id',$request->get('studentroomid'));
-         
+        
         }
 
   
@@ -1056,20 +1072,32 @@ class ClassroomController extends Controller
                                         'students.id',
                                         'classroomstudents.id as classid'
                                     )->get();
-                           
+        
             return view('teacher.classrooms.include.studentststab')
                         ->with('classroomstudents',$classroomstudents);
 
         }
         else if($request->get('remove') == 'remove' && $request->has('remove')){
 
-            $classroomstudents = $classroomstudents->where('createdby',auth()->user()->id);
 
-            $classroomstudents->update([
-                'deleted'=>1,
-                'deletedby'=>auth()->user()->id,
-                'deleteddatetime'=>\Carbon\Carbon::now('Asia/Manila')
+            DB::table('classroomstudents')
+                ->where('id', $request->get('studentroomid'))
+                ->where('studentid', $request->get('studentid'))
+                ->update([
+                    'deleted'=>1,
+                    'deletedby'=>auth()->user()->id,
+                    'deleteddatetime'=>\Carbon\Carbon::now('Asia/Manila')
             ]);
+
+
+
+            // $classroomstudents = $classroomstudents->where('createdby',auth()->user()->id)->where('studentid',$request->has('selectedStudent'));
+
+            // $classroomstudents->update([
+            //     'deleted'=>1,
+            //     'deletedby'=>auth()->user()->id,
+            //     'deleteddatetime'=>\Carbon\Carbon::now('Asia/Manila')
+            // ]);
 
         }
 
@@ -1377,6 +1405,59 @@ class ClassroomController extends Controller
         
                 return view('global.viewbook.booklist.lesson')
                         ->with('lessons',$lessons);
+
+
+            }
+
+
+
+            else if($request->has('searchlesson')){
+
+
+                    $lessons = array();
+
+                    
+                    $lesson = DB::table('lessons')
+                                ->join('chapters', 'chapters.id', '=', 'lessons.chapterid')
+                                ->where('chapters.bookid', $request->get('bookid'))
+                                ->where('lessons.title','like','%'.$request->get('searchlesson').'%')
+                                ->where('chapters.deleted',0)
+                                ->where('lessons.deleted',0)
+                                ->select('lessons.*')
+                                ->get();
+
+
+
+                    $chapterQuiz = DB::table('lesssonquiz')
+                                ->join('chapters', 'chapters.id', '=', 'lesssonquiz.chapterid')
+                                ->where('chapters.bookid', $request->get('bookid'))
+                                ->where('lesssonquiz.title','like','%'.$request->get('searchlesson').'%')
+                                ->select('lesssonquiz.*')
+                                ->where('lesssonquiz.deleted',0)
+                                ->get();
+
+                    $lessons = collect($lesson)->toArray();
+
+                    foreach($chapterQuiz as $item){
+
+                        $item->quiz = true;
+                        $item->type = 1;
+
+                        array_push($lessons,$item);
+        
+                    }
+
+
+
+
+
+
+                    return view('global.viewbook.booklist.lesson')
+                                ->with('lessons',$lessons);
+
+
+        
+                
 
 
             }

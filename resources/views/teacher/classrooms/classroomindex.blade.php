@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="{{asset('plugins/select2/css/select2.min.css')}}">
     <link rel="stylesheet" href="{{asset('plugins/select2/select2.min.css')}}">
 
+ 
     <!-- search overlay-->
     <div id="searchbox">
 
@@ -35,10 +36,10 @@
 
     </div>
 
-    <div id="modal-close-default" uk-modal> 
-        <div class="uk-modal-dialog uk-modal-body"> 
-            <button class="uk-modal-close-default" type="button" uk-close></button> 
-            <h2 class="uk-modal-title">Create Classroom</h2> 
+    <div id="modal-close-default" uk-modal>
+        <div class="uk-modal-dialog uk-modal-body">
+            <button class="uk-modal-close-default" type="button" uk-close></button>
+            <h2 class="uk-modal-title">Create Classroom</h2>
 
             <div class="uk-margin">
                 <label class="uk-form-label" for="form-horizontal-text">Classroom Name</label>
@@ -58,7 +59,7 @@
                     <input class="uk-input" name="classroomimage" type="file" accept="image/*">
                 </div>
             </div>
-            
+
             <div class="uk-margin">
                 <label class="uk-form-label" for="form-horizontal-text">Classroom Code</label>
                 <div class="uk-form-controls">
@@ -76,7 +77,7 @@
                     Create Classroom
                 </a>
             </div>
-        </div> 
+        </div>
     </div>
 
 
@@ -90,7 +91,7 @@
                 </div>
                 <div class="section-header-right">
                     <a href="#" class="btn btn-default uk-visible@s" id="addclassroom" uk-toggle="target: #modal-close-default"> <i class="uil-plus"></i> Add classroom</a>
-         
+
                 </div>
             </div>
          --}}
@@ -107,7 +108,7 @@
                     </ul>
                 </div>
             </div> --}}
-            
+
             <div class="section-header pb-0">
                 <div class="section-header-left">
                     <h1>Classrooms</h1>
@@ -129,11 +130,11 @@
             <div class="section-small" id="classroom_table_holder">
 
                     {{-- Classroom Table will appear here  --}}
-                    
+
             </div>
-            
-        
-        
+
+
+
         </div>
 
 
@@ -159,7 +160,7 @@
             //     }
             // });
 
-            
+
             loadClassroom()
 
 
@@ -172,10 +173,10 @@
                     success: function(data){
 
                         $('#classroom_table_holder').append(data)
-                
+
                     }
                 })
-                
+
             }
 
 
@@ -232,14 +233,14 @@
 
             })
 
-           
+
 
 
 
 
             $('#search-input').on('input', function() {
                 var searchText = $(this).val();
-                
+
                 // Perform your search logic or update the UI based on the search text
                 console.log('Search Text:', searchText);
 
@@ -252,7 +253,7 @@
                         $('#classroom_table_holder').empty();
                         $('#classroom_table_holder').append(data)
                         //console.log(data);
-                
+
                     }
                 })
 
@@ -277,7 +278,7 @@
 
             })
 
-            
+
 
             $(document).on('click', '#create_classroom', function() {
                 var validInput = true;
@@ -347,9 +348,9 @@
                 }
                 });
 
-   
 
-          
+
+
         })
 
         // $(document).on('click', 'li.classroom', function(){

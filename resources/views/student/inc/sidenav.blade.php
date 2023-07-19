@@ -39,6 +39,16 @@
             </a>
 
         </li>
+
+        <li>
+            <a href="student/activities" class="header-widget-icon" uk-toggle="target: #searchbox; cls: is-active">
+                <div class="d-flex flex-column align-items-center">
+                    <i class="far fa-list-alt"></i>
+                    <span class="badge" style="font-size:10px">Activities</span>
+                </div>
+            </a>
+
+        </li>
     </ul>
     <ul class="uk-position-bottom">
         <li>
