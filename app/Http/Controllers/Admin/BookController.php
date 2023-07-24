@@ -1331,6 +1331,16 @@ class BookController extends Controller
     {
         date_default_timezone_set('Asia/Manila');
 
+        $robotics = $request->get('robotics');
+        if($robotics){
+            
+            $value = 1;
+
+
+        }else{
+
+            $value = 0;
+        }
         // return $request->all();
         if($request->has('cover'))
         {
@@ -1397,10 +1407,13 @@ class BookController extends Controller
                 ->insertGetId([
                     'title'             => $request->get('title'),
                     'description'       => $request->get('description'),
+                    'robotics'          => $value,
                     'subjectid'         => $request->get('subjectid'),
                     'picurl'            => 'books/'.$request->get('title').'/'.$file->getClientOriginalName(),
                     'createddatetime'   => date('Y-m-d H:i:s')
                 ]);
+
+            
     
             // }
         }else{
@@ -1410,6 +1423,7 @@ class BookController extends Controller
                 ->insertGetId([
                     'title'             => $request->get('title'),
                     'description'       => $request->get('description'),
+                    'robotics'          => $value,
                     'subjectid'         => $request->get('subjectid'),
                     'createddatetime'   => date('Y-m-d H:i:s')
                 ]);

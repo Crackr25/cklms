@@ -328,7 +328,20 @@ Route::middleware(['auth', 'isTeacher','isDefaultPass'])->group(function () {
     Route::get('/teachermessages', 'Teacher\BookController@messages');
 
 
-  
+    //Group
+
+    Route::get('/teachergoup/create', 'Teacher\GroupController@create');
+    Route::get('/teachergroupview', 'Teacher\GroupController@groupView');
+    Route::get('/groupmembers', 'Teacher\GroupController@groupMembers');
+    Route::get('/groupbooks', 'Teacher\GroupController@groupBooks');
+    Route::get('/group/allstudent', 'Teacher\GroupController@groupStudents');
+    Route::get('/teacheraddmember', 'Teacher\GroupController@addmember');
+    Route::get('/group/leader', 'Teacher\GroupController@setLeader');
+    Route::get('/groupbooks/allbooks', 'Teacher\GroupController@allbooks');
+    Route::get('/teacheraddthisbookgroup', 'Teacher\GroupController@addbook');
+
+
+
 
     //viewQuiz
 
@@ -364,6 +377,7 @@ Route::middleware(['auth', 'isTeacher','isDefaultPass'])->group(function () {
     Route::get('/teacherquiz/quiz/drag/setpoints', 'Teacher\Teacherquizcontroller@setDragPoints');
     Route::get('/teacherquiz/createdragoption', 'Teacher\Teacherquizcontroller@createdragoption');
     Route::get('/teacherquiz/createdropquestion', 'Teacher\Teacherquizcontroller@createdropquestion');
+    Route::get('/teacherquiz/changePoints', 'Teacher\Teacherquizcontroller@changeSetPoints');
 
 
 
@@ -400,6 +414,7 @@ Route::middleware(['auth', 'isTeacher','isDefaultPass'])->group(function () {
 
     Route::get('/post', 'Teacher\ClassroomController@post');
     Route::get('/classroomstudents', 'Teacher\ClassroomController@classroomstudents');
+    Route::get('/classroomgroups', 'Teacher\ClassroomController@classroomgroups');
     Route::get('/students', 'Teacher\ClassroomController@students');
     Route::get('/classroombooks', 'Teacher\ClassroomController@classroombooks');
     Route::get('/quizContent/{id}/{classroomid}', 'Teacher\BookController@quizContent');
@@ -416,6 +431,8 @@ Route::middleware(['auth', 'isTeacher','isDefaultPass'])->group(function () {
 Route::middleware(['auth', 'isStudent','isDefaultPass'])->group(function () {  
     
     Route::get('/studentprofile', 'Student\StudentProfileController@index');   
+    Route::get('/student/activities', 'Student\StudentActivitiesController@index');   
+    Route::get('/student/scores', 'Student\StudentActivitiesController@viewScores');   
     Route::post('/student/updateprofile', 'Student\StudentProfileController@updateProfile');   
     Route::post('/student/updateprofilegrades', 'Student\StudentProfileController@updateProfileGrades');   
     Route::post('/student/updateprofilegender', 'Student\StudentProfileController@updateProfileGender');   

@@ -15,25 +15,91 @@ class BooksController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
 
 
 
-        $classroombooks = DB::table('classroombooks')
-                                ->where('classroombooks.deleted',0)
-                                ->where('classroomid','63')
-                                ->join('books',function($join){
-                                        $join->on('classroombooks.bookid','=','books.id');
-                                        $join->where('books.deleted',0);
-                                })
-                                ->select('books.title','classroombooks.*','books.picurl')
-                                ->get();
+        // $classroombooks = DB::table('classroombooks')
+        //                         ->where('classroombooks.deleted',0)
+        //                         ->where('classroomid','63')
+        //                         ->join('books',function($join){
+        //                                 $join->on('classroombooks.bookid','=','books.id');
+        //                                 $join->where('books.deleted',0);
+        //                         })
+        //                         ->select('books.title','classroombooks.*','books.picurl')
+        //                         ->get();
 
 
         
         
-        return response()->json($classroombooks);
+        // return response()->json($classroombooks);
+
+        $studentid = DB::table('students')
+                ->where('userid', $request->get('id'))
+                ->first()
+                ->id;
+
+
+
+        $classrooms = Db::table('classrooms')
+                ->select(
+                    'classrooms.id',
+                    'classrooms.classroomname',
+                    'classrooms.createddatetime',
+                    'teachers.firstname',
+                    'teachers.middlename',
+                    'teachers.lastname',
+                    'teachers.suffix',
+                    'classrooms.code'
+                )
+                ->join('teachers','classrooms.createdby','=','teachers.id')
+                ->where('classrooms.deleted','0')
+                ->distinct()
+                ->get();
+            $sortdata = array();
+            if(count($classrooms) > 0){
+                foreach($classrooms as $classroom){
+                    $classroomid = $classroom->id;
+                    $classroom->createddatetime = date('F d, Y h:i:s A', strtotime($classroom->createddatetime));
+                    $classroom->students = Db::table('classroomstudents')
+                        ->where('classroomid', $classroom->id)
+                        ->where('deleted','0')
+                        ->count();
+
+                    $joined = Db::table('classroomstudents')
+                        ->where('classroomid', $classroom->id)
+                        ->where('classroomstudents.studentid',$studentid)
+                        ->where('deleted','0')
+                        ->get();
+                    
+                    if(count($joined) == 0){
+                        $classroom->joined = 0;
+                    }else{
+                        $classroom->joined = 1;
+                        $classroom->datejoined = date('F d, Y', strtotime($joined[0]->createddatetime));
+                    }
+
+                    if($classroom->joined == 1){
+
+                        
+                        $classroom->books = Db::table('classroombooks')
+                            ->where('classroomid', $classroom->id)
+                            ->join('books',function($join){
+                                                $join->on('books.id','=','classroombooks.bookid');
+                                                $join->where('books.deleted',0);
+                                            })
+                            ->where('classroombooks.deleted','0')
+                            ->select('books.*')
+                            ->get();
+
+                        array_push($sortdata, $classroom->books);
+
+                        
+                }
+            }
+        }
+        return response()->json($sortdata);
 
 
     }
@@ -232,7 +298,8 @@ class BooksController extends Controller
                 $lesson->path = DB::table('lessoncontents')
                     ->where('lessonid', $lesson->id)
                     ->where('lessoncontents.deleted', 0)
-                    ->value('filepath');
+                    // ->value('filepath');
+                    ->get();
 
                 $lesson->lessontitle = DB::table('lessons')
                     ->where('id', $lesson->id)
@@ -245,7 +312,6 @@ class BooksController extends Controller
                 'parts' => $parts,
                 'chapters' => $chapters,
                 'lessons' => $lessons,
-                
             ];
             
 
@@ -271,7 +337,7 @@ class BooksController extends Controller
                     $lesson->path = DB::table('lessoncontents')
                         ->where('lessonid', $lesson->lessonid)
                         ->where('lessoncontents.deleted', 0)
-                        ->value('filepath');
+                        ->get();
                 }
 
                 $object = (object) [
@@ -284,7 +350,7 @@ class BooksController extends Controller
 
                 $array = array($lessons, $objects);
         
-            return response()->json($array);
+            return response()->json($object);
 
             
 
@@ -324,7 +390,7 @@ class BooksController extends Controller
                 $lesson->path = DB::table('lessoncontents')
                     ->where('lessonid', $lesson->lessonid)
                     ->where('lessoncontents.deleted', 0)
-                    ->value('filepath');
+                    ->get();
             }
 
             $object = (object) [

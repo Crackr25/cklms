@@ -126,9 +126,9 @@
                     </div>
                 </div>
                 <div class="uk-margin">
-                    {{-- <a href="#" target="_blank" type="button" class="btn btn-info mt-2 uk-first-column" id="modal_view_book_button">
+                    <a href="#" target="_blank" type="button" class="btn btn-info mt-2 uk-first-column" id="modal_view_book_button">
                         <i class="icon-feather-book-open mr-2h mr-2"></i>View Book
-                    </a> --}}
+                    </a>
                 </div>
             </div> 
         </div>
@@ -222,6 +222,8 @@
                                 </a>
                                 </div>
                             </div>
+
+                            
                     @endforeach
                 </div>
 

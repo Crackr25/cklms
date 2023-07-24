@@ -196,11 +196,7 @@
                                                     </a>
                                                     <a class="btn btn-sm text-white gfg_tooltip" contenttype="video" style="background-color: #3175c2; border: 3px solid #1d62b7;">
                                                         <i class="fas fa-video m-0"></i><span class="gfg_text">Video</span>
-                                                    </a>
-                                                    <a class="btn btn-sm text-white gfg_tooltip"style="background-color: #3175c2; border: 3px solid #1d62b7;">
-                                                        <i class="fa-sharp fa-light fa-scroll"></i><span class="gfg_text">Quiz</span>
-                                                    </a>
-                                                    
+                                                    </a>                                                    
                                                     <a class="btn btn-sm text-white gfg_tooltip newrow" style="background-color: #3175c2; border: 3px solid #1d62b7;">
                                                         <i class="fas fa-plus m-0"></i><span class="gfg_text">New row</span>
                                                     </a>
@@ -350,8 +346,6 @@
                                         '<a class="btn btn-sm text-white gfg_tooltip" contenttype="video" style="background-color: #3175c2; border: 3px solid #1d62b7;"id="'+addrow+'">'+
                                             '<i class="fas fa-video m-0"></i><span class="gfg_text">Video</span>'+
                                         '</a>'+
-                                        '<a class="btn btn-sm text-white gfg_tooltip newrow" style="background-color: #3175c2; border: 3px solid #1d62b7;">'+
-                                            '<i class="fa-sharp fa-light fa-scroll"></i><span class="gfg_text">Quiz</span>'+
                                         '</a>'+
                                         '<a class="btn btn-sm text-white gfg_tooltip newrow" id="'+addrow+'"style="background-color: #3175c2; border: 3px solid #1d62b7;">'+
                                             '<i class="fas fa-plus m-0"></i><span class="gfg_text">New row</span>'+
@@ -409,9 +403,6 @@
                                 '<a class="btn btn-sm text-white gfg_tooltip" contenttype="video" style="background-color: #3175c2; border: 3px solid #1d62b7;" id="'+addrowid+'">'+
                                     '<i class="fas fa-video m-0"></i><span class="gfg_text">Video</span>'+
                                 '</a>'+
-                                '<a class="btn btn-sm text-white gfg_tooltip newrow" style="background-color: #3175c2; border: 3px solid #1d62b7;">'+
-                                            '<i class="fa-sharp fa-light fa-scroll"></i><span class="gfg_text">Quiz</span>'+
-                                        '</a>'+
                                 '<a class="btn btn-sm text-white gfg_tooltip newrow" style="background-color: #3175c2; border: 3px solid #1d62b7;" id="'+addrowid+'">'+
                                     '<i class="fas fa-plus m-0"></i><span class="gfg_text">New row</span>'+
                                 '</a>'+
@@ -532,7 +523,7 @@
                     $('.ui-helper-hidden-accessible').remove();
                     var contentvalue = $(this).closest('div.row').find('div.contenttype').children()[0].value;
                     var formcontenttype = $(this).closest('div.row').find('div.contenttype').children().first().attr('contenttype');
-                    if(formcontenttype == 'file' || formcontenttype == 'image'){
+                    if(formcontenttype == 'file' || formcontenttype == 'image' || formcontenttype == 'video'){
                         $('form[name="formdata"]').append($(this).closest('div.row').find('div.contenttype').children()[0]);
                         $('form[name="formdata"]').find('input[name=file]').attr('name','content');
                         $('form[name="formdata"]').find('input[name=contenttype]').val(formcontenttype);

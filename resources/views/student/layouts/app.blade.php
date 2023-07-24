@@ -24,7 +24,7 @@
     <link rel="stylesheet" href="{{asset('plugins/fontawesome-free/css/all.min.css')}}">
 <!-- SweetAlert2 -->
     <link rel="stylesheet" href="{{asset('plugins/sweetalert2-theme-bootstrap-4/bootstrap-4.min.css')}}">
-    <link rel="stylesheet" href="{{asset('plugins/datatables-bs4/css/dataTables.bootstrap4.css')}}">
+   
 <!-- summernote -->
     <!-- icons
     ================================================== -->
@@ -32,7 +32,17 @@
     <link rel="stylesheet" href="{{asset('plugins/fullcalendar/main.min.css')}}">
     <link rel="stylesheet" href="{{asset('templatefiles/icons.css')}}">
     <!-- FullCalendar CSS -->
-`  
+
+
+    <style>
+
+        .logo {
+            background-image: url("assets/cklogo.png");
+            /* Additional CSS properties for sizing and positioning the image */
+        }
+
+
+    </style>
 
 
 </head>
@@ -41,7 +51,7 @@
 
     <div id="wrapper">
 
-        {{-- @include('student.inc.topnav') --}}
+        @include('student.inc.topnav')
         @include('student.inc.sidenav')
 
         @yield('headercover')
@@ -100,6 +110,7 @@
     </div>
     <script>
         $(document).ready(function(){
+
 
             $(document).on('click','#logout',function(){
                 Swal.fire({

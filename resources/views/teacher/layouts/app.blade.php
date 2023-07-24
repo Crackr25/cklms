@@ -109,7 +109,7 @@
 
         <footer class="text-center py-4">
                         <div class="container">
-                            <p class="m-0">© 2023 Powered by <span>  <img src="assets/cklogo.png" alt="Logo" style="width:30px ; height:30px;">  </span> </p>
+                            <p class="m-0">© 2023 Powered by <span>  <img src="/assets/cklogo.png" alt="Logo" style="width:30px ; height:30px;">  </span> </p>
                         </div>
         </footer>
         

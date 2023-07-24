@@ -4,7 +4,7 @@ namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
+use DB;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -32,9 +32,19 @@ class LoginController extends Controller
 
         $token = $user->createToken('ebooktoken')->plainTextToken;
 
+
+
+        $grade = DB::table('students')
+                    ->where('students.userid', $user->id)
+                    ->join('gradelevel', 'gradelevel.id', '=', 'students.gradelevel')
+                    ->select('gradelevel.levelname')
+                    ->first();
+
+
         $response = [
             'message' => 'success',
             'success' => true,
+            'grade'   => $grade->levelname,
             'user' => $user,
             'token' => $token
         ];

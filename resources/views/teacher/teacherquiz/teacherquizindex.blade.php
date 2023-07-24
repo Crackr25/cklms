@@ -130,13 +130,13 @@
         white-space: pre-wrap;
     }
 
-    #viewresponse .response-text {
+    /* #viewresponse .response-text {
         display: none;
-    }
+    } */
 
-    #viewresponse:hover .response-text {
+    /* #viewresponse:hover .response-text {
         display: inline;
-    }
+    } */
 
 
 
@@ -167,7 +167,7 @@
                 </a>
             </div>
         </div> 
-    </div>
+</div>
 
 
 
@@ -294,7 +294,7 @@
 
             if($('input[name=quizname]').val() == ''){
 
-                 UIkit.notification("<span uk-icon='icon: warning'></span> Quiz title is required!", {status:'danger', timeout: 1500 });
+                    UIkit.notification("<span uk-icon='icon: warning'></span> Quiz title is required!", {status:'danger', timeout: 1500 });
 
                 validInput = false
                 console.log('invalid')

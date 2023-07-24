@@ -144,6 +144,12 @@
                                         '<input type="file" class="form-control" id="book_cover" name="cover" required="">'+
                                     '</div>'+
                                 '</div>'+
+                                '<div class="form-group row mb-3">'+
+                                    '<label class="col-md-3 col-form-label" for="robotics_checkbox" style="font-size: 13px;">Robotics:</label>'+
+                                    '<div class="col-md-2">'+
+                                        '<input type="checkbox" id="robotics_checkbox" name="robotics" value="1" style="height:30px">'+
+                                    '</div>'+
+                                '</div>'+
                                 '</div>'+
                             '</form>'+
                         '</div>'+

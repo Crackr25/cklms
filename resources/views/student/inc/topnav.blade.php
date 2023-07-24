@@ -1,5 +1,5 @@
 <link rel="stylesheet" href="{{asset('templatefiles/night-mode.css')}}">
-<header class="header uk-sticky" uk-sticky="top:20 ; cls-active:header-sticky" style="">
+<header class="header uk-sticky" uk-sticky="top:20 ; cls-active:header-sticky" style="background-color:white">
 
     <div class="container">
         <nav uk-navbar="" class="uk-navbar">
@@ -10,9 +10,6 @@
                 <span class="btn-mobile" uk-toggle="target: #wrapper ; cls: mobile-active"></span>
 
 
-
-                <!-- logo -->
-              
 
             @yield('breadcrumbs')
 
@@ -151,7 +148,7 @@
                 </div>
 
 
-
+{{-- 
                 <!-- icon search-->
                 <a class="uk-navbar-toggle uk-hidden@s" uk-toggle="target: .nav-overlay; animation: uk-animation-fade" href="#">
                     <i class="uil-search icon-small"></i>
@@ -160,7 +157,7 @@
                 
                 <!-- User icons -->
                     <a href="#" class="uil-user icon-small uk-hidden@s" uk-toggle="target: .header-widget ; cls: is-active">
-                    </a>
+                    </a> --}}
 
             </div>
             <!-- End Right Side Content / End -->

@@ -18,7 +18,7 @@
     <div class="side-nav-bg"></div>
     <div class="logo uk-visible@s">
         <a href="/home">
-            <img src="assets/cklogo.png" alt="Logo">
+            <img src="/assets/cklogo.png" alt="Logo">
         </a>
     </div>
     <ul>

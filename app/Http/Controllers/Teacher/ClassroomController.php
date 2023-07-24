@@ -825,7 +825,7 @@ class ClassroomController extends Controller
     }
     public function addthisbook(Request $request)
     {
-     
+
         $checkifexists = DB::table('classroombooks')
             ->where('bookid', $request->get('bookid'))
             ->where('classroomid', $request->get('classroomid'))
@@ -1103,6 +1103,21 @@ class ClassroomController extends Controller
 
     }
 
+    public function classroomgroups(Request $request){
+
+        $groups = DB::table('classroomgroups')
+                                ->where('teacherid', auth()->user()->id)
+                                ->where('classroomid', $request->get('classroomid'))
+                                ->where('deleted', 0)
+                                ->get();
+
+
+
+        return view('teacher.classrooms.include.groupstab')
+                ->with('groups', $groups);                       
+
+    }
+
 
     public function students(Request $request){
 
@@ -1201,7 +1216,8 @@ class ClassroomController extends Controller
 
         }
 
-    public function allbooks(Request $request){
+    public function allbooks(Request $request)
+    {
 
 
             $books = DB::table('books')

@@ -83,6 +83,26 @@
     </div> 
 </div>
 
+
+<div id="modal-groups-create" uk-modal> 
+    <div class="uk-modal-dialog uk-modal-body"> 
+        <button class="uk-modal-close-default" type="button" uk-close></button> 
+        <h2 class="uk-modal-title">Create New Group</h2> 
+
+        <div class="uk-margin">
+            <label class="uk-form-label" for="form-horizontal-text">Group Name</label>
+            <div class="uk-form-controls">
+                <input class="uk-input" name="groupname" type="text" placeholder="Group Name" autocomplete="off">
+            </div>
+        </div>
+        <div class="uk-margin">
+            <a href="#" type="button" class="btn btn-success uk-first-column" id="create_group" >
+                Create Group
+            </a>
+        </div>
+    </div> 
+</div>
+
 <div id="modal-student-info" uk-modal> 
     <div class="uk-modal-dialog uk-modal-body"> 
         <button class="uk-modal-close-default" type="button" uk-close></button> 
@@ -193,6 +213,7 @@
                         <li class="uk-active"><a href="#" aria-expanded="true" id="feetab">Feed</a></li>
                         <li class=""><a href="#" aria-expanded="false" id="studenttab">Students</a></li>
                         <li class=""><a href="#" aria-expanded="false" id="booksholdertab">Books</a></li>
+                        <li class=""><a href="#" aria-expanded="false" id="groupsholdertab">Groups</a></li>
                     </ul>
                 </nav>
             </div>
@@ -212,17 +233,13 @@
         <div class="uk-width-expand@m uk-first-column">
             <ul id="course-intro-tab" class="uk-switcher mt-4 mb-4" style="touch-action: pan-y pinch-zoom;">
 
-                <li class="course-description-content uk-active  " style="" 
-                id="feed_holder"
-                >
-
-
-             
+                <li class="course-description-content uk-active" id="feed_holder">
                 </li>
                 <li class="" style="" id="studens_holder"></li>
                 <li class="" style="" id="books_holder"></li>
+                <li class="" style="" id="groups_holder"></li>
 
-                <!-- course Announcement-->
+                {{-- <!-- course Announcement-->
                 <li class="" style="">
                     <h4> Announcement </h4>
 
@@ -273,10 +290,10 @@
 
 
                     </article>
-                </li>
+                </li> --}}
 
                 <!-- course Reviews-->
-                <li class="" style="">
+                {{-- <li class="" style="">
 
                     <div class="review-summary">
                         <h4 class="review-summary-title"> Student feedback </h4>
@@ -516,7 +533,7 @@
                         </ul>
                     </div>
 
-                </li>
+                </li> --}}
 
             </ul>
         </div>
@@ -1061,6 +1078,76 @@
         $(document).on('click', '.call',function(){
             var clasroomid = $(this).attr('id');
             window.open('/videoconference/start?classroomid='+clasroomid,'newwindow','width=700,height=700,top=0, left=960');
+        })
+    </script>
+
+
+    <script>
+        
+        $(document).ready(function(){
+            function loadGroups(){
+
+                $.ajax({
+                        url: '/classroomgroups',
+                        type:"GET",
+                        data:{
+                                classroomid : '{{$classroominfo->id}}'
+                            },
+                        success: function(data){
+                            $('#groups_holder').empty()
+                            $('#groups_holder').append(data)
+                        }
+                })
+            }
+
+            
+
+            $(document).on('click','#groupsholdertab',function(){
+
+                loadGroups();
+
+            })
+
+
+            $(document).on('click','#create_group',function(){
+
+                // classroomid='+'{{$classroominfo->id}}'
+
+                console.log();
+                var validInput = true
+
+                
+
+                if($('input[name=groupname]').val() == ''){
+
+                        UIkit.notification("<span uk-icon='icon: warning'></span> Group name is required", {status:'danger', timeout: 1500 });
+
+                    validInput = false
+                    console.log('invalid')
+                }
+                
+                if(validInput){
+
+                    console.log($('input[name=groupname]').val());
+
+                    $.ajax({
+                            url: '/teachergoup/create',
+                            type:"GET",
+                            data:{
+                                groupname: $('input[name=groupname]').val(),
+                                classroomid : '{{$classroominfo->id}}'
+                            },
+                            success: function(data){
+                                UIkit.notification("<span uk-icon='icon: check'></span> Created Successfully!", {status:'success', timeout: 1000 });
+                                loadGroups();
+                            }
+                    })
+
+                }
+
+        })
+
+
         })
     </script>
 

@@ -240,7 +240,7 @@ class LessonController extends Controller
                     'createddatetime'   => date('Y-m-d H:i:s')
                 ]);
         }
-        if($request->get('contenttype') == 'file' || $request->get('contenttype') == 'image'){
+        if($request->get('contenttype') == 'file' || $request->has('photos') == true || $request->has('video') == true){
             $lessoninfo = DB::table('lessons')
                 ->where('id', $request->get('lessonid'))
                 ->first();
@@ -316,11 +316,17 @@ class LessonController extends Controller
     
     
             
-            if($request->get('contenttype') == 'file'){
+            if($request->has('content') == true){
                 $file = $request->file('content');
-            }else{
+                // $filetype = 3;
+            }elseif($request->has('photos') == true){
                 $file = $request->file('photos');
+                // $filetype = 5;
+            }elseif($request->has('video') == true){
+                $file = $request->file('video');
+                // $filetype = 6;
             }
+            
             $extension = $file->getClientOriginalExtension();
             
         
@@ -333,7 +339,7 @@ class LessonController extends Controller
     
             //  }
             //  catch(\Exception $e){
-               
+        
         
             //  }
             $destinationPath = public_path($publicpath.'/');
@@ -344,7 +350,7 @@ class LessonController extends Controller
     
             }
             catch(\Exception $e){
-               
+                return $e;
         
             }
             DB::table('lessoncontents')
@@ -369,7 +375,7 @@ class LessonController extends Controller
                 ]);
         }
     }
-    public function updatecontent(Request $request)
+public function updatecontent(Request $request)
     {
         // return $request->all();
         // typelist:

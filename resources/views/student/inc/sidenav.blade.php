@@ -1,12 +1,9 @@
 <style>
-    .active {
+    .actives {
         /* Define your desired style for the active button here */
-        background-color: linear-gradient(-225deg, #FF057C 0%, #8D0B93 50%, #321575 100%);
+        background-color: #f0f0f0;
         color: #000;
         /* Add any other desired styles */
-    }
-    .bodys {
-        background-color: linear-gradient(-225deg, #FF057C 0%, #8D0B93 50%, #321575 100%) !important;
     }
 </style>
 
@@ -17,12 +14,12 @@
     <div class="side-nav-bg bodys"></div>
     <div class="logo uk-visible@s bodys">
         <a href="/home">
-            <img src="assets/cklogo.png" alt="Logo">
+            <img src="/assets/cklogo.png" alt="Logo">
         </a>
     </div>
     <ul>
         <li>
-            <a href="/home" class="{{ Request::url() == url('/home') ? 'active' : '' }}">
+            <a href="/home" class="{{ Request::url() == url('/home') ? 'actives' : '' }}">
                 <div class="d-flex flex-column align-items-center">
                     <i class="fa fa-home"></i>
                     <span class="badge" style="font-size:10px" >Home</span>
@@ -41,13 +38,21 @@
         </li>
 
         <li>
-            <a href="student/activities" class="header-widget-icon" uk-toggle="target: #searchbox; cls: is-active">
+            <a href="/student/activities" class="{{ Request::url() == url('/student/activities') ? 'actives' : '' }}">
                 <div class="d-flex flex-column align-items-center">
                     <i class="far fa-list-alt"></i>
                     <span class="badge" style="font-size:10px">Activities</span>
                 </div>
             </a>
+        </li>
 
+        <li>
+            <a href="/student/scores" class="{{ Request::url() == url('/student/scores') ? 'actives' : '' }}">
+                <div class="d-flex flex-column align-items-center">
+                    <i class="fas fa-chart-bar"></i></i>
+                    <span class="badge" style="font-size:10px">Scores</span>
+                </div>
+            </a>
         </li>
     </ul>
     <ul class="uk-position-bottom">

@@ -127,13 +127,15 @@ class Teacherquizcontroller extends Controller
         $search = $request->get('search');
 
         $query = DB::table('classroomstudents')
-            ->join('users', 'classroomstudents.studentid', '=', 'users.id')
+            ->join('students', 'classroomstudents.studentid', '=', 'students.id')
             ->select(
                 'classroomstudents.id as id',
-                'users.name as text'
+                DB::raw("CONCAT(students.firstname, ' ', students.lastname) as text")
             )
             ->where('classroomstudents.classroomid', $classroomId)
             ->where('classroomstudents.deleted', 0);
+
+
 
         if ($search) {
             $query->where('users.name', 'LIKE', '%' . $search . '%');
@@ -1950,6 +1952,57 @@ class Teacherquizcontroller extends Controller
             return 0;
         }
 
+    }
+
+
+    public function changeSetPoints(){
+
+
+
+
+        $store = DB::table('lessonquizquestions')
+                    ->where('typeofquiz', 7)
+                    ->where('deleted', 0)
+                    ->get();
+
+        $count = 0;
+        $sortdata = array();
+        foreach($store  as $item){
+
+            $store2 = DB::table('lesson_fill_question')
+                    ->where('questionid', $item->id)
+                    ->where('deleted', 0)
+                    ->get();
+
+                $sortdata1 = array();
+                foreach($store2 as $question){
+
+                    $keyword = '~input'; // The word you want to count
+                    $existingval = $question->question;
+
+                    $count2 = substr_count($existingval, $keyword);
+
+                    $count+= $count2;
+
+                        
+                }
+            
+
+            
+            DB::table('lessonquizquestions')
+                ->where('id', $item->id)
+                ->update([
+                    'points'             =>  $count,
+                ]);
+            
+            array_push($sortdata1,$count ,$item->id);
+            array_push($sortdata, $sortdata1);
+
+            $count = 0;
+                        
+        }
+
+    dd($sortdata);
     }
 
 
